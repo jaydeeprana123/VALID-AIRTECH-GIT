@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:valid_airtech/Screens/Authentication/Model/login_response.dart';
+import 'package:valid_airtech/Screens/Authentication/View/login_screen_view.dart';
+import 'package:valid_airtech/Screens/home_page.dart';
 import 'package:valid_airtech/Screens/login_screen.dart';
 import '../Styles/my_colors.dart';
 import '../Styles/my_icons.dart';
@@ -67,22 +70,14 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   void redirectOnPendingState() {
     Future.delayed(const Duration(seconds: 4), () async {
 
-      Get.offAll(LoginScreen());
+      LoginData? loginResponseModel =
+      await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel);
 
-     //  LoginResponseModel? loginResponseModel =
-     //  await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel);
-     //
-     // var cartItemList =  await MySharedPref().getCartItems(SharePreData.keySaveCart);
-     // if(cartItemList?.isForEditOrder??false){
-     //   await MySharedPref().clearData(SharePreData.keySaveCart);
-     // }
-     //
-     //  if (loginResponseModel != null && ((loginResponseModel.data?.user?.name??"0").isNotEmpty)) {
-     //    Get.offAll(BottomNavigationView(selectTabPosition: 0));
-     //  } else {
-     //
-     //     Get.off(() => WelcomeScreenView());
-     //  }
+      if (loginResponseModel != null && ((loginResponseModel.eUserName??"").isNotEmpty)) {
+        Get.offAll(HomePage());
+      } else {
+         Get.off(() => LoginScreenView());
+      }
 
 
     });

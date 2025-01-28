@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Screens/Authentication/Model/login_response.dart';
+
 class MySharedPref {
   static MySharedPref? classInstance;
   static SharedPreferences? preferences;
@@ -21,23 +23,26 @@ class MySharedPref {
 
 
   /// Used to save user's information
-  // setLoginModel(LoginData model, String key) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   await prefs.reload();
-  //   prefs.setString(key, json.encode(model.toJson()));
-  // }
-  //
-  // /// Used to get user's information
-  // Future<LoginData?> getLoginModel(String key) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   await prefs.reload();
-  //
-  //   var myJson = prefs.getString(key);
-  //   if (myJson == null) {
-  //     return null;
-  //   }
-  //   return LoginData.fromJson(json.decode(myJson));
-  // }
+  setLoginModel(LoginData model, String key) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
+    prefs.setString(key, json.encode(model.toJson()));
+  }
+
+  /// Used to get user's information
+  Future<LoginData?> getLoginModel(String key) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
+
+    var myJson = prefs.getString(key);
+    if (myJson == null) {
+      return null;
+    }
+    return LoginData.fromJson(json.decode(myJson));
+  }
+
+
+
 
   Future<void> setString(String key, String content) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

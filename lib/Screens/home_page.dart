@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:valid_airtech/Screens/Appointment/View/appointment_screen.dart';
+import 'package:valid_airtech/Screens/Authentication/View/profile_screen_view.dart';
 import 'package:valid_airtech/Screens/Planning/View/planning_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_screen.dart';
 import '../Styles/app_text_style.dart';
@@ -19,7 +20,9 @@ class HomePage extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.person_2_outlined, color: color_secondary),
-          onPressed: () {},
+          onPressed: () {
+            Get.to(ProfileScreen());
+          },
         ),
         title: Text(
           'Profile',
