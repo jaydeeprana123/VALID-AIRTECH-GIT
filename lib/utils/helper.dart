@@ -1,8 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:valid_airtech/Screens/Authentication/View/login_screen_view.dart';
+import 'package:valid_airtech/utils/preference_utils.dart';
+import 'package:valid_airtech/utils/share_predata.dart';
 import '../Enums/select_date_enum.dart';
 import '../Styles/my_colors.dart';
+import 'package:get/get.dart';
+
 class Helper {
 
 
@@ -161,6 +166,12 @@ class Helper {
     String result;
     result = DateFormat("d MMM yyyy").format(originalDate);
     return result;
+  }
+
+
+  logout(){
+    MySharedPref().clearData(SharePreData.keySaveLoginModel);
+    Get.offAll(LoginScreenView());
   }
 
 

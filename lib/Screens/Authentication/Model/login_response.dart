@@ -9,81 +9,85 @@ LoginResponse loginResponseFromJson(String str) => LoginResponse.fromJson(json.d
 String loginResponseToJson(LoginResponse data) => json.encode(data.toJson());
 
 class LoginResponse {
-  int? status;
+  bool? status;
   String? message;
-  LoginData? data;
+  int? code;
+  List<LoginData>? data;
+  String? token;
 
   LoginResponse({
     this.status,
     this.message,
+    this.code,
     this.data,
+    this.token,
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
     status: json["status"],
     message: json["message"],
-    data: json["data"] == null ? null : LoginData.fromJson(json["data"]),
+    code: json["code"],
+    data: json["data"] == null ? [] : List<LoginData>.from(json["data"]!.map((x) => LoginData.fromJson(x))),
+    token: json["token"],
   );
 
   Map<String, dynamic> toJson() => {
     "status": status,
     "message": message,
-    "data": data?.toJson(),
+    "code": code,
+    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
+    "token": token,
   };
 }
 
 class LoginData {
-  String? eId;
-  String? eEmployeeName;
-  String? eWorkmanNo;
-  String? eEmail;
-  String? eMobile;
-  String? eUserName;
-  String? ePassword;
-  String? eProfile;
-  String? eEmployeeToken;
-  String? eUserType;
-  DateTime? eCreatedAt;
+  int? id;
+  String? name;
+  String? userName;
+  String? passCode;
+  String? email;
+  String? mobileNumber;
+  int? roleId;
+  String? status;
+  dynamic photo;
+  String? token;
 
   LoginData({
-    this.eId,
-    this.eEmployeeName,
-    this.eWorkmanNo,
-    this.eEmail,
-    this.eMobile,
-    this.eUserName,
-    this.ePassword,
-    this.eProfile,
-    this.eEmployeeToken,
-    this.eUserType,
-    this.eCreatedAt,
+    this.id,
+    this.name,
+    this.userName,
+    this.passCode,
+    this.email,
+    this.mobileNumber,
+    this.roleId,
+    this.status,
+    this.photo,
+    this.token
   });
 
   factory LoginData.fromJson(Map<String, dynamic> json) => LoginData(
-    eId: json["e_id"],
-    eEmployeeName: json["e_employee_name"],
-    eWorkmanNo: json["e_workman_no"],
-    eEmail: json["e_email"],
-    eMobile: json["e_mobile"],
-    eUserName: json["e_user_name"],
-    ePassword: json["e_password"],
-    eProfile: json["e_profile"],
-    eEmployeeToken: json["e_employee_token"],
-    eUserType: json["e_user_type"],
-    eCreatedAt: json["e_created_at"] == null ? null : DateTime.parse(json["e_created_at"]),
+    id: json["id"],
+    name: json["name"],
+    userName: json["user_name"],
+    passCode: json["pass_code"],
+    email: json["email"],
+    mobileNumber: json["mobile_number"],
+    roleId: json["role_id"],
+    status: json["status"],
+    photo: json["photo"],
+    token:json["token"]
   );
 
   Map<String, dynamic> toJson() => {
-    "e_id": eId,
-    "e_employee_name": eEmployeeName,
-    "e_workman_no": eWorkmanNo,
-    "e_email": eEmail,
-    "e_mobile": eMobile,
-    "e_user_name": eUserName,
-    "e_password": ePassword,
-    "e_profile": eProfile,
-    "e_employee_token": eEmployeeToken,
-    "e_user_type": eUserType,
-    "e_created_at": eCreatedAt?.toIso8601String(),
+    "id": id,
+    "name": name,
+    "user_name": userName,
+    "pass_code": passCode,
+    "email": email,
+    "mobile_number": mobileNumber,
+    "role_id": roleId,
+    "status": status,
+    "photo": photo,
+    "token":token
   };
 }

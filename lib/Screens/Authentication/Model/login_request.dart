@@ -1,25 +1,29 @@
+// To parse this JSON data, do
+//
+//     final loginRequest = loginRequestFromJson(jsonString);
+
+import 'dart:convert';
+
+LoginRequest loginRequestFromJson(String str) => LoginRequest.fromJson(json.decode(str));
+
+String loginRequestToJson(LoginRequest data) => json.encode(data.toJson());
+
 class LoginRequest {
   String? userName;
-  String? password;
-  String? deviceId;
-  String? deviceType;
+  String? passCode;
 
-  LoginRequest({this.userName, this.password});
+  LoginRequest({
+    this.userName,
+    this.passCode,
+  });
 
-  LoginRequest.fromJson(Map<String, dynamic> json) {
-    userName = json['user_name'];
-    password = json['password'];
-    deviceId = json["device_id"];
-    deviceType = json["device_type"];
-  }
+  factory LoginRequest.fromJson(Map<String, dynamic> json) => LoginRequest(
+    userName: json["user_name"],
+    passCode: json["pass_code"],
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['user_name'] = userName;
-    data['password'] = password;
-    data["device_id"] = deviceId;
-    data["device_type"] = deviceType;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "user_name": userName,
+    "pass_code": passCode,
+  };
 }
-

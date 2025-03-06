@@ -73,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       LoginData? loginResponseModel =
       await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel);
 
-      if (loginResponseModel != null && ((loginResponseModel.eUserName??"").isNotEmpty)) {
+      if (loginResponseModel != null && ((loginResponseModel.userName??"").isNotEmpty)) {
         Get.offAll(HomePage());
       } else {
          Get.off(() => LoginScreenView());

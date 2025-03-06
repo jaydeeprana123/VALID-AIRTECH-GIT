@@ -4,13 +4,16 @@ import 'dart:ffi';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:valid_airtech/Screens/Authentication/View/login_screen_view.dart';
 import 'package:valid_airtech/Screens/home_page.dart';
 
 import '../../../RepoDB/repositories/api_repository.dart';
 import '../../../Widget/common_widget.dart';
+import '../../../base_model.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/preference_utils.dart';
 import '../../../utils/share_predata.dart';
+import '../Model/change_password_request.dart';
 import '../Model/login_request.dart';
 import '../Model/login_response.dart';
 
@@ -37,6 +40,8 @@ class LoginController extends GetxController {
   Rx<bool> isLoading = false.obs;
   var errorMessage = ''.obs;
 
+  String? filePath;
+
   String? deviceToken;
   Rx<TextEditingController> otpText = TextEditingController().obs;
 
@@ -58,20 +63,23 @@ class LoginController extends GetxController {
 
       LoginRequest loginRequest = LoginRequest();
       loginRequest.userName = userNameController.value.text;
-      loginRequest.password = passwordController.value.text;
-      loginRequest.deviceId = fcmToken ?? "TOcYmaP0okd5D6yQ";
-      loginRequest.deviceType = "0";
+      loginRequest.passCode = passwordController.value.text;
+      // loginRequest.deviceId = fcmToken ?? "TOcYmaP0okd5D6yQ";
+      // loginRequest.deviceType = "0";
       LoginResponse response = await postRepository.login(loginRequest);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status == 1) {
+      if (response.status??false) {
         // Successful login
 
         Get.snackbar('Success', response.message ?? "");
+
+        var loginData = response.data?[0] ?? LoginData();
+        loginData.token = response.token??"";
         await MySharedPref().setLoginModel(
-            response.data ?? LoginData(), SharePreData.keySaveLoginModel);
+            loginData, SharePreData.keySaveLoginModel);
 
         Get.offAll(HomePage());
       } else {
@@ -93,18 +101,18 @@ class LoginController extends GetxController {
     try {
       isLoading.value = true;
 
-      LoginResponse response = await postRepository.profile(loginData.value.eEmployeeToken??"");
+      LoginResponse response = await postRepository.profile(loginData.value.token??"");
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status == 1) {
-        loginData.value = response.data??LoginData();
+      if (response.status??false) {
+        loginData.value = response.data?[0]??LoginData();
 
-        userNameController.value.text = loginData.value.eUserName??"";
-        fullNameController.value.text = loginData.value.eEmployeeName??"";
-        mobileController.value.text = loginData.value.eMobile??"";
-        emailController.value.text = loginData.value.eEmail??"";
+        userNameController.value.text = loginData.value.userName??"";
+        fullNameController.value.text = loginData.value.name??"";
+        mobileController.value.text = loginData.value.mobileNumber??"";
+        emailController.value.text = loginData.value.email??"";
       } else {
         errorMessage.value = response.message ?? 'Unknown error';
         Get.snackbar('Error', errorMessage.value);
@@ -119,6 +127,78 @@ class LoginController extends GetxController {
     }
   }
 
+  /// Edit Profile api call
+  void callEditProfileAPI() async {
+    try {
+      isLoading.value = true;
+
+      LoginData loginDataRequest = LoginData();
+      loginDataRequest.id = loginData.value.id;
+      loginDataRequest.userName = userNameController.value.text;
+      loginDataRequest.name = fullNameController.value.text;
+      loginDataRequest.email = emailController.value.text;
+      loginDataRequest.mobileNumber = mobileController.value.text;
+      LoginResponse response = await postRepository.editProfile(loginDataRequest,filePath, loginData.value.token??"");
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        // Successful login
+
+        Get.snackbar('Success', response.message ?? "");
+        Get.offAll(HomePage());
+      } else {
+        errorMessage.value = response.message ?? 'Unknown error';
+        Get.snackbar('Error', errorMessage.value);
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+
+  /// Change Password api call
+  void callChangePasswordAPI() async {
+    try {
+      isLoading.value = true;
+
+      ChangePasswordRequest changePasswordRequest = ChangePasswordRequest();
+      changePasswordRequest.currentPassword = passwordController.value.text;
+      changePasswordRequest.newPassword = newPasswordController.value.text;
+      changePasswordRequest.newPasswordConfirmation = confirmPasswordController.value.text;
+      // loginRequest.deviceId = fcmToken ?? "TOcYmaP0okd5D6yQ";
+      // loginRequest.deviceType = "0";
+      BaseModel response = await postRepository.changePassword(changePasswordRequest, loginData.value.token??"");
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        // Successful login
+
+        Get.snackbar('Success', response.message ?? "");
+
+        MySharedPref().clearData(SharePreData.keySaveLoginModel);
+        Get.offAll(LoginScreenView());
+      } else {
+        errorMessage.value = response.message ?? 'Unknown error';
+        Get.snackbar('Error', errorMessage.value);
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
 
 
   @override

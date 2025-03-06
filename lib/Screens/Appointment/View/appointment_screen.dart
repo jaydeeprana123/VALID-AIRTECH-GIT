@@ -19,6 +19,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   AppointmentController appointmentController = Get.put(AppointmentController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    appointmentController.getLoginData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

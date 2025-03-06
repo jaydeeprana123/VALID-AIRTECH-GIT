@@ -58,7 +58,7 @@ class _LoginScreenPageState extends State<LoginScreenView> {
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
-          resizeToAvoidBottomInset: false,
+
           body: Obx(() => Stack(
                 children: [
                   Form(
@@ -137,16 +137,16 @@ class _LoginScreenPageState extends State<LoginScreenView> {
                         ),
                         Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 20.w, vertical: 20.w),
+                              horizontal: 30, vertical: 20.w),
                           margin: EdgeInsets.symmetric(vertical: 20)
                           ,child: CommonButton(
                             titleText: "Log in",
                             textColor: isDataFill == true
                                 ? Colors.white
-                                : disableTextColor,
+                                : Colors.white,
                             buttonColor: isDataFill == true
                                 ? color_primary
-                                : btnDisableBgColor,
+                                : color_primary,
                             onCustomButtonPressed: () async {
                               if (_formKey.currentState?.validate() ?? false) {
 

@@ -7,46 +7,59 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
 
+import '../../../RepoDB/repositories/api_repository.dart';
 import '../../../Widget/common_widget.dart';
 import '../../../utils/constants.dart';
+import '../../../utils/helper.dart';
+import '../../../utils/preference_utils.dart';
+import '../../../utils/share_predata.dart';
+import '../../Authentication/Model/login_response.dart';
+import '../../Sites/Model/site_list_response.dart';
 
 
 /// Controller
 class AppointmentController extends GetxController {
-  Rx<bool> isLoading = false.obs;
+  APIRepository postRepository = APIRepository();
+  RxBool isLoading = false.obs;
   var errorMessage = ''.obs;
 
-  final Rx<TextEditingController> controllerTrain = TextEditingController(text: "0")
-      .obs;
 
-  final Rx<TextEditingController> controllerBus = TextEditingController(text:"0")
-      .obs;
 
-  final Rx<TextEditingController> controllerAuto = TextEditingController(text:"0")
-      .obs;
+  Rx<LoginData> loginData = LoginData().obs;
+  RxList<SiteData> siteList = <SiteData>[].obs;
 
-  final Rx<TextEditingController> controllerFuel = TextEditingController(text:"0")
-      .obs;
+  Future getLoginData()async{
+    loginData.value =  await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel)??LoginData();
 
-  final Rx<TextEditingController> controllerFoodAmount = TextEditingController(text:"0")
-      .obs;
+    printData("token", loginData.value.token??"");
 
-  final Rx<TextEditingController> controllerOther = TextEditingController()
-      .obs;
+  }
 
-  final Rx<TextEditingController> controllerRemarksForOther = TextEditingController()
-      .obs;
 
-  final Rx<TextEditingController> controllerUsername = TextEditingController()
-      .obs;
-  final Rx<TextEditingController> controllerCity = TextEditingController().obs;
-  final Rx<
-      TextEditingController> controllerPhoneNumber = TextEditingController()
-      .obs;
-  final Rx<TextEditingController> controllerEmailId = TextEditingController()
-      .obs;
-  final Rx<TextEditingController> controllerPassword = TextEditingController()
-      .obs;
+  /// site list api call
+  void callSiteList() async {
+    try {
+      isLoading.value = true;
+
+      SiteListResponse response = await postRepository.siteList(loginData.value.token??"");
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        siteList.value = response.data??[];
+      }else if(response.code == 401){
+        Helper().logout();
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
 
 
 
@@ -61,10 +74,6 @@ class AppointmentController extends GetxController {
 
   ///Clear all field
   clearAllField() {
-    controllerUsername.value.clear();
-    controllerCity.value.clear();
-    controllerPhoneNumber.value.clear();
-    controllerEmailId.value.clear();
-    controllerPassword.value.clear();
+
   }
 }

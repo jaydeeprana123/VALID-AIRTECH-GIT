@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Appointment/Controller/appointment_controller.dart';
+import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
 import '../../../Styles/app_text_style.dart';
@@ -29,7 +30,6 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
   String? selectedSite;
   String? contactPerson;
 
-  final List<String> siteOptions = ['Office', 'Factory', 'Field Work'];
   final List<String> contactPersons = ['John Doe', 'Jane Smith', 'Bob Johnson'];
 
   void _pickDate() async {
@@ -64,8 +64,8 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    appointmentController.callSiteList();
   }
 
 
@@ -96,7 +96,7 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
+      body: Obx(() =>SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -109,10 +109,10 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
 
             SizedBox(height: 28,),
 
-            _buildDropdown(siteOptions, selectedSite, (val) => setState(() => selectedSite = val), "Select Site"),
+            _buildDropdown(appointmentController.siteList, selectedSite, (val) => setState(() => selectedSite = val), "Select Site"),
 
             SizedBox(height: 28,),
-            _buildDropdown(contactPersons, contactPerson, (val) => setState(() => contactPerson = val), "Select Contact Person"),
+         //   _buildDropdown(contactPersons, contactPerson, (val) => setState(() => contactPerson = val), "Select Contact Person"),
 
 
             SizedBox(height: 20,),
@@ -134,7 +134,7 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
             ),
           ],
         ),
-      ),
+      )),
     );
   }
 
@@ -169,7 +169,7 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
     );
   }
 
-  Widget _buildDropdown(List<String> items, String? selectedValue, Function(String?) onChanged, String hint) {
+  Widget _buildDropdown(List<SiteData> items, String? selectedValue, Function(String?) onChanged, String hint) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         contentPadding: EdgeInsets.only(bottom: 10),
@@ -191,7 +191,7 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
       ),
       value: selectedValue,
       isExpanded: true, // Ensures dropdown takes full width
-      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+      items: items.map((e) => DropdownMenuItem(value: e.id.toString(), child: Text(e.headName??""))).toList(),
       onChanged: onChanged,
     );
     ;

@@ -15,7 +15,7 @@ class API {
   API._internal() {
     _dio = Dio(
       BaseOptions(
-          baseUrl: 'http://app.validservices.in/api/admin',
+          baseUrl: 'https://validairtech.avds.pw/api/admin',
           connectTimeout: const Duration(seconds: 60),
           receiveTimeout: const Duration(seconds: 60)),
     );

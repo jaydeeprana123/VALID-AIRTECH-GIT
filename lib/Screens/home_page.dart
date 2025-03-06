@@ -6,9 +6,11 @@ import 'package:valid_airtech/Screens/Appointment/View/appointment_screen.dart';
 import 'package:valid_airtech/Screens/Authentication/View/profile_screen_view.dart';
 import 'package:valid_airtech/Screens/Planning/View/planning_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_screen.dart';
+import 'package:valid_airtech/utils/helper.dart';
 import '../Styles/app_text_style.dart';
 import '../Styles/my_colors.dart';
 import '../Styles/my_icons.dart';
+import 'Master/View/master_index_screen.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -33,7 +35,9 @@ class HomePage extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Icons.logout, color: color_secondary),
-            onPressed: () {},
+            onPressed: () {
+              Helper().logout();
+            },
           ),
         ],
       ),
@@ -94,9 +98,13 @@ class HomePage extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildFooterButton('Master /\nIndex'),
-                _buildFooterButton('Admin\nReport'),
-                _buildFooterButton('Workman\nRecord'),
+                Expanded(child: InkWell(onTap: (){
+                  Get.to(MasterIndexScreen());
+                },child: _buildFooterButton('Master /\nIndex'))),
+                Expanded(child: InkWell(onTap: (){
+                  
+                },child: _buildFooterButton('Admin\nReport'))),
+                Expanded(child: InkWell(child: _buildFooterButton('Workman\nRecord'))),
               ],
             ),
           ),
@@ -129,23 +137,21 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildFooterButton(String title) {
-    return Expanded(
-      child: Container(
+    return Container(
 
-        margin: EdgeInsets.only(right: 8, left: 8),
-        alignment: Alignment.center,
-        padding: EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.deepPurple.shade600,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Center(
-          child: Text(
-            textAlign: TextAlign.center,
-            title,
-            style: AppTextStyle.largeBold.copyWith(fontSize: 14
-                , color: Colors.white),
-          ),
+      margin: EdgeInsets.only(right: 8, left: 8),
+      alignment: Alignment.center,
+      padding: EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.deepPurple.shade600,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Center(
+        child: Text(
+          textAlign: TextAlign.center,
+          title,
+          style: AppTextStyle.largeBold.copyWith(fontSize: 14
+              , color: Colors.white),
         ),
       ),
     );
