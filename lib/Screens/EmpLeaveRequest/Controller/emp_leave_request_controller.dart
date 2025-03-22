@@ -17,18 +17,18 @@ import '../../../utils/preference_utils.dart';
 import '../../../utils/share_predata.dart';
 import '../../Authentication/Model/login_response.dart';
 import '../Model/create_service_request.dart';
-import '../Model/service_list_response.dart';
+import '../Model/emp_leave_request_list_response.dart';
 
 
 /// Controller
-class ServiceController extends GetxController {
+class EmpLeaveRequestController extends GetxController {
   APIRepository postRepository = APIRepository();
   Rx<bool> isLoading = false.obs;
   var errorMessage = ''.obs;
 
   Rx<CreateServiceRequest> createServiceRequest = CreateServiceRequest().obs;
 
-  RxList<ServiceData> serviceList = <ServiceData>[].obs;
+  RxList<EmpLeaveRequestData> empLeaveRequestList = <EmpLeaveRequestData>[].obs;
 
   final Rx<TextEditingController> controllerTestName = TextEditingController(text: "")
       .obs;
@@ -43,18 +43,18 @@ class ServiceController extends GetxController {
   }
 
 
-  /// Service list api call
-  void callServiceListList() async {
+  /// Employee Leaver request list api call
+  void callEmployeeLeaveRequestList(String empId) async {
     try {
       isLoading.value = true;
 
-      ServiceListResponse response = await postRepository.serviceList(loginData.value.token??"");
+      EmpLeaveRequestListResponse response = await postRepository.employeeLeaveRequestList(loginData.value.token??"", empId);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status??false) {
-        serviceList.value = response.data??[];
+        empLeaveRequestList.value = response.data??[];
       } else if(response.code == 401){
         Helper().logout();
       }
@@ -69,37 +69,37 @@ class ServiceController extends GetxController {
   }
 
   /// Service create api call
-  Future<void> callCreateService() async {
-    try {
-      isLoading.value = true;
-
-      printData("site ", "api called");
-
-      BaseModel response =
-      await postRepository.createService(loginData.value.token ?? "",createServiceRequest.value);
-      isLoading.value = false;
-
-      // Get.snackbar("response ",loginResponseToJson(response));
-
-      if (response.status ?? false) {
-        Get.snackbar("Success", response.message??"");
-        printData("response", response.message??"");
-        Get.off(AddServiceScreen());
-
-      } else if (response.code == 401) {
-        Helper().logout();
-      }else {
-        Get.snackbar("Error", response.message ?? "Something went wrong");
-      }
-    } catch (ex) {
-      if (ex is DioException) {
-        errorMessage.value = ex.type.toString();
-      } else {
-        errorMessage.value = ex.toString();
-      }
-      Get.snackbar('Error', errorMessage.value);
-    }
-  }
+  // Future<void> callCreateService() async {
+  //   try {
+  //     isLoading.value = true;
+  //
+  //     printData("site ", "api called");
+  //
+  //     BaseModel response =
+  //     await postRepository.createService(loginData.value.token ?? "",createServiceRequest.value);
+  //     isLoading.value = false;
+  //
+  //     // Get.snackbar("response ",loginResponseToJson(response));
+  //
+  //     if (response.status ?? false) {
+  //       Get.snackbar("Success", response.message??"");
+  //       printData("response", response.message??"");
+  //       Get.off(AddServiceScreen());
+  //
+  //     } else if (response.code == 401) {
+  //       Helper().logout();
+  //     }else {
+  //       Get.snackbar("Error", response.message ?? "Something went wrong");
+  //     }
+  //   } catch (ex) {
+  //     if (ex is DioException) {
+  //       errorMessage.value = ex.type.toString();
+  //     } else {
+  //       errorMessage.value = ex.toString();
+  //     }
+  //     Get.snackbar('Error', errorMessage.value);
+  //   }
+  // }
 
 
   @override
@@ -108,7 +108,7 @@ class ServiceController extends GetxController {
     super.onClose();
 
     printData("onClose", "onClose login controller");
-    Get.delete<ServiceController>();
+    Get.delete<EmpLeaveRequestController>();
   }
 
 }

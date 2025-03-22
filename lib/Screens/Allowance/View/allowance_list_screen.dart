@@ -4,25 +4,29 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:valid_airtech/Screens/Allowance/Controller/allowance_controller.dart';
+import 'package:valid_airtech/Screens/Allowance/View/add_allowance_screen.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/View/add_conveyance_screen.dart';
+import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controller.dart';
+import 'package:valid_airtech/Screens/Instruments/View/add_instrument_screen.dart';
+import 'package:valid_airtech/Screens/Service/Controller/service_controller.dart';
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/View/add_site_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_details_screen.dart';
 import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
-import 'conveyance_head_list_screen.dart';
 
 
-class ConveyanceListScreen extends StatefulWidget {
+class AllowanceListScreen extends StatefulWidget {
   @override
-  _ConveyanceListScreenState createState() => _ConveyanceListScreenState();
+  _AllowanceListScreenState createState() => _AllowanceListScreenState();
 }
 
-class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
+class _AllowanceListScreenState extends State<AllowanceListScreen> {
 
-  ConveyanceController conveyanceController = Get.put(ConveyanceController());
+  AllowanceController allowanceController = Get.put(AllowanceController());
 
 
   @override
@@ -32,11 +36,11 @@ class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
   }
 
   void _initializeData() async {
-    await conveyanceController.getLoginData();
+    await allowanceController.getLoginData();
 
     printData("_initializeData", "_initializeData");
 
-    conveyanceController.callConveyanceList();
+    allowanceController.callAllowanceList();
   }
 
   @override
@@ -77,7 +81,7 @@ class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
                 padding: const EdgeInsets.all(12),
                 child:  Center(
                   child: Text(
-                    'Conveyance',
+                    'Allowance',
                     style: AppTextStyle.largeBold.copyWith(fontSize: 14
                         , color: Colors.white),
                     textAlign: TextAlign.center,
@@ -90,7 +94,7 @@ class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
                 margin: EdgeInsets.only(top: 16),
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -100,33 +104,18 @@ class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
                         ),
                       ),
                       onPressed: () {
-                        Get.to(ConveyanceheadConveysListScreen());
+                        Get.to(AddAllowanceScreen())?.then((value) {
+                          allowanceController.isLoading.value = false;
+                          allowanceController.callAllowanceList();
+                        });
                       },
                       child: Text(
-                        'Head >',
+                        'Head +',
                         style:AppTextStyle.largeBold.copyWith(fontSize: 13
                             , color: Colors.white),
                       ),
                     ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color_primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        Get.to(() => AddConveyanceScreen())?.then((value) {
-                          conveyanceController.isLoading.value = false;
-                          conveyanceController.callConveyanceList();
-                        });
-                      },
-                      child: Text(
-                        '+Add',
-                        style: AppTextStyle.largeBold.copyWith(fontSize: 13
-                            , color: Colors.white),
-                      ),
-                    ),
+
                   ],
                 ),
               ),
@@ -134,7 +123,7 @@ class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.all(10),
-                  itemCount: conveyanceController.conveysList.length,
+                  itemCount: allowanceController.allowanceList.length,
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
@@ -148,53 +137,24 @@ class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                               Row(
-                                 children: [
-                                   Expanded(
-                                     child: Column(
-                                       crossAxisAlignment: CrossAxisAlignment.start
-                                       ,children: [
-                                         Text(
-                                          'Conveyor Name',
-                                          style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                              , color: color_brown_title),
-                                                                       ),
-                                                                       Text(
-                                          conveyanceController.conveysList[index].name??"",
-                                          style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                              , color: Colors.black),
-                                                                       ),
-                                       ],
-                                     ),
-                                   ),
-
-                                   Expanded(
-                                     child: Column(
-                                       crossAxisAlignment: CrossAxisAlignment.end,
-                                       children: [
-                                         Text(
-                                           'Conveyor Through',
-                                           style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                               , color: color_brown_title),
-                                         ),
-                                         Text(
-                                           conveyanceController.conveysList[index].headConveyanceName??"",
-                                           style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                               , color: Colors.black),
-                                         ),
-                                       ],
-                                     ),
-                                   )
-                                 ],
-                               ),
-                              const SizedBox(height: 12),
-                               Text(
-                                'Conveyor Contact No.',
+                              Text(
+                                'Allowance Name',
                                 style: AppTextStyle.largeMedium.copyWith(fontSize: 12
                                     , color: color_brown_title),
                               ),
                               Text(
-                                conveyanceController.conveysList[index].contact?[0].mobileNo??"",
+                                allowanceController.allowanceList[index].name??"",
+                                style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
+                                    , color: Colors.black),
+                              ),
+                              const SizedBox(height: 12),
+                               Text(
+                                'Allowance Code',
+                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
+                                    , color: color_brown_title),
+                              ),
+                              Text(
+                                (allowanceController.allowanceList[index].status??0).toString(),
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
                               ),
@@ -209,7 +169,7 @@ class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
             ],
           ),
 
-          if(conveyanceController.isLoading.value)Center(child: CircularProgressIndicator(),)
+          if(allowanceController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
 

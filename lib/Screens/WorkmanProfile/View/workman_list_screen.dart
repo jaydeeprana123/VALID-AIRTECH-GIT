@@ -6,23 +6,26 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/View/add_conveyance_screen.dart';
+import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controller.dart';
+import 'package:valid_airtech/Screens/Instruments/View/add_instrument_screen.dart';
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/View/add_site_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_details_screen.dart';
+import 'package:valid_airtech/Screens/WorkmanProfile/Controller/workman_profile_controller.dart';
 import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
-import 'conveyance_head_list_screen.dart';
+import 'add_workman_screen.dart';
 
 
-class ConveyanceListScreen extends StatefulWidget {
+class WorkmanListScreen extends StatefulWidget {
   @override
-  _ConveyanceListScreenState createState() => _ConveyanceListScreenState();
+  _WorkmanListScreenState createState() => _WorkmanListScreenState();
 }
 
-class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
+class _WorkmanListScreenState extends State<WorkmanListScreen> {
 
-  ConveyanceController conveyanceController = Get.put(ConveyanceController());
+  WorkmanProfileController workmanProfileController = Get.put(WorkmanProfileController());
 
 
   @override
@@ -32,11 +35,11 @@ class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
   }
 
   void _initializeData() async {
-    await conveyanceController.getLoginData();
+    await workmanProfileController.getLoginData();
 
     printData("_initializeData", "_initializeData");
 
-    conveyanceController.callConveyanceList();
+    workmanProfileController.callWorkmanList();
   }
 
   @override
@@ -77,7 +80,7 @@ class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
                 padding: const EdgeInsets.all(12),
                 child:  Center(
                   child: Text(
-                    'Conveyance',
+                    'Workman',
                     style: AppTextStyle.largeBold.copyWith(fontSize: 14
                         , color: Colors.white),
                     textAlign: TextAlign.center,
@@ -90,7 +93,8 @@ class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
                 margin: EdgeInsets.only(top: 16),
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
+
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -100,30 +104,14 @@ class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
                         ),
                       ),
                       onPressed: () {
-                        Get.to(ConveyanceheadConveysListScreen());
-                      },
-                      child: Text(
-                        'Head >',
-                        style:AppTextStyle.largeBold.copyWith(fontSize: 13
-                            , color: Colors.white),
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color_primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        Get.to(() => AddConveyanceScreen())?.then((value) {
-                          conveyanceController.isLoading.value = false;
-                          conveyanceController.callConveyanceList();
+                        Get.to(AddWorkmanScreen())?.then((value) {
+                          workmanProfileController.isLoading.value = false;
+                          workmanProfileController.callWorkmanList();
                         });
                       },
                       child: Text(
-                        '+Add',
-                        style: AppTextStyle.largeBold.copyWith(fontSize: 13
+                        'Head +',
+                        style:AppTextStyle.largeBold.copyWith(fontSize: 13
                             , color: Colors.white),
                       ),
                     ),
@@ -134,7 +122,7 @@ class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.all(10),
-                  itemCount: conveyanceController.conveysList.length,
+                  itemCount: workmanProfileController.workmanList.length,
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
@@ -148,56 +136,40 @@ class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                               Row(
-                                 children: [
-                                   Expanded(
-                                     child: Column(
-                                       crossAxisAlignment: CrossAxisAlignment.start
-                                       ,children: [
-                                         Text(
-                                          'Conveyor Name',
-                                          style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                              , color: color_brown_title),
-                                                                       ),
-                                                                       Text(
-                                          conveyanceController.conveysList[index].name??"",
-                                          style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                              , color: Colors.black),
-                                                                       ),
-                                       ],
-                                     ),
-                                   ),
-
-                                   Expanded(
-                                     child: Column(
-                                       crossAxisAlignment: CrossAxisAlignment.end,
-                                       children: [
-                                         Text(
-                                           'Conveyor Through',
-                                           style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                               , color: color_brown_title),
-                                         ),
-                                         Text(
-                                           conveyanceController.conveysList[index].headConveyanceName??"",
-                                           style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                               , color: Colors.black),
-                                         ),
-                                       ],
-                                     ),
-                                   )
-                                 ],
-                               ),
-                              const SizedBox(height: 12),
-                               Text(
-                                'Conveyor Contact No.',
+                              Text(
+                                'Workman Name',
                                 style: AppTextStyle.largeMedium.copyWith(fontSize: 12
                                     , color: color_brown_title),
                               ),
                               Text(
-                                conveyanceController.conveysList[index].contact?[0].mobileNo??"",
+                                workmanProfileController.workmanList[index].name??"",
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
                               ),
+                              const SizedBox(height: 12),
+                               Text(
+                                'Workman No.',
+                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
+                                    , color: color_brown_title),
+                              ),
+                              Text(
+                                workmanProfileController.workmanList[index].workmanNo??"",
+                                style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
+                                    , color: Colors.black),
+                              ),
+
+                              const SizedBox(height: 12),
+                              Text(
+                                'Contact No.',
+                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
+                                    , color: color_brown_title),
+                              ),
+                              Text(
+                                workmanProfileController.workmanList[index].mobileNumber??"",
+                                style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
+                                    , color: Colors.black),
+                              ),
+
                             ],
                           ),
                         ),
@@ -209,7 +181,7 @@ class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
             ],
           ),
 
-          if(conveyanceController.isLoading.value)Center(child: CircularProgressIndicator(),)
+          if(workmanProfileController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
 

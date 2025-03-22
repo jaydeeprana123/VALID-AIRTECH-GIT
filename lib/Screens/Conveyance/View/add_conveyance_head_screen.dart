@@ -5,45 +5,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
-import 'package:valid_airtech/Screens/Conveyance/Model/create_conveyance_request.dart';
+import 'package:valid_airtech/Screens/Head/Model/create_head_request.dart';
 import 'package:valid_airtech/Screens/Head/Model/head_list_response.dart';
-import 'package:valid_airtech/Screens/HeadConveyance/Model/head_conveyance_list_response.dart';
-import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controller.dart';
-import 'package:valid_airtech/Screens/Instruments/Model/create_instrument_request.dart';
-import 'package:valid_airtech/Screens/Instruments/Model/head_instrument_list_response.dart';
 import 'package:valid_airtech/Screens/Planning/Controller/planning_controller.dart';
 import 'package:valid_airtech/Screens/Planning/Model/convey_model.dart';
 import 'package:valid_airtech/Screens/Planning/Model/instrument_model.dart';
-import 'package:valid_airtech/Screens/Service/Controller/service_controller.dart';
-import 'package:valid_airtech/Screens/Service/Model/create_service_request.dart';
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/Model/create_site_request.dart';
 import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
+import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
-import '../../Sites/Model/add_contact_model.dart';
 
-class AddServiceScreen extends StatefulWidget {
+class AddConveyanceHeadScreen extends StatefulWidget {
   @override
-
-
-
-
-
-
-  _AddServiceScreenState createState() => _AddServiceScreenState();
+  _AddConveyanceHeadScreenState createState() => _AddConveyanceHeadScreenState();
 }
 
-class _AddServiceScreenState extends State<AddServiceScreen> {
-  ServiceController serviceController = Get.find<ServiceController>();
-  String? selectedInstrumentName;
+class _AddConveyanceHeadScreenState extends State<AddConveyanceHeadScreen> {
+  ConveyanceController conveyanceController = Get.find<ConveyanceController>();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Perform navigation or state updates after build completes
+
+    });
 
 
 
@@ -63,7 +56,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
           },
         ),
         title: Text(
-          'Service Details',
+          'Conveyance Type',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
@@ -86,27 +79,15 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                   height: 16,
                 ),
 
-
                 _buildTextField(
-                  serviceController.controllerTestName.value,
-                  "Test Name"
-                    ),
+                    conveyanceController.conveyanceTypeController.value,
+                    "Conveyance Type"
+                ),
 
                 SizedBox(
                   height: 16,
                 ),
 
-
-                _buildTextField(
-                    serviceController.controllerTestCode.value,
-                    "Test Code"
-                ),
-
-
-
-                SizedBox(
-                  height: 20,
-                ),
 
                 // Login Button
                 Padding(
@@ -116,10 +97,12 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                     textColor: Colors.white,
                     onCustomButtonPressed: () async {
 
-                      serviceController.createServiceRequest.value = CreateServiceRequest();
-                      serviceController.createServiceRequest.value.testName = serviceController.controllerTestName.value.text;
-                      serviceController.createServiceRequest.value.testCode = serviceController.controllerTestCode.value.text;
-                      serviceController.callCreateService();
+                      if(conveyanceController.conveyanceTypeController.value.text.isEmpty){
+                        snackBar(context, "Enter Conveyance Type");
+                        return;
+                      }
+
+                      conveyanceController.callCreateConveyanceHead();
 
                     },
                     borderColor: color_primary,
@@ -130,7 +113,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
             ),
           ),
 
-          if(serviceController.isLoading.value)Center(child: CircularProgressIndicator(),)
+          if(conveyanceController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
     );
@@ -182,7 +165,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
   }
 
 
-  Widget _buildDropdown(List<HeadInstrumentData> items, String? selectedValue,
+  Widget _buildDropdown(List<HeadData> items, String? selectedValue,
       Function(String?) onChanged, String hint) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(

@@ -10,6 +10,8 @@ import 'package:valid_airtech/utils/helper.dart';
 import '../Styles/app_text_style.dart';
 import '../Styles/my_colors.dart';
 import '../Styles/my_icons.dart';
+import 'AdminLeaveRequest/View/admin_leave_request_list_screen.dart';
+import 'AdminLeaveRequest/View/select_workman_calender_leave_request_screen.dart';
 import 'Master/View/master_index_screen.dart';
 
 
@@ -85,7 +87,9 @@ class HomePage extends StatelessWidget {
                   Get.to(WorkReportScreen());
                 },child: _buildGridItem('Work Report', Icons.work_history_outlined)),
                 _buildGridItem('Allowance', Icons.monetization_on_sharp),
-                _buildGridItem('Leave Request', Icons.note_add_outlined),
+                InkWell(onTap: (){
+                  Get.to(SelectWorkmanLeaveRequestScreen());
+                },child: _buildGridItem('Leave Request', Icons.note_add_outlined)),
                 _buildGridItem('Note', Icons.note_alt),
                 _buildGridItem('Circular', Icons.newspaper),
                 _buildGridItem('Query', Icons.contact_support),

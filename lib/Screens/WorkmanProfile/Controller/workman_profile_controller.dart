@@ -1,0 +1,138 @@
+import 'dart:convert';
+import 'dart:ffi';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:valid_airtech/Screens/Conveyance/Model/conveyance_list_response.dart';
+import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
+
+import '../../../RepoDB/repositories/api_repository.dart';
+import '../../../Widget/common_widget.dart';
+import '../../../base_model.dart';
+import '../../../utils/constants.dart';
+import '../../../utils/helper.dart';
+import '../../../utils/preference_utils.dart';
+import '../../../utils/share_predata.dart';
+import '../../Authentication/Model/login_response.dart';
+import '../../HeadConveyance/Model/head_conveyance_list_response.dart';
+import '../../Sites/Model/add_contact_model.dart';
+import '../Model/create_workman_request.dart';
+import '../Model/workman_list_response.dart';
+import '../View/add_workman_screen.dart';
+
+
+/// Controller
+class WorkmanProfileController extends GetxController {
+  Rx<bool> isLoading = false.obs;
+  var errorMessage = ''.obs;
+
+  Rx<CreateWorkmanRequest> createWorkmanRequest = CreateWorkmanRequest().obs;
+
+  Rx<TextEditingController> nameController = TextEditingController().obs;
+  Rx<TextEditingController> userNameController = TextEditingController().obs;
+  Rx<TextEditingController> contactNoController = TextEditingController().obs;
+  Rx<TextEditingController> workmanNoController = TextEditingController().obs;
+  Rx<TextEditingController> workmanPasswordController = TextEditingController().obs;
+  Rx<TextEditingController> permanentAddressController = TextEditingController().obs;
+  Rx<TextEditingController> residentAddressController = TextEditingController().obs;
+  Rx<TextEditingController> birthDateController = TextEditingController().obs;
+  Rx<TextEditingController> aadharCardNoController = TextEditingController().obs;
+  Rx<TextEditingController> licenseNoController = TextEditingController().obs;
+  Rx<TextEditingController> epfNoController = TextEditingController().obs;
+  Rx<TextEditingController> esiNoController = TextEditingController().obs;
+  Rx<TextEditingController> bankNameController = TextEditingController().obs;
+  Rx<TextEditingController> ifscCodeController = TextEditingController().obs;
+  Rx<TextEditingController> accountNoController = TextEditingController().obs;
+  Rx<TextEditingController> fatherNameController = TextEditingController().obs;
+  Rx<TextEditingController> fatherAadharCardNoController = TextEditingController().obs;
+  Rx<TextEditingController> motherNameController = TextEditingController().obs;
+  Rx<TextEditingController> motherAadharCardNoController = TextEditingController().obs;
+  Rx<TextEditingController> wifeNameController = TextEditingController().obs;
+  Rx<TextEditingController> wifeAadharCardNoController = TextEditingController().obs;
+
+  RxList<TextEditingController> childrenList = <TextEditingController>[].obs;
+
+  RxList<WorkmanData> workmanList = <WorkmanData>[].obs;
+  APIRepository postRepository = APIRepository();
+
+  Rx<LoginData> loginData = LoginData().obs;
+  Future getLoginData()async{
+    loginData.value =  await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel)??LoginData();
+  }
+
+
+
+  /// Instrument list api call
+  void callWorkmanList() async {
+    try {
+      isLoading.value = true;
+
+      WorkmanListResponse response = await postRepository.workmanList(loginData.value.token??"");
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        workmanList.value = response.data??[];
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+
+  /// Workman create api call
+  Future<void> callCreateWorkman() async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.createWorkman(loginData.value.token ?? "",createWorkmanRequest.value);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.snackbar("Success", response.message??"");
+        printData("response", response.message??"");
+        Get.off(AddWorkmanScreen());
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+
+
+  @override
+  void onClose() {
+    // TODO: implement onClose
+    super.onClose();
+
+    printData("onClose", "onClose login controller");
+    Get.delete<WorkmanProfileController>();
+  }
+
+}

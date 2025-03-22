@@ -31,6 +31,7 @@ class InstrumentController extends GetxController {
   var errorMessage = ''.obs;
 
   Rx<CreateInstrumentRequest> createInstrumentRequest = CreateInstrumentRequest().obs;
+  Rx<TextEditingController> instrumentNameController = TextEditingController().obs;
 
   Rx<TextEditingController> instrumentIdNoController = TextEditingController().obs;
   Rx<TextEditingController> modelNoController = TextEditingController().obs;
@@ -136,7 +137,35 @@ class InstrumentController extends GetxController {
     }
   }
 
+  Future<void> callCreateInstrumentHead() async {
+    try {
+      isLoading.value = true;
 
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.createHeadInstrument(loginData.value.token ?? "",instrumentNameController.value.text);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.snackbar("Success", "Instrument created successfully");
+
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
 
   @override
   void onClose() {

@@ -45,9 +45,7 @@ class SiteData {
   String? contactName;
   String? departmentName;
   String? email;
-  String? contactType;
-  String? mobileNo;
-  dynamic telephone;
+  List<ContactSite>? contact;
 
   SiteData({
     this.id,
@@ -58,9 +56,7 @@ class SiteData {
     this.contactName,
     this.departmentName,
     this.email,
-    this.contactType,
-    this.mobileNo,
-    this.telephone,
+    this.contact,
   });
 
   factory SiteData.fromJson(Map<String, dynamic> json) => SiteData(
@@ -72,9 +68,7 @@ class SiteData {
     contactName: json["contact_name"],
     departmentName: json["department_name"],
     email: json["email"],
-    contactType: json["contact_type"],
-    mobileNo: json["mobile_no"],
-    telephone: json["telephone"],
+    contact: json["contact"] == null ? [] : List<ContactSite>.from(json["contact"]!.map((x) => ContactSite.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -86,7 +80,41 @@ class SiteData {
     "contact_name": contactName,
     "department_name": departmentName,
     "email": email,
+    "contact": contact == null ? [] : List<dynamic>.from(contact!.map((x) => x.toJson())),
+  };
+}
+
+class ContactSite {
+  int? id;
+  int? siteId;
+  int? contactType;
+  String? contactTypeName;
+  String? mobileNo;
+  String? telephone;
+
+  ContactSite({
+    this.id,
+    this.siteId,
+    this.contactType,
+    this.contactTypeName,
+    this.mobileNo,
+    this.telephone,
+  });
+
+  factory ContactSite.fromJson(Map<String, dynamic> json) => ContactSite(
+    id: json["id"],
+    siteId: json["site_id"],
+    contactType: json["contact_type"],
+    contactTypeName: json["contact_type_name"],
+    mobileNo: json["mobile_no"],
+    telephone: json["telephone"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "site_id": siteId,
     "contact_type": contactType,
+    "contact_type_name": contactTypeName,
     "mobile_no": mobileNo,
     "telephone": telephone,
   };

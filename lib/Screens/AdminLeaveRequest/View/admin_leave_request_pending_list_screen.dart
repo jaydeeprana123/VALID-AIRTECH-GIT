@@ -4,28 +4,29 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:valid_airtech/Screens/AdminLeaveRequest/Controller/admin_leave_request_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/View/add_conveyance_screen.dart';
 import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controller.dart';
 import 'package:valid_airtech/Screens/Instruments/View/add_instrument_screen.dart';
+import 'package:valid_airtech/Screens/Service/Controller/service_controller.dart';
+import 'package:valid_airtech/Screens/Service/View/add_service_screen.dart';
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/View/add_site_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_details_screen.dart';
 import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
-import 'instrument_head_list_screen.dart';
 
 
-class InstrumentListScreen extends StatefulWidget {
+class AdminLeaveRequestPendingListScreen extends StatefulWidget {
   @override
-  _InstrumentListScreenState createState() => _InstrumentListScreenState();
+  _AdminLeaveRequestPendingListScreenState createState() => _AdminLeaveRequestPendingListScreenState();
 }
 
-class _InstrumentListScreenState extends State<InstrumentListScreen> {
+class _AdminLeaveRequestPendingListScreenState extends State<AdminLeaveRequestPendingListScreen> {
 
-  InstrumentController instrumentController = Get.put(InstrumentController());
-
+  AdminLeaveRequestController adminLeaveRequestController = Get.find<AdminLeaveRequestController>();
 
   @override
   void initState() {
@@ -34,11 +35,11 @@ class _InstrumentListScreenState extends State<InstrumentListScreen> {
   }
 
   void _initializeData() async {
-    await instrumentController.getLoginData();
+    await adminLeaveRequestController.getLoginData();
 
     printData("_initializeData", "_initializeData");
 
-    instrumentController.callInstrumentList();
+    adminLeaveRequestController.callAdminLeavePendingRequestList();
   }
 
   @override
@@ -79,7 +80,7 @@ class _InstrumentListScreenState extends State<InstrumentListScreen> {
                 padding: const EdgeInsets.all(12),
                 child:  Center(
                   child: Text(
-                    'Instrument',
+                    'Pending Leave Request',
                     style: AppTextStyle.largeBold.copyWith(fontSize: 14
                         , color: Colors.white),
                     textAlign: TextAlign.center,
@@ -87,56 +88,12 @@ class _InstrumentListScreenState extends State<InstrumentListScreen> {
                   ),
                 ),
               ),
-
-              Container(
-                margin: EdgeInsets.only(top: 16),
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color_primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        Get.to(InstrumentHeadListScreen());
-                      },
-                      child: Text(
-                        'Head >',
-                        style:AppTextStyle.largeBold.copyWith(fontSize: 13
-                            , color: Colors.white),
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color_primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        Get.to(() => AddInstrumentScreen())?.then((value) {
-                          instrumentController.isLoading.value = false;
-                          instrumentController.callInstrumentList();
-                        });
-                      },
-                      child: Text(
-                        '+Add',
-                        style: AppTextStyle.largeBold.copyWith(fontSize: 13
-                            , color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              
 
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.all(10),
-                  itemCount: instrumentController.instrumentList.length,
+                  itemCount: adminLeaveRequestController.adminLeaveRequestPendingList.length,
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
@@ -150,24 +107,65 @@ class _InstrumentListScreenState extends State<InstrumentListScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Instrument Name',
-                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                    , color: color_brown_title),
-                              ),
-                              Text(
-                                instrumentController.instrumentList[index].modelNo??"",
-                                style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                    , color: Colors.black),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Workman Name',
+                                          style: AppTextStyle.largeMedium.copyWith(fontSize: 12
+                                              , color: color_brown_title),
+                                        ),
+                                        Text(
+                                          adminLeaveRequestController.adminLeaveRequestPendingList[index].employeeName??"",
+                                          style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
+                                              , color: Colors.black),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        'Status',
+                                        style: AppTextStyle.largeMedium.copyWith(fontSize: 12
+                                            , color: color_brown_title),
+                                      ),
+                                      Text(
+                                        adminLeaveRequestController.adminLeaveRequestPendingList[index].statusType??"",
+                                        style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
+                                            , color: adminLeaveRequestController.adminLeaveRequestPendingList[index].status == 0?Colors.yellow.shade900:
+                                            adminLeaveRequestController.adminLeaveRequestPendingList[index].status == 1?Colors.green:Colors.red),
+                                      ),
+                                    ],
+                                  )
+
+                                ],
                               ),
                               const SizedBox(height: 12),
                                Text(
-                                'Instrument Id No.',
+                                'From Date',
                                 style: AppTextStyle.largeMedium.copyWith(fontSize: 12
                                     , color: color_brown_title),
                               ),
                               Text(
-                                instrumentController.instrumentList[index].instrumentIdNo??"",
+                                adminLeaveRequestController.adminLeaveRequestPendingList[index].fromDate??"",
+                                style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
+                                    , color: Colors.black),
+                              ),
+
+                              const SizedBox(height: 12),
+                              Text(
+                                'No Of Leave Days',
+                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
+                                    , color: color_brown_title),
+                              ),
+                              Text(
+                                adminLeaveRequestController.adminLeaveRequestPendingList[index].numberOfLeaveDays??"",
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
                               ),
@@ -182,7 +180,7 @@ class _InstrumentListScreenState extends State<InstrumentListScreen> {
             ],
           ),
 
-          if(instrumentController.isLoading.value)Center(child: CircularProgressIndicator(),)
+          if(adminLeaveRequestController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
 

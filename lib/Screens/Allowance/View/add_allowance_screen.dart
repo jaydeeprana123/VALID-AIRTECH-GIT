@@ -4,6 +4,8 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:valid_airtech/Screens/Allowance/Controller/allowance_controller.dart';
+import 'package:valid_airtech/Screens/Allowance/Model/create_allowance_request.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/create_conveyance_request.dart';
 import 'package:valid_airtech/Screens/Head/Model/head_list_response.dart';
@@ -26,28 +28,19 @@ import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
 import '../../Sites/Model/add_contact_model.dart';
 
-class AddServiceScreen extends StatefulWidget {
+class AddAllowanceScreen extends StatefulWidget {
   @override
-
-
-
-
-
-
-  _AddServiceScreenState createState() => _AddServiceScreenState();
+  
+  _AddAllowanceScreenState createState() => _AddAllowanceScreenState();
 }
 
-class _AddServiceScreenState extends State<AddServiceScreen> {
-  ServiceController serviceController = Get.find<ServiceController>();
-  String? selectedInstrumentName;
+class _AddAllowanceScreenState extends State<AddAllowanceScreen> {
+  AllowanceController allowanceController = Get.find<AllowanceController>();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-
-
-
+    
   }
 
   @override
@@ -63,7 +56,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
           },
         ),
         title: Text(
-          'Service Details',
+          'Allowance Details',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
@@ -88,8 +81,8 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
 
 
                 _buildTextField(
-                  serviceController.controllerTestName.value,
-                  "Test Name"
+                  allowanceController.controllerName.value,
+                  "Allowance Name"
                     ),
 
                 SizedBox(
@@ -97,11 +90,20 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                 ),
 
 
-                _buildTextField(
-                    serviceController.controllerTestCode.value,
-                    "Test Code"
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Checkbox(
+                      value: allowanceController.isChecked.value,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          allowanceController.isChecked.value = value!;
+                        });
+                      },
+                    ),
+                    Text("Allowance Status"),
+                  ],
                 ),
-
 
 
                 SizedBox(
@@ -116,10 +118,10 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                     textColor: Colors.white,
                     onCustomButtonPressed: () async {
 
-                      serviceController.createServiceRequest.value = CreateServiceRequest();
-                      serviceController.createServiceRequest.value.testName = serviceController.controllerTestName.value.text;
-                      serviceController.createServiceRequest.value.testCode = serviceController.controllerTestCode.value.text;
-                      serviceController.callCreateService();
+                      allowanceController.createAllowanceRequest.value = CreateAllowanceRequest();
+                      allowanceController.createAllowanceRequest.value.name = allowanceController.controllerName.value.text;
+                      allowanceController.createAllowanceRequest.value.status = allowanceController.isChecked.value?"1":"0";
+                      allowanceController.callCreateAllowance();
 
                     },
                     borderColor: color_primary,
@@ -130,7 +132,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
             ),
           ),
 
-          if(serviceController.isLoading.value)Center(child: CircularProgressIndicator(),)
+          if(allowanceController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
     );

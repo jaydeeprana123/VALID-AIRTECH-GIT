@@ -5,23 +5,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
+import 'package:valid_airtech/Screens/Sites/View/add_head_screen.dart';
 import 'package:valid_airtech/Screens/Sites/View/add_site_screen.dart';
-import 'package:valid_airtech/Screens/Sites/View/site_head_list_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_details_screen.dart';
 import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
-import 'edit_site_screen.dart';
+import 'edit_head_screen.dart';
 
 
-class SiteListScreen extends StatefulWidget {
+class SiteHeadListScreen extends StatefulWidget {
   @override
-  _SiteListScreenState createState() => _SiteListScreenState();
+  _SiteHeadListScreenState createState() => _SiteHeadListScreenState();
 }
 
-class _SiteListScreenState extends State<SiteListScreen> {
+class _SiteHeadListScreenState extends State<SiteHeadListScreen> {
 
-  SiteController siteController = Get.put(SiteController());
+  SiteController siteController = Get.find<SiteController>();
 
 
   @override
@@ -35,7 +35,7 @@ class _SiteListScreenState extends State<SiteListScreen> {
 
     printData("_initializeData", "_initializeData");
 
-    siteController.callSiteList();
+    siteController.callHeadListList();
   }
 
   @override
@@ -76,7 +76,7 @@ class _SiteListScreenState extends State<SiteListScreen> {
                 padding: const EdgeInsets.all(12),
                 child:  Center(
                   child: Text(
-                    'Site',
+                    'Site Name & Address',
                     style: AppTextStyle.largeBold.copyWith(fontSize: 14
                         , color: Colors.white),
                     textAlign: TextAlign.center,
@@ -88,63 +88,41 @@ class _SiteListScreenState extends State<SiteListScreen> {
               Container(
                 margin: EdgeInsets.only(top: 16),
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color_primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-
-                        Get.to(SiteHeadListScreen());
-
-                      },
-                      child: Text(
-                        'Head >',
-                        style:AppTextStyle.largeBold.copyWith(fontSize: 13
-                            , color: Colors.white),
-                      ),
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: color_primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color_primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        Get.to(() => AddSiteScreen())?.then((value) {
-                          siteController.isLoading.value = false;
-                          siteController.callSiteList();
-                        });
-                      },
-                      child: Text(
-                        '+Add',
-                        style: AppTextStyle.largeBold.copyWith(fontSize: 13
-                            , color: Colors.white),
-                      ),
-                    ),
-                  ],
+                  ),
+                  onPressed: () {
+                    Get.to(() => AddHeadScreen())?.then((value) {
+                      siteController.isLoading.value = false;
+                      siteController.callHeadListList();
+                    });
+                  },
+                  child: Text(
+                    '+Generate',
+                    style: AppTextStyle.largeBold.copyWith(fontSize: 13
+                        , color: Colors.white),
+                  ),
                 ),
               ),
 
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.all(10),
-                  itemCount: siteController.siteList.length,
+                  itemCount: siteController.headList.length,
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
 
-                        siteController.siteDetails.value = siteController.siteList[index];
+                        siteController.selectedHead.value = siteController.headList[index];
 
-                        Get.to(EditSiteScreen())?.then((value) {
+                        Get.to(EditHeadScreen())?.then((value) {
                           siteController.isLoading.value = false;
-                          siteController.callSiteList();
+                          siteController.callHeadListList();
                         });
                       },
                       child: Card(
@@ -161,33 +139,22 @@ class _SiteListScreenState extends State<SiteListScreen> {
                                     , color: color_brown_title),
                               ),
                               Text(
-                                siteController.siteList[index].headName??"",
+                                siteController.headList[index].name??"",
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
                               ),
                               const SizedBox(height: 12),
                                Text(
-                                'Department Name',
+                                'Site Address',
                                 style: AppTextStyle.largeMedium.copyWith(fontSize: 12
                                     , color: color_brown_title),
                               ),
                               Text(
-                                siteController.siteList[index].departmentName??"",
+                                siteController.headList[index].address??"",
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
                               ),
 
-                              const SizedBox(height: 12),
-                              Text(
-                                'Contact Name',
-                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                    , color: color_brown_title),
-                              ),
-                              Text(
-                                siteController.siteList[index].contactName??"",
-                                style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                    , color: Colors.black),
-                              ),
                             ],
                           ),
                         ),

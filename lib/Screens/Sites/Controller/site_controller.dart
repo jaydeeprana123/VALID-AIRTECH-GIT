@@ -4,6 +4,7 @@ import 'dart:ffi';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:valid_airtech/Screens/Head/Model/create_head_request.dart';
 import 'package:valid_airtech/Screens/Sites/Model/driver_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
 import 'package:valid_airtech/Screens/home_page.dart';
@@ -28,15 +29,17 @@ class SiteController extends GetxController {
   APIRepository postRepository = APIRepository();
   RxBool isLoading = false.obs;
   var errorMessage = ''.obs;
-
+  Rx<TextEditingController> siteNameController = TextEditingController().obs;
   Rx<TextEditingController> siteAddressController = TextEditingController().obs;
   Rx<TextEditingController> suffixController = TextEditingController().obs;
   Rx<TextEditingController> contactNameController = TextEditingController().obs;
   Rx<TextEditingController> departmentNameController = TextEditingController().obs;
   Rx<TextEditingController> contactEmailController = TextEditingController().obs;
 
+  RxBool isEdit = false.obs;
   RxList<AddContactModel> contactList = <AddContactModel>[].obs;
 
+  Rx<SiteData> siteDetails = SiteData().obs;
   RxList<SiteData> siteList = <SiteData>[].obs;
   RxList<EmployeeData> employeeList = <EmployeeData>[].obs;
   RxList<TransportationData> transportationList = <TransportationData>[].obs;
@@ -44,10 +47,11 @@ class SiteController extends GetxController {
   RxList<DriverData> allDriverList = <DriverData>[].obs;
   RxList<DriverData> filteredDriverList = <DriverData>[].obs;
   RxList<HeadData> headList = <HeadData>[].obs;
-
+  Rx<HeadData> selectedHead = HeadData().obs;
   Rx<LoginData> loginData = LoginData().obs;
 
   Rx<CreateSiteRequest> createSiteRequest = CreateSiteRequest().obs;
+  Rx<CreateHeadRequest> createHeadRequest = CreateHeadRequest().obs;
 
   Future getLoginData() async {
     loginData.value =
@@ -104,6 +108,171 @@ class SiteController extends GetxController {
         contactList.clear();
         Get.snackbar("Success", "Site created successfully");
         Get.back();
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// site delete api call
+  Future<void> callDeleteSite(String id) async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.deleteSite(loginData.value.token ?? "",id);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+
+        printData("response", response.message??"");
+
+        contactList.clear();
+        Get.snackbar("Success", "Site deleted successfully");
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// site delete api call
+  Future<void> callDeleteHead(String id) async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.deleteHead(loginData.value.token ?? "",id);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+
+        printData("response", response.message??"");
+
+        contactList.clear();
+        Get.snackbar("Success", "Site head deleted successfully");
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// site Edit api call
+  Future<void> callEditSite() async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.editSite(loginData.value.token ?? "",createSiteRequest.value);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+
+        printData("response", response.message??"");
+        contactList.clear();
+        Get.snackbar("Success", "Site updated successfully");
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Head create api call
+  Future<void> callCreateHead() async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.createHead(loginData.value.token ?? "",createHeadRequest.value);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+
+        printData("response", response.message??"");
+        Get.snackbar("Success", "Site created successfully");
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Head edit api call
+  Future<void> callEditHead() async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.updateHead(loginData.value.token ?? "",createHeadRequest.value);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+
+        printData("response", response.message??"");
+        Get.snackbar("Success", "Site head updated successfully");
       } else if (response.code == 401) {
         Helper().logout();
       }else {

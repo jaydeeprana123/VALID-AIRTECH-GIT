@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
+import 'package:valid_airtech/Screens/AdminLeaveRequest/Model/admin_leave_request_list_response.dart';
 import 'package:valid_airtech/Screens/Allowance/Model/allowance_list_response.dart';
 import 'package:valid_airtech/Screens/Authentication/Model/change_password_request.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/conveyance_list_response.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/create_conveyance_request.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/update_conveyance_request.dart';
+import 'package:valid_airtech/Screens/EmpLeaveRequest/Model/emp_leave_request_list_response.dart';
 import 'package:valid_airtech/Screens/Head/Model/create_head_request.dart';
 import 'package:valid_airtech/Screens/HeadConveyance/Model/head_conveyance_list_response.dart';
 import 'package:valid_airtech/Screens/Instruments/Model/create_instrument_request.dart';
@@ -19,6 +21,8 @@ import 'package:valid_airtech/Screens/Sites/Model/employee_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/test_type_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/transportation_list_response.dart';
+import 'package:valid_airtech/Screens/WorkmanProfile/Model/create_workman_request.dart';
+import 'package:valid_airtech/Screens/WorkmanProfile/Model/workman_list_response.dart';
 
 
 
@@ -167,6 +171,79 @@ class APIRepository {
     }
   }
 
+  /// Delete Allowance
+  Future<BaseModel> deleteSite(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/site/delete",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Delete Allowance
+  Future<BaseModel> deleteHead(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/head/delete",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Edit Head
+  Future<BaseModel> editSite(String token, CreateSiteRequest createSiteRequest) async {
+    try {
+
+
+      Response response = await api.dio.post("/site/update",
+          data: createSiteRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
   /// Test Type List
   Future<HeadListResponse> headListList(String token) async {
     try {
@@ -230,30 +307,7 @@ class APIRepository {
   }
 
 
-  /// Delete Head
-  Future<BaseModel> deleteHead(String token, String id) async {
-    try {
 
-      var data = json.encode({
-        "id": id,
-      });
-
-      Response response = await api.dio.post("/head/delete",
-          data: data,
-          options: Options(
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
-            },
-
-
-          ));
-      dynamic postMaps = response.data;
-      return BaseModel.fromJson(postMaps);
-    } catch (ex) {
-      rethrow;
-    }
-  }
 
 
 
@@ -645,6 +699,32 @@ class APIRepository {
     }
   }
 
+
+  /// Create Instrument Head
+  Future<BaseModel> createHeadInstrument(String token, String name) async {
+    try {
+
+      var data = json.encode({
+        "name": name
+      });
+
+      Response response = await api.dio.post("/head-instrument/create",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
   /// Conveyance List
   Future<InstrumentListResponse> instrumentList(String token) async {
     try {
@@ -685,6 +765,131 @@ class APIRepository {
     }
   }
 
+
+  /// Workman List
+  Future<WorkmanListResponse> workmanList(String token) async {
+    try {
+
+      Response response = await api.dio.get("/workman-profile/list",
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return WorkmanListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Create Conveyance
+  Future<BaseModel> createWorkman(String token, CreateWorkmanRequest createWorkmanRequest) async {
+    try {
+      Response response = await api.dio.post("/workman-profile/create",
+          data: createWorkmanRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Emp leave requet list
+  Future<EmpLeaveRequestListResponse> employeeLeaveRequestList(String token, String empId) async {
+    try {
+
+      var user = {'emp_id': empId};
+      var formData = FormData.fromMap(user);
+
+      Response response = await api.dio.post("/employee-leave-request/list",
+          data: formData,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return EmpLeaveRequestListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Admin leave requet list
+  Future<AdminLeaveRequestListResponse> adminLeaveRequestList(String token) async {
+    try {
+      Response response = await api.dio.get("/admin-leave-request/list",
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return AdminLeaveRequestListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Admin leave requet list
+  Future<AdminLeaveRequestListResponse> adminLeaveRequestListByDateWorkman(String token, String empId, String date) async {
+    try {
+
+      var user = {'emp_id': empId, "date": date};
+      var formData = FormData.fromMap(user);
+
+      Response response = await api.dio.post("/admin-leave-request/calender-list",
+          data: formData,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return AdminLeaveRequestListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Admin leave requet list
+  Future<AdminLeaveRequestListResponse> adminLeaveRequestPendingList(String token) async {
+    try {
+      Response response = await api.dio.get("/admin-leave-request/pending_list",
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return AdminLeaveRequestListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
 
   /// Test Type List
   Future<TestTypeListResponse> testTypeList() async {
@@ -741,6 +946,9 @@ class APIRepository {
       rethrow;
     }
   }
+
+
+
 
 
 

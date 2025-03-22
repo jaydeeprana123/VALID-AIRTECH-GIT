@@ -29,6 +29,7 @@ class ConveyanceController extends GetxController {
   var errorMessage = ''.obs;
 
   Rx<CreateConveyanceRequest> createConveyanceRequest = CreateConveyanceRequest().obs;
+  Rx<TextEditingController> conveyanceTypeController = TextEditingController().obs;
 
   Rx<TextEditingController> conveyorNameController = TextEditingController().obs;
   Rx<TextEditingController> suffixController = TextEditingController().obs;
@@ -133,6 +134,36 @@ class ConveyanceController extends GetxController {
     }
   }
 
+  /// Conveyance create api call
+  Future<void> callCreateConveyanceHead() async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.createHeadConveyance(loginData.value.token ?? "",conveyanceTypeController.value.text);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.snackbar("Success", "Conveyance Type created successfully");
+
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
 
 
   @override

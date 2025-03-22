@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Enums/master_screen_enum.dart';
+import 'package:valid_airtech/Screens/Allowance/View/allowance_list_screen.dart';
 import 'package:valid_airtech/Screens/Conveyance/View/conveyance_list_screen.dart';
 import 'package:valid_airtech/Screens/Instruments/View/instrument_list_screen.dart';
 import 'package:valid_airtech/Screens/Service/View/service_list_screen.dart';
 import 'package:valid_airtech/Screens/Sites/View/site_list_screen.dart';
+import 'package:valid_airtech/Screens/WorkmanProfile/View/workman_list_screen.dart';
 
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
@@ -124,10 +126,10 @@ class MasterIndexScreen extends StatelessWidget {
         Get.to(ServiceListScreen());
         break;
       case MasterScreenEnum.allowance:
-      // Add navigation logic here
+        Get.to(AllowanceListScreen());
         break;
       case MasterScreenEnum.workmanProfile:
-      // Add navigation logic here
+        Get.to(WorkmanListScreen());
         break;
     }
   }

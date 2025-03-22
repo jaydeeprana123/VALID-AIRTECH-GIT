@@ -5,26 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
-import 'package:valid_airtech/Screens/Conveyance/View/add_conveyance_screen.dart';
-import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controller.dart';
-import 'package:valid_airtech/Screens/Instruments/View/add_instrument_screen.dart';
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
+import 'package:valid_airtech/Screens/Sites/View/add_head_screen.dart';
 import 'package:valid_airtech/Screens/Sites/View/add_site_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_details_screen.dart';
 import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
-import 'instrument_head_list_screen.dart';
+import 'add_conveyance_head_screen.dart';
 
 
-class InstrumentListScreen extends StatefulWidget {
+class ConveyanceheadConveysListScreen extends StatefulWidget {
   @override
-  _InstrumentListScreenState createState() => _InstrumentListScreenState();
+  _ConveyanceheadConveysListScreenState createState() => _ConveyanceheadConveysListScreenState();
 }
 
-class _InstrumentListScreenState extends State<InstrumentListScreen> {
+class _ConveyanceheadConveysListScreenState extends State<ConveyanceheadConveysListScreen> {
 
-  InstrumentController instrumentController = Get.put(InstrumentController());
+  ConveyanceController conveyanceController = Get.find<ConveyanceController>();
 
 
   @override
@@ -34,11 +32,11 @@ class _InstrumentListScreenState extends State<InstrumentListScreen> {
   }
 
   void _initializeData() async {
-    await instrumentController.getLoginData();
+    await conveyanceController.getLoginData();
 
     printData("_initializeData", "_initializeData");
 
-    instrumentController.callInstrumentList();
+    conveyanceController.callHeadConveyanceList();
   }
 
   @override
@@ -79,7 +77,7 @@ class _InstrumentListScreenState extends State<InstrumentListScreen> {
                 padding: const EdgeInsets.all(12),
                 child:  Center(
                   child: Text(
-                    'Instrument',
+                    'Conveyance Type',
                     style: AppTextStyle.largeBold.copyWith(fontSize: 14
                         , color: Colors.white),
                     textAlign: TextAlign.center,
@@ -91,52 +89,32 @@ class _InstrumentListScreenState extends State<InstrumentListScreen> {
               Container(
                 margin: EdgeInsets.only(top: 16),
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color_primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        Get.to(InstrumentHeadListScreen());
-                      },
-                      child: Text(
-                        'Head >',
-                        style:AppTextStyle.largeBold.copyWith(fontSize: 13
-                            , color: Colors.white),
-                      ),
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: color_primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color_primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        Get.to(() => AddInstrumentScreen())?.then((value) {
-                          instrumentController.isLoading.value = false;
-                          instrumentController.callInstrumentList();
-                        });
-                      },
-                      child: Text(
-                        '+Add',
-                        style: AppTextStyle.largeBold.copyWith(fontSize: 13
-                            , color: Colors.white),
-                      ),
-                    ),
-                  ],
+                  ),
+                  onPressed: () {
+                    Get.to(() => AddConveyanceHeadScreen())?.then((value) {
+                      conveyanceController.isLoading.value = false;
+                      conveyanceController.callHeadConveyanceList();
+                    });
+                  },
+                  child: Text(
+                    '+Generate',
+                    style: AppTextStyle.largeBold.copyWith(fontSize: 13
+                        , color: Colors.white),
+                  ),
                 ),
               ),
 
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.all(10),
-                  itemCount: instrumentController.instrumentList.length,
+                  itemCount: conveyanceController.headConveysList.length,
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
@@ -150,27 +128,17 @@ class _InstrumentListScreenState extends State<InstrumentListScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Instrument Name',
-                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                    , color: color_brown_title),
-                              ),
-                              Text(
-                                instrumentController.instrumentList[index].modelNo??"",
-                                style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                    , color: Colors.black),
-                              ),
-                              const SizedBox(height: 12),
                                Text(
-                                'Instrument Id No.',
+                                'Conveyance Type',
                                 style: AppTextStyle.largeMedium.copyWith(fontSize: 12
                                     , color: color_brown_title),
                               ),
                               Text(
-                                instrumentController.instrumentList[index].instrumentIdNo??"",
+                                conveyanceController.headConveysList[index].name??"",
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
                               ),
+
                             ],
                           ),
                         ),
@@ -182,7 +150,7 @@ class _InstrumentListScreenState extends State<InstrumentListScreen> {
             ],
           ),
 
-          if(instrumentController.isLoading.value)Center(child: CircularProgressIndicator(),)
+          if(conveyanceController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
 
