@@ -13,6 +13,7 @@ import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import 'add_conveyance_head_screen.dart';
+import 'edit_conveyance_head_screen.dart';
 
 
 class ConveyanceheadConveysListScreen extends StatefulWidget {
@@ -118,7 +119,12 @@ class _ConveyanceheadConveysListScreenState extends State<ConveyanceheadConveysL
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
-                        Get.to(WorkReportDetailsScreen());
+
+                        conveyanceController.selectedHeadConveyance.value = conveyanceController.headConveysList[index];
+                        Get.to(EditConveyanceHeadScreen())?.then((value) {
+                          conveyanceController.isLoading.value = false;
+                          conveyanceController.callHeadConveyanceList();
+                        });
                       },
                       child: Card(
                         elevation: 2,

@@ -4,44 +4,47 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:valid_airtech/Screens/Allowance/Controller/allowance_controller.dart';
+import 'package:valid_airtech/Screens/Allowance/Model/create_allowance_request.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
-import 'package:valid_airtech/Screens/Head/Model/create_head_request.dart';
+import 'package:valid_airtech/Screens/Conveyance/Model/create_conveyance_request.dart';
 import 'package:valid_airtech/Screens/Head/Model/head_list_response.dart';
+import 'package:valid_airtech/Screens/HeadConveyance/Model/head_conveyance_list_response.dart';
 import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controller.dart';
+import 'package:valid_airtech/Screens/Instruments/Model/create_instrument_request.dart';
+import 'package:valid_airtech/Screens/Instruments/Model/head_instrument_list_response.dart';
 import 'package:valid_airtech/Screens/Planning/Controller/planning_controller.dart';
 import 'package:valid_airtech/Screens/Planning/Model/convey_model.dart';
 import 'package:valid_airtech/Screens/Planning/Model/instrument_model.dart';
+import 'package:valid_airtech/Screens/Service/Controller/service_controller.dart';
+import 'package:valid_airtech/Screens/Service/Model/create_service_request.dart';
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/Model/create_site_request.dart';
 import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
-import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
+import '../../../Widget/common_widget.dart';
+import '../../Sites/Model/add_contact_model.dart';
 
-class AddInstrumentHeadScreen extends StatefulWidget {
+class EditAllowanceScreen extends StatefulWidget {
   @override
-  _AddInstrumentHeadScreenState createState() => _AddInstrumentHeadScreenState();
+  
+  _EditAllowanceScreenState createState() => _EditAllowanceScreenState();
 }
 
-class _AddInstrumentHeadScreenState extends State<AddInstrumentHeadScreen> {
-  InstrumentController instrumentController = Get.find<InstrumentController>();
-
+class _EditAllowanceScreenState extends State<EditAllowanceScreen> {
+  AllowanceController allowanceController = Get.find<AllowanceController>();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    allowanceController.isEdit.value = false;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Perform navigation or state updates after build completes
-      instrumentController.instrumentNameController.value.text = "";
-    });
-
-
-
-
+    allowanceController.controllerName.value.text = allowanceController.selectedAllowance.value.name??"";
+    allowanceController.isChecked.value = (allowanceController.selectedAllowance.value.status??0) == 1?true:false;
   }
 
   @override
@@ -57,15 +60,45 @@ class _AddInstrumentHeadScreenState extends State<AddInstrumentHeadScreen> {
           },
         ),
         title: Text(
-          'Instruments',
+          'Allowance Details',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.home, color: color_secondary),
-            onPressed: () {},
+            icon: Icon(Icons.edit_calendar, color: color_secondary),
+            onPressed: () {
+              allowanceController.isEdit.value = true;
+            },
+          ),
+
+          IconButton(
+            icon: Icon(Icons.delete_forever, color: color_secondary),
+            onPressed: () {
+              Get.defaultDialog(
+                  title: "DELETE",
+                  middleText:
+                  "Are you sure want to delete this Allowance?",
+                  barrierDismissible: false,
+                  titlePadding: const EdgeInsets.only(
+                      left: 20, right: 20, top: 10),
+                  textConfirm: "Yes",
+                  textCancel: "No",
+                  titleStyle: TextStyle(
+                      fontSize: 15),
+                  buttonColor: Colors.white,
+                  confirmTextColor: color_primary,
+                  onCancel: () {
+                    Navigator.pop(context);
+
+                  },
+                  onConfirm: () async {
+                    Navigator.pop(context);
+                    allowanceController.callDeleteAllowance(allowanceController.selectedAllowance.value.id.toString());
+
+                  });
+            },
           ),
         ],
       ),
@@ -80,41 +113,64 @@ class _AddInstrumentHeadScreenState extends State<AddInstrumentHeadScreen> {
                   height: 16,
                 ),
 
+
                 _buildTextField(
-                    instrumentController.instrumentNameController.value,
-                    "Instrument Name"
-                ),
+                  allowanceController.controllerName.value,
+                  "Allowance Name"
+                    ),
 
                 SizedBox(
                   height: 16,
                 ),
 
 
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Checkbox(
+                      value: allowanceController.isChecked.value,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          allowanceController.isChecked.value = value!;
+                        });
+                      },
+                    ),
+                    Text("Allowance Status"),
+                  ],
+                ),
+
+
+                SizedBox(
+                  height: 20,
+                ),
+
                 // Login Button
-                Padding(
+                allowanceController.isEdit.value?Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: CommonButton(
                     titleText: "Save",
                     textColor: Colors.white,
                     onCustomButtonPressed: () async {
-
-                      if(instrumentController.instrumentNameController.value.text.isEmpty){
-                        snackBar(context, "Enter instrument name");
+                      if(allowanceController.controllerName.value.text.isEmpty){
+                        snackBar(context, "Enter Name");
                         return;
                       }
-
-                      instrumentController.callCreateInstrumentHead();
+                      allowanceController.createAllowanceRequest.value = CreateAllowanceRequest();
+                      allowanceController.createAllowanceRequest.value.id = allowanceController.selectedAllowance.value.id.toString();
+                      allowanceController.createAllowanceRequest.value.name = allowanceController.controllerName.value.text;
+                      allowanceController.createAllowanceRequest.value.status = allowanceController.isChecked.value?"1":"0";
+                      allowanceController.callUpdateAllowance();
 
                     },
                     borderColor: color_primary,
                     borderWidth: 0,
                   ),
-                ),
+                ):SizedBox(),
               ],
             ),
           ),
 
-          if(instrumentController.isLoading.value)Center(child: CircularProgressIndicator(),)
+          if(allowanceController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
     );
@@ -166,7 +222,7 @@ class _AddInstrumentHeadScreenState extends State<AddInstrumentHeadScreen> {
   }
 
 
-  Widget _buildDropdown(List<HeadData> items, String? selectedValue,
+  Widget _buildDropdown(List<HeadInstrumentData> items, String? selectedValue,
       Function(String?) onChanged, String hint) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(

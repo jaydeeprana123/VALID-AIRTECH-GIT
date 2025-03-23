@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controller.dart';
+import 'package:valid_airtech/Screens/Instruments/View/edit_instrument_head_screen.dart';
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/View/add_head_screen.dart';
 import 'package:valid_airtech/Screens/Sites/View/add_site_screen.dart';
@@ -119,7 +120,11 @@ class _InstrumentHeadListScreenState extends State<InstrumentHeadListScreen> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
-                        Get.to(WorkReportDetailsScreen());
+                        instrumentController.selectedInstrumentHead.value = instrumentController.headInstrumentList[index];
+                        Get.to(EditInstrumentHeadScreen())?.then((value) {
+                          instrumentController.isLoading.value = false;
+                          instrumentController.callHeadInstrumentList();
+                        });
                       },
                       child: Card(
                         elevation: 2,

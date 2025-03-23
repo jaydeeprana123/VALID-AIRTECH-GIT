@@ -241,6 +241,11 @@ class _EditSiteScreenState extends State<EditSiteScreen> {
                                             ))
                                         : InkWell(
                                             onTap: () {
+
+                                              RemovedContact removedContact = RemovedContact();
+                                              removedContact.removedContactId = siteController.contactList[i].id.toString();
+                                              siteController.removedContactList.add(removedContact);
+
                                               siteController.contactList
                                                   .removeAt(i);
                                               setState(() {});
@@ -312,6 +317,8 @@ class _EditSiteScreenState extends State<EditSiteScreen> {
                             siteController.createSiteRequest.value.contact
                                 ?.add(contact);
                           }
+
+                          siteController.createSiteRequest.value.removedContact?.addAll(siteController.removedContactList);
 
                           siteController.callEditSite();
                         },

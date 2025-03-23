@@ -39,6 +39,9 @@ class _AddHeadScreenState extends State<AddHeadScreen> {
       siteController.callHeadListList();
       siteController.contactList.clear();
       siteController.contactList.add(AddContactModel());
+
+      siteController.siteNameController.value.text = "";
+      siteController.siteAddressController.value.text = "";
     });
 
 

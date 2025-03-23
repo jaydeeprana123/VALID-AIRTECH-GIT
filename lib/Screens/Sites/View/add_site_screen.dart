@@ -37,6 +37,8 @@ class _AddSiteScreenState extends State<AddSiteScreen> {
       siteController.callHeadListList();
       siteController.contactList.clear();
       siteController.contactList.add(AddContactModel());
+
+      clearField();
     });
 
 
@@ -406,6 +408,15 @@ class _AddSiteScreenState extends State<AddSiteScreen> {
 
       ),
     );
+  }
+
+  void clearField() {
+    siteController.siteAddressController.value.text = "";
+    siteController.suffixController.value.text = "";
+    siteController.contactNameController.value.text = "";
+    siteController.departmentNameController.value.text = "";
+    siteController.contactEmailController.value.text = "";
+
   }
 
 

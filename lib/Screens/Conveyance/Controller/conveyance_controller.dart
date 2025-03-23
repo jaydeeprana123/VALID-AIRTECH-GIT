@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:valid_airtech/Screens/Conveyance/Model/conveyance_list_response.dart';
+import 'package:valid_airtech/Screens/Conveyance/Model/update_conveyance_request.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
 
 import '../../../RepoDB/repositories/api_repository.dart';
@@ -27,8 +28,10 @@ import '../Model/instrument_model.dart';
 class ConveyanceController extends GetxController {
   Rx<bool> isLoading = false.obs;
   var errorMessage = ''.obs;
-
+  RxBool isEdit = false.obs;
   Rx<CreateConveyanceRequest> createConveyanceRequest = CreateConveyanceRequest().obs;
+  Rx<UpdateConveyanceRequest> updateConveyanceRequest = UpdateConveyanceRequest().obs;
+
   Rx<TextEditingController> conveyanceTypeController = TextEditingController().obs;
 
   Rx<TextEditingController> conveyorNameController = TextEditingController().obs;
@@ -39,10 +42,14 @@ class ConveyanceController extends GetxController {
   RxList<TextEditingController> workmanList = <TextEditingController>[].obs;
   RxList<ConveyanceData> conveysList = <ConveyanceData>[].obs;
   APIRepository postRepository = APIRepository();
+  Rx<ConveyanceData> selectedConveyance = ConveyanceData().obs;
 
   Rx<LoginData> loginData = LoginData().obs;
   RxList<HeadConveyanceData> headConveysList = <HeadConveyanceData>[].obs;
+  Rx<HeadConveyanceData> selectedHeadConveyance = HeadConveyanceData().obs;
   RxList<AddContactModel> contactList = <AddContactModel>[].obs;
+  RxList<RemovedUpdateContact> removedContact = <RemovedUpdateContact>[].obs;
+
   Future getLoginData()async{
     loginData.value =  await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel)??LoginData();
   }
@@ -113,12 +120,83 @@ class ConveyanceController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
-        Get.snackbar("Success", "Site created successfully");
+        Get.back();
+        Get.snackbar("Success", "Conveyance created successfully");
         printData("response", response.message??"");
 
         contactList.clear();
 
         Get.back();
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Conveyance edit api call
+  Future<void> callEditConveyance() async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.updateConveyance(loginData.value.token ?? "",updateConveyanceRequest.value);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.back();
+        Get.snackbar("Success", "Conveyance Update successfully");
+        printData("response", response.message??"");
+
+        contactList.clear();
+
+        Get.back();
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Conveyance delete api call
+  Future<void> callDeleteConveyance(String id) async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.deleteConveyance(loginData.value.token ?? "",id);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.back();
+        printData("response", response.message??"");
+
+        contactList.clear();
+        Get.snackbar("Success", "Conveyance deleted successfully");
       } else if (response.code == 401) {
         Helper().logout();
       }else {
@@ -148,6 +226,7 @@ class ConveyanceController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
+        Get.back();
         Get.snackbar("Success", "Conveyance Type created successfully");
 
       } else if (response.code == 401) {
@@ -165,6 +244,71 @@ class ConveyanceController extends GetxController {
     }
   }
 
+  /// Conveyance update api call
+  Future<void> callUpdateConveyanceHead() async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.updateHeadConveyance(loginData.value.token ?? "",conveyanceTypeController.value.text, selectedHeadConveyance.value.id.toString());
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.back();
+        Get.snackbar("Success", "Conveyance Type updated successfully");
+
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Conveyance delete api call
+  Future<void> callDeleteConveyanceHead(String id) async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.deleteConveyanceHead(loginData.value.token ?? "",id);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.back();
+        printData("response", response.message??"");
+
+        contactList.clear();
+        Get.snackbar("Success", "Conveyance head deleted successfully");
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
 
   @override
   void onClose() {

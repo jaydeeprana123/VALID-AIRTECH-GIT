@@ -21,28 +21,26 @@ import 'package:valid_airtech/Screens/Sites/Model/create_site_request.dart';
 import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
+import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
 import '../../Sites/Model/add_contact_model.dart';
 
-class AddServiceScreen extends StatefulWidget {
+class EditServiceScreen extends StatefulWidget {
   @override
-
-
-
-
-
-
-  _AddServiceScreenState createState() => _AddServiceScreenState();
+  _EditServiceScreenState createState() => _EditServiceScreenState();
 }
 
-class _AddServiceScreenState extends State<AddServiceScreen> {
+class _EditServiceScreenState extends State<EditServiceScreen> {
   ServiceController serviceController = Get.find<ServiceController>();
   String? selectedInstrumentName;
   @override
   void initState() {
-    // TODO: implement initState
+
+    serviceController.isEdit.value = false;
+    serviceController.controllerTestName.value.text = serviceController.selectedService.value.testName??"";
+    serviceController.controllerTestCode.value.text = serviceController.selectedService.value.testCode??"";
     super.initState();
 
 
@@ -70,8 +68,38 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.home, color: color_secondary),
-            onPressed: () {},
+            icon: Icon(Icons.edit_calendar, color: color_secondary),
+            onPressed: () {
+              serviceController.isEdit.value = true;
+            },
+          ),
+
+          IconButton(
+            icon: Icon(Icons.delete_forever, color: color_secondary),
+            onPressed: () {
+              Get.defaultDialog(
+                  title: "DELETE",
+                  middleText:
+                  "Are you sure want to delete this Service?",
+                  barrierDismissible: false,
+                  titlePadding: const EdgeInsets.only(
+                      left: 20, right: 20, top: 10),
+                  textConfirm: "Yes",
+                  textCancel: "No",
+                  titleStyle: TextStyle(
+                      fontSize: 15),
+                  buttonColor: Colors.white,
+                  confirmTextColor: color_primary,
+                  onCancel: () {
+                    Navigator.pop(context);
+
+                  },
+                  onConfirm: () async {
+                    Navigator.pop(context);
+                    serviceController.callDeleteService(serviceController.selectedService.value.id.toString());
+
+                  });
+            },
           ),
         ],
       ),
@@ -109,23 +137,34 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                 ),
 
                 // Login Button
-                Padding(
+                serviceController.isEdit.value?Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: CommonButton(
                     titleText: "Save",
                     textColor: Colors.white,
                     onCustomButtonPressed: () async {
 
+                      if(serviceController.controllerTestName.value.text.isEmpty){
+                        snackBar(context, "Enter Test Name");
+                        return;
+                      }
+
+                      if(serviceController.controllerTestCode.value.text.isEmpty){
+                        snackBar(context, "Enter Test Code");
+                        return;
+                      }
+
                       serviceController.createServiceRequest.value = CreateServiceRequest();
+                      serviceController.createServiceRequest.value.id = serviceController.selectedService.value.id.toString();
                       serviceController.createServiceRequest.value.testName = serviceController.controllerTestName.value.text;
                       serviceController.createServiceRequest.value.testCode = serviceController.controllerTestCode.value.text;
-                      serviceController.callCreateService();
+                      serviceController.callUpdateService();
 
                     },
                     borderColor: color_primary,
                     borderWidth: 0,
                   ),
-                ),
+                ):SizedBox(),
               ],
             ),
           ),

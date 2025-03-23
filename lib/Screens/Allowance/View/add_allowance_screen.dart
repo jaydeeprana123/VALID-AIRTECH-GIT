@@ -26,6 +26,7 @@ import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
+import '../../../Widget/common_widget.dart';
 import '../../Sites/Model/add_contact_model.dart';
 
 class AddAllowanceScreen extends StatefulWidget {
@@ -40,7 +41,10 @@ class _AddAllowanceScreenState extends State<AddAllowanceScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    
+
+    allowanceController.controllerName.value.text = "";
+    allowanceController.isChecked.value = false;
+
   }
 
   @override
@@ -117,7 +121,10 @@ class _AddAllowanceScreenState extends State<AddAllowanceScreen> {
                     titleText: "Save",
                     textColor: Colors.white,
                     onCustomButtonPressed: () async {
-
+                      if(allowanceController.controllerName.value.text.isEmpty){
+                        snackBar(context, "Enter Name");
+                        return;
+                      }
                       allowanceController.createAllowanceRequest.value = CreateAllowanceRequest();
                       allowanceController.createAllowanceRequest.value.name = allowanceController.controllerName.value.text;
                       allowanceController.createAllowanceRequest.value.status = allowanceController.isChecked.value?"1":"0";

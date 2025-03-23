@@ -63,7 +63,7 @@ class WorkmanData {
   String? workmanNo;
   String? status;
   String? email;
-  List<Child>? children;
+  List<WorkmanChild>? children;
 
   WorkmanData({
     this.id,
@@ -122,7 +122,7 @@ class WorkmanData {
     workmanNo: json["workman_no"],
     status: json["status"],
     email: json["email "],
-    children: json["children"] == null ? [] : List<Child>.from(json["children"]!.map((x) => Child.fromJson(x))),
+    children: json["children"] == null ? [] : List<WorkmanChild>.from(json["children"]!.map((x) => WorkmanChild.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -156,18 +156,18 @@ class WorkmanData {
   };
 }
 
-class Child {
+class WorkmanChild {
   int? id;
   int? userId;
   String? childrenName;
 
-  Child({
+  WorkmanChild({
     this.id,
     this.userId,
     this.childrenName,
   });
 
-  factory Child.fromJson(Map<String, dynamic> json) => Child(
+  factory WorkmanChild.fromJson(Map<String, dynamic> json) => WorkmanChild(
     id: json["id"],
     userId: json["user_id"],
     childrenName: json["children_name"],

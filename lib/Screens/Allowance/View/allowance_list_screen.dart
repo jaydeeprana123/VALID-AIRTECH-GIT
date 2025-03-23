@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Allowance/Controller/allowance_controller.dart';
 import 'package:valid_airtech/Screens/Allowance/View/add_allowance_screen.dart';
+import 'package:valid_airtech/Screens/Allowance/View/edit_allowance_screen.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/View/add_conveyance_screen.dart';
 import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controller.dart';
@@ -127,7 +128,11 @@ class _AllowanceListScreenState extends State<AllowanceListScreen> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
-                        Get.to(WorkReportDetailsScreen());
+                        allowanceController.selectedAllowance.value = allowanceController.allowanceList[index];
+                        Get.to(EditAllowanceScreen())?.then((value) {
+                          allowanceController.isLoading.value = false;
+                          allowanceController.callAllowanceList();
+                        });
                       },
                       child: Card(
                         elevation: 2,

@@ -14,8 +14,8 @@ class UpdateConveyanceRequest {
   String? name;
   String? sufix;
   String? address;
-  List<Contact>? contact;
-  List<RemovedContact>? removedContact;
+  List<UpdateContact>? contact;
+  List<RemovedUpdateContact>? removedContact;
 
   UpdateConveyanceRequest({
     this.id,
@@ -33,8 +33,8 @@ class UpdateConveyanceRequest {
     name: json["name"],
     sufix: json["sufix"],
     address: json["address"],
-    contact: json["contact"] == null ? [] : List<Contact>.from(json["contact"]!.map((x) => Contact.fromJson(x))),
-    removedContact: json["removed_contact"] == null ? [] : List<RemovedContact>.from(json["removed_contact"]!.map((x) => RemovedContact.fromJson(x))),
+    contact: json["contact"] == null ? [] : List<UpdateContact>.from(json["contact"]!.map((x) => UpdateContact.fromJson(x))),
+    removedContact: json["removed_contact"] == null ? [] : List<RemovedUpdateContact>.from(json["removed_contact"]!.map((x) => RemovedUpdateContact.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -48,20 +48,20 @@ class UpdateConveyanceRequest {
   };
 }
 
-class Contact {
+class UpdateContact {
   String? id;
   String? contactType;
   String? mobileNo;
   String? telephone;
 
-  Contact({
+  UpdateContact({
     this.id,
     this.contactType,
     this.mobileNo,
     this.telephone,
   });
 
-  factory Contact.fromJson(Map<String, dynamic> json) => Contact(
+  factory UpdateContact.fromJson(Map<String, dynamic> json) => UpdateContact(
     id: json["id"],
     contactType: json["contact_type"],
     mobileNo: json["mobile_no"],
@@ -76,14 +76,14 @@ class Contact {
   };
 }
 
-class RemovedContact {
+class RemovedUpdateContact {
   String? removedContactId;
 
-  RemovedContact({
+  RemovedUpdateContact({
     this.removedContactId,
   });
 
-  factory RemovedContact.fromJson(Map<String, dynamic> json) => RemovedContact(
+  factory RemovedUpdateContact.fromJson(Map<String, dynamic> json) => RemovedUpdateContact(
     removedContactId: json["removed_contact_id"],
   );
 

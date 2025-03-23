@@ -52,7 +52,7 @@ class SiteController extends GetxController {
 
   Rx<CreateSiteRequest> createSiteRequest = CreateSiteRequest().obs;
   Rx<CreateHeadRequest> createHeadRequest = CreateHeadRequest().obs;
-
+  RxList<RemovedContact> removedContactList = <RemovedContact>[].obs;
   Future getLoginData() async {
     loginData.value =
         await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel) ??
@@ -102,7 +102,7 @@ class SiteController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
-
+        Get.back();
         printData("response", response.message??"");
 
         contactList.clear();
@@ -137,7 +137,7 @@ class SiteController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
-
+        Get.back();
         printData("response", response.message??"");
 
         contactList.clear();
@@ -171,7 +171,7 @@ class SiteController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
-
+        Get.back();
         printData("response", response.message??"");
 
         contactList.clear();
@@ -205,7 +205,7 @@ class SiteController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
-
+        Get.back();
         printData("response", response.message??"");
         contactList.clear();
         Get.snackbar("Success", "Site updated successfully");
@@ -238,9 +238,9 @@ class SiteController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
-
+        Get.back();
         printData("response", response.message??"");
-        Get.snackbar("Success", "Site created successfully");
+        Get.snackbar("Success", "Site head created successfully");
       } else if (response.code == 401) {
         Helper().logout();
       }else {
@@ -270,7 +270,7 @@ class SiteController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
-
+        Get.back();
         printData("response", response.message??"");
         Get.snackbar("Success", "Site head updated successfully");
       } else if (response.code == 401) {

@@ -37,7 +37,7 @@ class CreateWorkmanRequest {
   String? status;
   String? email;
   List<Children>? children;
-  List<RemovedChild>? removedChildren;
+  List<RemovedWorkmanChild>? removedChildren;
 
   CreateWorkmanRequest({
     this.id,
@@ -100,7 +100,7 @@ class CreateWorkmanRequest {
     status: json["status"],
     email: json["email"],
     children: json["children"] == null ? [] : List<Children>.from(json["children"]!.map((x) => Children.fromJson(x))),
-    removedChildren: json["removed_children"] == null ? [] : List<RemovedChild>.from(json["removed_children"]!.map((x) => RemovedChild.fromJson(x))),
+    removedChildren: json["removed_children"] == null ? [] : List<RemovedWorkmanChild>.from(json["removed_children"]!.map((x) => RemovedWorkmanChild.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -156,14 +156,14 @@ class Children {
   };
 }
 
-class RemovedChild {
+class RemovedWorkmanChild {
   String? removedChildrenId;
 
-  RemovedChild({
+  RemovedWorkmanChild({
     this.removedChildrenId,
   });
 
-  factory RemovedChild.fromJson(Map<String, dynamic> json) => RemovedChild(
+  factory RemovedWorkmanChild.fromJson(Map<String, dynamic> json) => RemovedWorkmanChild(
     removedChildrenId: json["removed_children_id"],
   );
 

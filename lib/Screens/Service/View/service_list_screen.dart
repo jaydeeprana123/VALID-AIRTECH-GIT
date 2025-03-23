@@ -10,6 +10,7 @@ import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controll
 import 'package:valid_airtech/Screens/Instruments/View/add_instrument_screen.dart';
 import 'package:valid_airtech/Screens/Service/Controller/service_controller.dart';
 import 'package:valid_airtech/Screens/Service/View/add_service_screen.dart';
+import 'package:valid_airtech/Screens/Service/View/edit_service_screen.dart';
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/View/add_site_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_details_screen.dart';
@@ -127,7 +128,11 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
-                        Get.to(WorkReportDetailsScreen());
+                        serviceController.selectedService.value = serviceController.serviceList[index];
+                        Get.to(EditServiceScreen())?.then((value) {
+                          serviceController.isLoading.value = false;
+                          serviceController.callServiceListList();
+                        });
                       },
                       child: Card(
                         elevation: 2,

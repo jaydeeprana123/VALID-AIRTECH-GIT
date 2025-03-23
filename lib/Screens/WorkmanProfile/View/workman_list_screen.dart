@@ -12,6 +12,7 @@ import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/View/add_site_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_details_screen.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/Controller/workman_profile_controller.dart';
+import 'package:valid_airtech/Screens/WorkmanProfile/View/edit_workman_screen.dart';
 import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
@@ -126,7 +127,11 @@ class _WorkmanListScreenState extends State<WorkmanListScreen> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
-                        Get.to(WorkReportDetailsScreen());
+                        workmanProfileController.selectedWorkman.value = workmanProfileController.workmanList[index];
+                        Get.to(EditWorkmanScreen())?.then((value) {
+                          workmanProfileController.isLoading.value = false;
+                          workmanProfileController.callWorkmanList();
+                        });
                       },
                       child: Card(
                         elevation: 2,

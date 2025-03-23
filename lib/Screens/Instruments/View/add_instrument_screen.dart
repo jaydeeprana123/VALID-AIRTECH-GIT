@@ -41,6 +41,12 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Perform navigation or state updates after build completes
       instrumentController.callHeadInstrumentList();
+
+      instrumentController.instrumentIdNoController.value.text = "";
+      instrumentController.modelNoController.value.text = "";
+      instrumentController.srNoController.value.text = "";
+      instrumentController.makeController.value.text = "";
+
     });
 
 

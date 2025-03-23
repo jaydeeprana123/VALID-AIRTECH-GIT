@@ -26,10 +26,11 @@ class ServiceController extends GetxController {
   Rx<bool> isLoading = false.obs;
   var errorMessage = ''.obs;
 
+  Rx<bool> isEdit = false.obs;
   Rx<CreateServiceRequest> createServiceRequest = CreateServiceRequest().obs;
 
   RxList<ServiceData> serviceList = <ServiceData>[].obs;
-
+  Rx<ServiceData> selectedService = ServiceData().obs;
   final Rx<TextEditingController> controllerTestName = TextEditingController(text: "")
       .obs;
 
@@ -82,9 +83,10 @@ class ServiceController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
+        Get.back();
         Get.snackbar("Success", response.message??"");
         printData("response", response.message??"");
-        Get.off(AddServiceScreen());
+
 
       } else if (response.code == 401) {
         Helper().logout();
@@ -101,7 +103,71 @@ class ServiceController extends GetxController {
     }
   }
 
+  /// Service update api call
+  Future<void> callUpdateService() async {
+    try {
+      isLoading.value = true;
 
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.updateService(loginData.value.token ?? "",createServiceRequest.value);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.back();
+        Get.snackbar("Success", response.message??"");
+        printData("response", response.message??"");
+
+
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Service delete api call
+  Future<void> callDeleteService(String id) async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.deleteService(loginData.value.token ?? "",id);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.back();
+        printData("response", response.message??"");
+        Get.snackbar("Success", "Service deleted successfully");
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
   @override
   void onClose() {
     // TODO: implement onClose

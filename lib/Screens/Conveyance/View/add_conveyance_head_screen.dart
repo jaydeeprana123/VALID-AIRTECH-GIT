@@ -35,7 +35,7 @@ class _AddConveyanceHeadScreenState extends State<AddConveyanceHeadScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Perform navigation or state updates after build completes
-
+      conveyanceController.conveyanceTypeController.value.text = "";
     });
 
 

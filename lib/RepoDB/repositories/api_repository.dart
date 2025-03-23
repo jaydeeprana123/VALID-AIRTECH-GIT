@@ -681,7 +681,7 @@ class APIRepository {
   }
 
 
-  /// Head Conveyance List
+  /// Head Instrument List
   Future<HeadInstrumentResponse> headInstrumentList(String token) async {
     try {
 
@@ -700,6 +700,31 @@ class APIRepository {
   }
 
 
+  /// Delete Instrument Head
+  Future<BaseModel> deleteInstrumentHead(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/head-instrument/delete",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
   /// Create Instrument Head
   Future<BaseModel> createHeadInstrument(String token, String name) async {
     try {
@@ -709,6 +734,32 @@ class APIRepository {
       });
 
       Response response = await api.dio.post("/head-instrument/create",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Update Instrument Head
+  Future<BaseModel> updateHeadInstrument(String token, String name, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+        "name": name
+      });
+
+      Response response = await api.dio.post("/head-instrument/update",
           data: data,
           options: Options(
             headers: {
@@ -743,13 +794,61 @@ class APIRepository {
     }
   }
 
-  /// Create Conveyance
+  /// Create Instrument
   Future<BaseModel> createInstrument(String token, CreateInstrumentRequest createInstrumentRequest) async {
     try {
 
 
       Response response = await api.dio.post("/instrument/create",
           data: createInstrumentRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Update Instrument
+  Future<BaseModel> updateInstrument(String token, CreateInstrumentRequest createInstrumentRequest) async {
+    try {
+
+
+      Response response = await api.dio.post("/instrument/update",
+          data: createInstrumentRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Delete Instrument
+  Future<BaseModel> deleteInstrument(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/instrument/delete",
+          data: data,
           options: Options(
             headers: {
               'Content-Type': 'application/json',
@@ -789,6 +888,52 @@ class APIRepository {
     try {
       Response response = await api.dio.post("/workman-profile/create",
           data: createWorkmanRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Create Workman
+  Future<BaseModel> updateWorkman(String token, CreateWorkmanRequest createWorkmanRequest) async {
+    try {
+      Response response = await api.dio.post("/workman-profile/update",
+          data: createWorkmanRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Delete Workman
+  Future<BaseModel> deleteWorkman(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/workman-profile/delete",
+          data: data,
           options: Options(
             headers: {
               'Content-Type': 'application/json',

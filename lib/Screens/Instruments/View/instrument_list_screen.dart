@@ -8,6 +8,7 @@ import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controlle
 import 'package:valid_airtech/Screens/Conveyance/View/add_conveyance_screen.dart';
 import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controller.dart';
 import 'package:valid_airtech/Screens/Instruments/View/add_instrument_screen.dart';
+import 'package:valid_airtech/Screens/Instruments/View/edit_instrument_screen.dart';
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/View/add_site_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_details_screen.dart';
@@ -35,7 +36,7 @@ class _InstrumentListScreenState extends State<InstrumentListScreen> {
 
   void _initializeData() async {
     await instrumentController.getLoginData();
-
+    instrumentController.isEdit.value = false;
     printData("_initializeData", "_initializeData");
 
     instrumentController.callInstrumentList();
@@ -140,7 +141,11 @@ class _InstrumentListScreenState extends State<InstrumentListScreen> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
-                        Get.to(WorkReportDetailsScreen());
+                        instrumentController.selectedInstrument.value = instrumentController.instrumentList[index];
+                        Get.to(EditInstrumentScreen())?.then((value) {
+                          instrumentController.isLoading.value = false;
+                          instrumentController.callInstrumentList();
+                        });
                       },
                       child: Card(
                         elevation: 2,

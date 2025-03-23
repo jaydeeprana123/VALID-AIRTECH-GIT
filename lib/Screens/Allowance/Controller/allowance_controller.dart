@@ -27,7 +27,8 @@ class AllowanceController extends GetxController {
   var errorMessage = ''.obs;
 
   RxList<AllowanceData> allowanceList = <AllowanceData>[].obs;
-
+  Rx<AllowanceData> selectedAllowance = AllowanceData().obs;
+  RxBool isEdit = false.obs;
   final Rx<TextEditingController> controllerName = TextEditingController(text: "")
       .obs;
   RxBool isChecked = false.obs;
@@ -78,9 +79,9 @@ class AllowanceController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
+        Get.back();
         Get.snackbar("Success", response.message??"");
         printData("response", response.message??"");
-        Get.off(AddAllowanceScreen());
 
       } else if (response.code == 401) {
         Helper().logout();
@@ -97,6 +98,71 @@ class AllowanceController extends GetxController {
     }
   }
 
+
+  /// Allowance update api call
+  Future<void> callUpdateAllowance() async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.updateAllowance(loginData.value.token ?? "",createAllowanceRequest.value);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.back();
+        Get.snackbar("Success", response.message??"");
+        printData("response", response.message??"");
+
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Allowance delete api call
+  Future<void> callDeleteAllowance(String id) async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.deleteAllowance(loginData.value.token ?? "",id);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.back();
+        printData("response", response.message??"");
+        Get.snackbar("Success", "Allowance deleted successfully");
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
   @override
   void onClose() {
     // TODO: implement onClose

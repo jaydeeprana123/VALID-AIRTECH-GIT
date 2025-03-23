@@ -24,6 +24,7 @@ import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
+import '../../../Widget/common_widget.dart';
 import '../../Sites/Model/add_contact_model.dart';
 
 class AddServiceScreen extends StatefulWidget {
@@ -45,6 +46,8 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
     // TODO: implement initState
     super.initState();
 
+    serviceController.controllerTestName.value.text = "";
+    serviceController.controllerTestCode.value.text = "";
 
 
 
@@ -115,6 +118,16 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                     titleText: "Save",
                     textColor: Colors.white,
                     onCustomButtonPressed: () async {
+
+                      if(serviceController.controllerTestName.value.text.isEmpty){
+                        snackBar(context, "Enter Test Name");
+                        return;
+                      }
+
+                      if(serviceController.controllerTestCode.value.text.isEmpty){
+                        snackBar(context, "Enter Test Code");
+                        return;
+                      }
 
                       serviceController.createServiceRequest.value = CreateServiceRequest();
                       serviceController.createServiceRequest.value.testName = serviceController.controllerTestName.value.text;

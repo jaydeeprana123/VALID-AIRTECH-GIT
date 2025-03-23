@@ -21,12 +21,12 @@ import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
 
-class AddInstrumentHeadScreen extends StatefulWidget {
+class EditInstrumentHeadScreen extends StatefulWidget {
   @override
-  _AddInstrumentHeadScreenState createState() => _AddInstrumentHeadScreenState();
+  _EditInstrumentHeadScreenState createState() => _EditInstrumentHeadScreenState();
 }
 
-class _AddInstrumentHeadScreenState extends State<AddInstrumentHeadScreen> {
+class _EditInstrumentHeadScreenState extends State<EditInstrumentHeadScreen> {
   InstrumentController instrumentController = Get.find<InstrumentController>();
 
   @override
@@ -35,8 +35,9 @@ class _AddInstrumentHeadScreenState extends State<AddInstrumentHeadScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Perform navigation or state updates after build completes
-      instrumentController.instrumentNameController.value.text = "";
+      instrumentController.isEdit.value = false;
+      instrumentController.instrumentNameController.value.text = instrumentController.selectedInstrumentHead.value.name??"";
+
     });
 
 
@@ -64,8 +65,38 @@ class _AddInstrumentHeadScreenState extends State<AddInstrumentHeadScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.home, color: color_secondary),
-            onPressed: () {},
+            icon: Icon(Icons.edit_calendar, color: color_secondary),
+            onPressed: () {
+              instrumentController.isEdit.value = true;
+            },
+          ),
+
+          IconButton(
+            icon: Icon(Icons.delete_forever, color: color_secondary),
+            onPressed: () {
+              Get.defaultDialog(
+                  title: "DELETE",
+                  middleText:
+                  "Are you sure want to delete this Instrument Head?",
+                  barrierDismissible: false,
+                  titlePadding: const EdgeInsets.only(
+                      left: 20, right: 20, top: 10),
+                  textConfirm: "Yes",
+                  textCancel: "No",
+                  titleStyle: TextStyle(
+                      fontSize: 15),
+                  buttonColor: Colors.white,
+                  confirmTextColor: color_primary,
+                  onCancel: () {
+                    Navigator.pop(context);
+
+                  },
+                  onConfirm: () async {
+                    Navigator.pop(context);
+                    instrumentController.callDeleteInstrumentHead(instrumentController.selectedInstrumentHead.value.id.toString());
+
+                  });
+            },
           ),
         ],
       ),
@@ -91,7 +122,7 @@ class _AddInstrumentHeadScreenState extends State<AddInstrumentHeadScreen> {
 
 
                 // Login Button
-                Padding(
+                instrumentController.isEdit.value?Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: CommonButton(
                     titleText: "Save",
@@ -103,13 +134,13 @@ class _AddInstrumentHeadScreenState extends State<AddInstrumentHeadScreen> {
                         return;
                       }
 
-                      instrumentController.callCreateInstrumentHead();
+                      instrumentController.callUpdateInstrumentHead();
 
                     },
                     borderColor: color_primary,
                     borderWidth: 0,
                   ),
-                ),
+                ):SizedBox(),
               ],
             ),
           ),

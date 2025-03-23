@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/View/add_conveyance_screen.dart';
+import 'package:valid_airtech/Screens/Conveyance/View/edit_conveyance_screen.dart';
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/View/add_site_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_details_screen.dart';
@@ -138,7 +139,12 @@ class _ConveyanceListScreenState extends State<ConveyanceListScreen> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
-                        Get.to(WorkReportDetailsScreen());
+
+                        conveyanceController.selectedConveyance.value = conveyanceController.conveysList[index];
+                        Get.to(EditConveyanceScreen())?.then((value) {
+                          conveyanceController.isLoading.value = false;
+                          conveyanceController.callConveyanceList();
+                        });
                       },
                       child: Card(
                         elevation: 2,

@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Head/Model/create_head_request.dart';
 import 'package:valid_airtech/Screens/Head/Model/head_list_response.dart';
-import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controller.dart';
 import 'package:valid_airtech/Screens/Planning/Controller/planning_controller.dart';
 import 'package:valid_airtech/Screens/Planning/Model/convey_model.dart';
 import 'package:valid_airtech/Screens/Planning/Model/instrument_model.dart';
@@ -21,13 +20,13 @@ import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
 
-class AddInstrumentHeadScreen extends StatefulWidget {
+class EditConveyanceHeadScreen extends StatefulWidget {
   @override
-  _AddInstrumentHeadScreenState createState() => _AddInstrumentHeadScreenState();
+  _EditConveyanceHeadScreenState createState() => _EditConveyanceHeadScreenState();
 }
 
-class _AddInstrumentHeadScreenState extends State<AddInstrumentHeadScreen> {
-  InstrumentController instrumentController = Get.find<InstrumentController>();
+class _EditConveyanceHeadScreenState extends State<EditConveyanceHeadScreen> {
+  ConveyanceController conveyanceController = Get.find<ConveyanceController>();
 
   @override
   void initState() {
@@ -35,8 +34,9 @@ class _AddInstrumentHeadScreenState extends State<AddInstrumentHeadScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Perform navigation or state updates after build completes
-      instrumentController.instrumentNameController.value.text = "";
+      conveyanceController.conveyanceTypeController.value.text = conveyanceController.selectedHeadConveyance.value.name??"";
+
+      conveyanceController.isEdit.value = false;
     });
 
 
@@ -57,15 +57,45 @@ class _AddInstrumentHeadScreenState extends State<AddInstrumentHeadScreen> {
           },
         ),
         title: Text(
-          'Instruments',
+          'Conveyance Type',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.home, color: color_secondary),
-            onPressed: () {},
+            icon: Icon(Icons.edit_calendar, color: color_secondary),
+            onPressed: () {
+              conveyanceController.isEdit.value = true;
+            },
+          ),
+
+          IconButton(
+            icon: Icon(Icons.delete_forever, color: color_secondary),
+            onPressed: () {
+              Get.defaultDialog(
+                  title: "DELETE",
+                  middleText:
+                  "Are you sure want to delete this Conveyance Head Name?",
+                  barrierDismissible: false,
+                  titlePadding: const EdgeInsets.only(
+                      left: 20, right: 20, top: 10),
+                  textConfirm: "Yes",
+                  textCancel: "No",
+                  titleStyle: TextStyle(
+                      fontSize: 15),
+                  buttonColor: Colors.white,
+                  confirmTextColor: color_primary,
+                  onCancel: () {
+                    Navigator.pop(context);
+
+                  },
+                  onConfirm: () async {
+                    Navigator.pop(context);
+                    conveyanceController.callDeleteConveyanceHead(conveyanceController.selectedHeadConveyance.value.id.toString());
+
+                  });
+            },
           ),
         ],
       ),
@@ -81,8 +111,8 @@ class _AddInstrumentHeadScreenState extends State<AddInstrumentHeadScreen> {
                 ),
 
                 _buildTextField(
-                    instrumentController.instrumentNameController.value,
-                    "Instrument Name"
+                    conveyanceController.conveyanceTypeController.value,
+                    "Conveyance Type"
                 ),
 
                 SizedBox(
@@ -91,30 +121,30 @@ class _AddInstrumentHeadScreenState extends State<AddInstrumentHeadScreen> {
 
 
                 // Login Button
-                Padding(
+                conveyanceController.isEdit.value?Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: CommonButton(
                     titleText: "Save",
                     textColor: Colors.white,
                     onCustomButtonPressed: () async {
 
-                      if(instrumentController.instrumentNameController.value.text.isEmpty){
-                        snackBar(context, "Enter instrument name");
+                      if(conveyanceController.conveyanceTypeController.value.text.isEmpty){
+                        snackBar(context, "Enter Conveyance Type");
                         return;
                       }
 
-                      instrumentController.callCreateInstrumentHead();
+                      conveyanceController.callUpdateConveyanceHead();
 
                     },
                     borderColor: color_primary,
                     borderWidth: 0,
                   ),
-                ),
+                ):SizedBox(),
               ],
             ),
           ),
 
-          if(instrumentController.isLoading.value)Center(child: CircularProgressIndicator(),)
+          if(conveyanceController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
     );

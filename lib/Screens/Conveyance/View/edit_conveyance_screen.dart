@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/create_conveyance_request.dart';
+import 'package:valid_airtech/Screens/Conveyance/Model/update_conveyance_request.dart';
 import 'package:valid_airtech/Screens/Head/Model/head_list_response.dart';
 import 'package:valid_airtech/Screens/HeadConveyance/Model/head_conveyance_list_response.dart';
 import 'package:valid_airtech/Screens/Planning/Controller/planning_controller.dart';
@@ -22,12 +23,12 @@ import '../../../Widget/CommonButton.dart';
 import '../../Sites/Model/add_contact_model.dart';
 import '../Model/conveyance_list_response.dart';
 
-class AddConveyanceScreen extends StatefulWidget {
+class EditConveyanceScreen extends StatefulWidget {
   @override
-  _AddConveyanceScreenState createState() => _AddConveyanceScreenState();
+  _EditConveyanceScreenState createState() => _EditConveyanceScreenState();
 }
 
-class _AddConveyanceScreenState extends State<AddConveyanceScreen> {
+class _EditConveyanceScreenState extends State<EditConveyanceScreen> {
   ConveyanceController conveyanceController = Get.find<ConveyanceController>();
   String? selectedConveyanceThrough;
   final List<String> contactTypeOptions = ['Mobile', 'Telephone'];
@@ -38,14 +39,39 @@ class _AddConveyanceScreenState extends State<AddConveyanceScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Perform navigation or state updates after build completes
+      conveyanceController.isEdit.value = false;
       conveyanceController.callHeadConveyanceList();
       conveyanceController.contactList.clear();
-      conveyanceController.contactList.add(AddContactModel());
 
-      conveyanceController.conveyorNameController.value.text = "";
-      conveyanceController.suffixController.value.text = "";
-      conveyanceController.conveyorAddressController.value.text = "";
+      conveyanceController.conveyorNameController.value.text = conveyanceController.selectedConveyance.value.name??"";
+      conveyanceController.suffixController.value.text = conveyanceController.selectedConveyance.value.sufix??"";
+      conveyanceController.conveyorAddressController.value.text = conveyanceController.selectedConveyance.value.address??"";
 
+      selectedConveyanceThrough = conveyanceController.selectedConveyance.value.headConveyanceId.toString();
+
+      if ((conveyanceController.selectedConveyance.value.contact ?? []).isNotEmpty) {
+        for (int i = 0;
+        i < (conveyanceController.selectedConveyance.value.contact ?? []).length;
+        i++) {
+          AddContactModel addContactModel = AddContactModel();
+          addContactModel.id = conveyanceController.selectedConveyance.value.contact?[i].id.toString();
+          addContactModel.type =
+          conveyanceController.selectedConveyance.value.contact?[i].contactType == 1
+              ? "Mobile"
+              : "Telephone";
+
+          if (conveyanceController.selectedConveyance.value.contact?[i].contactType == 1) {
+            addContactModel.textEditingControllerNum.text =
+                conveyanceController.selectedConveyance.value.contact?[i].mobileNo ?? "";
+          } else {
+            addContactModel.textEditingControllerNum.text =
+                conveyanceController.selectedConveyance.value.contact?[i].mobileNo ?? "";
+          }
+          conveyanceController.contactList.add(addContactModel);
+        }
+      }else{
+        conveyanceController.contactList.add(AddContactModel());
+      }
     });
 
 
@@ -73,8 +99,38 @@ class _AddConveyanceScreenState extends State<AddConveyanceScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.home, color: color_secondary),
-            onPressed: () {},
+            icon: Icon(Icons.edit_calendar, color: color_secondary),
+            onPressed: () {
+              conveyanceController.isEdit.value = true;
+            },
+          ),
+
+          IconButton(
+            icon: Icon(Icons.delete_forever, color: color_secondary),
+            onPressed: () {
+              Get.defaultDialog(
+                  title: "DELETE",
+                  middleText:
+                  "Are you sure want to delete this Conveyance Name?",
+                  barrierDismissible: false,
+                  titlePadding: const EdgeInsets.only(
+                      left: 20, right: 20, top: 10),
+                  textConfirm: "Yes",
+                  textCancel: "No",
+                  titleStyle: TextStyle(
+                      fontSize: 15),
+                  buttonColor: Colors.white,
+                  confirmTextColor: color_primary,
+                  onCancel: () {
+                    Navigator.pop(context);
+
+                  },
+                  onConfirm: () async {
+                    Navigator.pop(context);
+                    conveyanceController.callDeleteConveyance(conveyanceController.selectedHeadConveyance.value.id.toString());
+
+                  });
+            },
           ),
         ],
       ),
@@ -183,6 +239,9 @@ class _AddConveyanceScreenState extends State<AddConveyanceScreen> {
                                       color: color_brown_title,
                                     )):InkWell(
                                     onTap: () {
+                                      RemovedUpdateContact removedContact = RemovedUpdateContact();
+                                      removedContact.removedContactId = conveyanceController.contactList[i].id.toString();
+                                      conveyanceController.removedContact.add(removedContact);
                                       conveyanceController.contactList.removeAt(i);
                                       setState(() {});
                                     },
@@ -205,22 +264,23 @@ class _AddConveyanceScreenState extends State<AddConveyanceScreen> {
 
 
                 // Login Button
-                Padding(
+                conveyanceController.isEdit.value? Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: CommonButton(
                     titleText: "Save",
                     textColor: Colors.white,
                     onCustomButtonPressed: () async {
 
-                      conveyanceController.createConveyanceRequest.value = CreateConveyanceRequest();
-                      conveyanceController.createConveyanceRequest.value.headConveyanceId = selectedConveyanceThrough??"";
-                      conveyanceController.createConveyanceRequest.value.name = conveyanceController.conveyorNameController.value.text;
-                      conveyanceController.createConveyanceRequest.value.sufix = conveyanceController.suffixController.value.text;
-                      conveyanceController.createConveyanceRequest.value.address = conveyanceController.conveyorAddressController.value.text;
+                      conveyanceController.updateConveyanceRequest.value = UpdateConveyanceRequest();
+                      conveyanceController.updateConveyanceRequest.value.id = conveyanceController.selectedConveyance.value.id.toString();
+                      conveyanceController.updateConveyanceRequest.value.headConveyanceId = selectedConveyanceThrough??"";
+                      conveyanceController.updateConveyanceRequest.value.name = conveyanceController.conveyorNameController.value.text;
+                      conveyanceController.updateConveyanceRequest.value.sufix = conveyanceController.suffixController.value.text;
+                      conveyanceController.updateConveyanceRequest.value.address = conveyanceController.conveyorAddressController.value.text;
 
-                      conveyanceController.createConveyanceRequest.value.contact = [];
+                      conveyanceController.updateConveyanceRequest.value.contact = [];
                       for(int i=0; i<conveyanceController.contactList.length; i++){
-                        ContactConveyance contact = ContactConveyance();
+                        UpdateContact contact = UpdateContact();
                         contact.contactType = (conveyanceController.contactList[i].type??"") == "Mobile"?"1":"2";
 
                         if(contact.contactType == "1"){
@@ -231,17 +291,22 @@ class _AddConveyanceScreenState extends State<AddConveyanceScreen> {
                         }
 
 
-                        conveyanceController.createConveyanceRequest.value.contact?.add(contact);
+
+
+
+                        conveyanceController.updateConveyanceRequest.value.contact?.add(contact);
 
                       }
 
-                      conveyanceController.callCreateConveyance();
+                      conveyanceController.updateConveyanceRequest.value.removedContact?.addAll(conveyanceController.removedContact);
+
+                      conveyanceController.callEditConveyance();
 
                     },
                     borderColor: color_primary,
                     borderWidth: 0,
                   ),
-                ),
+                ):SizedBox(),
               ],
             ),
           ),

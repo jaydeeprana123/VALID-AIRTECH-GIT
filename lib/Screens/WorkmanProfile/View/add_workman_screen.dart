@@ -20,6 +20,7 @@ import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/Controller/workman_profile_controller.dart';
+import 'package:valid_airtech/Screens/WorkmanProfile/Model/add_childern_model.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/create_workman_request.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
@@ -36,14 +37,17 @@ class _AddWorkmanScreenState extends State<AddWorkmanScreen> {
   WorkmanProfileController workmanController = Get.find<WorkmanProfileController>();
   String? selectedInstrumentName;
   DateTime? selectedDate;
+  String? selectedBloodGroup; // Initially null
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      workmanController.childrenList.clear();
+      workmanController.childrenList.add(AddChildrenModel());
 
-      workmanController.childrenList.add(TextEditingController());
+      clearField();
 
       // Perform navigation or state updates after build completes
     });
@@ -166,6 +170,32 @@ class _AddWorkmanScreenState extends State<AddWorkmanScreen> {
 
                 _buildDatePicker(),
 
+
+                SizedBox(
+                  height: 16,
+                ),
+
+
+                DropdownButton<String>(
+                  value: workmanController.bloodGroups
+                      .contains(selectedBloodGroup)
+                      ? selectedBloodGroup
+                      : null,
+                  // Ensure valid value
+                  hint: Text("Select Blood Group"),
+                  isExpanded: true,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedBloodGroup = newValue;
+                    });
+                  },
+                  items: workmanController.bloodGroups.map((String group) {
+                    return DropdownMenuItem<String>(
+                      value: group,
+                      child: Text(group),
+                    );
+                  }).toList(),
+                ),
 
                 SizedBox(
                   height: 16,
@@ -332,7 +362,7 @@ class _AddWorkmanScreenState extends State<AddWorkmanScreen> {
                               children: [
                                 Expanded(
                                   child:  _buildTextField(
-                                      workmanController.childrenList[i],
+                                      workmanController.childrenList[i].textEditingControllerName,
                                       'Children ${i + 1}'),),
 
 
@@ -344,7 +374,7 @@ class _AddWorkmanScreenState extends State<AddWorkmanScreen> {
                                 InkWell(
                                     onTap: () {
                                       workmanController.childrenList
-                                          .add(TextEditingController());
+                                          .add(AddChildrenModel());
                                       setState(() {});
                                     },
                                     child: Icon(
@@ -404,12 +434,13 @@ class _AddWorkmanScreenState extends State<AddWorkmanScreen> {
                       workmanController.createWorkmanRequest.value.motherAddharNo = workmanController.motherAadharCardNoController.value.text;
                       workmanController.createWorkmanRequest.value.wifeName = workmanController.wifeNameController.value.text;
                       workmanController.createWorkmanRequest.value.wifeAddharNo = workmanController.wifeAadharCardNoController.value.text;
+                      workmanController.createWorkmanRequest.value.bloodGroup =selectedBloodGroup;
 
                       workmanController.createWorkmanRequest.value.children = [];
                       
                       for(int i=0; i<workmanController.childrenList.length; i++){
                         Children child = Children();
-                        child.childrenName = workmanController.childrenList[i].text;
+                        child.childrenName = workmanController.childrenList[i].textEditingControllerName.text;
 
                         workmanController.createWorkmanRequest.value.children?.add(child);
 
@@ -639,4 +670,54 @@ class _AddWorkmanScreenState extends State<AddWorkmanScreen> {
     }
   }
 
+  void clearField() {
+    workmanController.nameController.value.text = "";
+    workmanController.userNameController.value.text = "";
+    workmanController.contactNoController.value.text = "";
+    workmanController.workmanNoController.value.text = "";
+    workmanController.permanentAddressController.value.text = "";
+    workmanController.residentAddressController.value.text = "";
+    workmanController.aadharCardNoController.value.text = "";
+    workmanController.licenseNoController.value.text = "";
+    workmanController.epfNoController.value.text = "";
+    workmanController.esiNoController.value.text = "";
+    workmanController.bankNameController.value.text = "";
+    workmanController.ifscCodeController.value.text = "";
+    workmanController.accountNoController.value.text = "";
+    workmanController.fatherNameController.value.text = "";
+    workmanController.fatherAadharCardNoController.value.text = "";
+    workmanController.motherNameController.value.text = "";
+    workmanController.motherAadharCardNoController.value.text = "";
+    workmanController.wifeNameController.value.text = "";
+    workmanController.wifeAadharCardNoController.value.text = "";
+    workmanController.birthDateController.value.text = "";
+
+
+  }
+
+
+  Widget buildDropdown(String label, List<String> items, RxString selectedValue) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+        Obx(() => DropdownButton<String>(
+          value: selectedValue.value,
+          isExpanded: true,
+          onChanged: (newValue) {
+            setState(() {
+              selectedValue.value = newValue!;
+            });
+          },
+          items: items.map((value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        )),
+        SizedBox(height: 10),
+      ],
+    );
+  }
 }
