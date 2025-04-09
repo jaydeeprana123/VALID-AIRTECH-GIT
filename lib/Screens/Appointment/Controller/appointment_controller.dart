@@ -5,10 +5,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:valid_airtech/Screens/Appointment/Model/appointment_contact_list_response.dart';
+import 'package:valid_airtech/Screens/Appointment/Model/appointment_list_response.dart';
+import 'package:valid_airtech/Screens/Appointment/Model/create_appointment_request.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
 
 import '../../../RepoDB/repositories/api_repository.dart';
 import '../../../Widget/common_widget.dart';
+import '../../../base_model.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/helper.dart';
 import '../../../utils/preference_utils.dart';
@@ -22,12 +26,15 @@ class AppointmentController extends GetxController {
   APIRepository postRepository = APIRepository();
   RxBool isLoading = false.obs;
   var errorMessage = ''.obs;
-
-
-
+  RxBool isEdit = false.obs;
   Rx<LoginData> loginData = LoginData().obs;
   RxList<SiteData> siteList = <SiteData>[].obs;
 
+  RxList<AppointmentData> appointmentList = <AppointmentData>[].obs;
+  Rx<AppointmentData> selectedAppointment = AppointmentData().obs;
+  RxList<AppointmentContactData> appointmentContactList = <AppointmentContactData>[].obs;
+
+  Rx<CreateAppointmentRequest> createAppointmentRequest = CreateAppointmentRequest().obs;
   Future getLoginData()async{
     loginData.value =  await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel)??LoginData();
 
@@ -37,7 +44,9 @@ class AppointmentController extends GetxController {
 
 
   /// site list api call
-  void callSiteList() async {
+  Future callSiteList() async {
+
+    printData("callSiteList", "callSiteList");
     try {
       isLoading.value = true;
 
@@ -61,6 +70,179 @@ class AppointmentController extends GetxController {
     }
   }
 
+  /// Contact list api call
+  Future callContactListList(String headId) async {
+    try {
+      isLoading.value = true;
+
+      AppointmentContactListResponse response = await postRepository.appointmentContactList(loginData.value.token??"", headId);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        appointmentContactList.value = response.data??[];
+      }else if(response.code == 401){
+        Helper().logout();
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Appointment list api call
+  void callAppointmentList() async {
+    try {
+      isLoading.value = true;
+
+      AppointmentListResponse response = await postRepository.appointmentList(loginData.value.token??"");
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        appointmentList.value = response.data??[];
+      }else if(response.code == 401){
+        Helper().logout();
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Appointment list by date api call
+  void callAppointmentListByDate(String date) async {
+    try {
+      isLoading.value = true;
+
+      AppointmentListResponse response = await postRepository.appointmentListByDate(loginData.value.token??"", date);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        appointmentList.value = response.data??[];
+      }else if(response.code == 401){
+        Helper().logout();
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+
+  /// Appointment create api call
+  Future<void> callCreateAppointment() async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.createAppointment(loginData.value.token ?? "",createAppointmentRequest.value);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.back();
+        Get.snackbar("Success", response.message??"");
+        printData("response", response.message??"");
+
+
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Appointment update api call
+  Future<void> callUpdateAppointment() async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.updateAppointment(loginData.value.token ?? "",createAppointmentRequest.value);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.back();
+        Get.snackbar("Success", response.message??"");
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Appointment delete api call
+  Future<void> callDeleteAppointment(String id) async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.deleteAppointment(loginData.value.token ?? "",id);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.back();
+        printData("response", response.message??"");
+
+        Get.snackbar("Success", "Appointment deleted successfully");
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
 
 
   @override

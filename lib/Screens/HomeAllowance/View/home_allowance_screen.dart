@@ -1,27 +1,39 @@
 import 'dart:developer';
-
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_list_by_date_screen.dart';
+import 'package:valid_airtech/Screens/HomeAllowance/controller/home_allowance_controller.dart';
 import 'package:valid_airtech/Screens/Planning/Controller/planning_controller.dart';
 import 'package:valid_airtech/Screens/Planning/View/add_plannig_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_list_screen.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
+import '../../../Widget/common_widget.dart';
+import 'add_home_allowance_screen.dart';
+import 'home_allowance_list_screen.dart';
 
-
-
-class PlanningScreen extends StatefulWidget {
+class HomeAllowanceScreen extends StatefulWidget {
   @override
-  _PlanningScreenState createState() => _PlanningScreenState();
+  _HomeAllowanceScreenState createState() => _HomeAllowanceScreenState();
 }
 
-class _PlanningScreenState extends State<PlanningScreen> {
+class _HomeAllowanceScreenState extends State<HomeAllowanceScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  PlanningController planningController = Get.put(PlanningController());
+  HomeAllowanceController homeAllowanceController =
+      Get.put(HomeAllowanceController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    homeAllowanceController.getLoginData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +44,13 @@ class _PlanningScreenState extends State<PlanningScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: color_secondary),
           onPressed: () {
-
-         Navigator.pop(context);
-
+            Navigator.pop(context);
           },
         ),
         title: Text(
           'Valid Airtech',
-          style: AppTextStyle.largeBold.copyWith(fontSize: 18
-            , color: color_secondary),
+          style: AppTextStyle.largeBold
+              .copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
         actions: [
@@ -58,9 +68,9 @@ class _PlanningScreenState extends State<PlanningScreen> {
             padding: EdgeInsets.symmetric(vertical: 10),
             child: Center(
               child: Text(
-                'Planning',
-                  style: AppTextStyle.largeBold.copyWith(fontSize: 16
-                      , color: Colors.white),
+                'Allowance',
+                style: AppTextStyle.largeBold
+                    .copyWith(fontSize: 16, color: Colors.white),
               ),
             ),
           ),
@@ -77,12 +87,12 @@ class _PlanningScreenState extends State<PlanningScreen> {
                     ),
                   ),
                   onPressed: () {
-                    Get.to(WorkReportListScreen());
+                    Get.to(HomeAllowanceListScreen());
                   },
                   child: Text(
                     'View All >',
-                    style:AppTextStyle.largeBold.copyWith(fontSize: 13
-                        , color: Colors.white),
+                    style: AppTextStyle.largeBold
+                        .copyWith(fontSize: 13, color: Colors.white),
                   ),
                 ),
                 ElevatedButton(
@@ -93,12 +103,12 @@ class _PlanningScreenState extends State<PlanningScreen> {
                     ),
                   ),
                   onPressed: () {
-                    Get.to(AddPlanningScreen());
+                    Get.to(AddHomeAllowanceScreen());
                   },
                   child: Text(
                     '+Add',
-                    style: AppTextStyle.largeBold.copyWith(fontSize: 13
-                        , color: Colors.white),
+                    style: AppTextStyle.largeBold
+                        .copyWith(fontSize: 13, color: Colors.white),
                   ),
                 ),
               ],
@@ -118,10 +128,17 @@ class _PlanningScreenState extends State<PlanningScreen> {
                   setState(() {
                     _selectedDay = selectedDay;
                     _focusedDay = focusedDay;
+
+                    String formattedDate =
+                        DateFormat('dd-MM-yyyy').format(selectedDay);
+                    printData("selected day", formattedDate);
+
+                    Get.to(HomeAllowanceListByDateScreen(
+                      date: formattedDate,
+                    ));
                   });
                 },
                 calendarStyle: CalendarStyle(
-
                   // todayDecoration: BoxDecoration(
                   //
                   //   color: Colors.green,
@@ -133,7 +150,6 @@ class _PlanningScreenState extends State<PlanningScreen> {
                   ),
                   defaultTextStyle: TextStyle(color: Colors.black),
                   weekendTextStyle: TextStyle(color: Colors.black),
-
                 ),
                 headerStyle: HeaderStyle(
                   formatButtonVisible: false,
@@ -143,9 +159,10 @@ class _PlanningScreenState extends State<PlanningScreen> {
                     fontWeight: FontWeight.bold,
                     color: color_secondary,
                   ),
-                  leftChevronIcon: Icon(Icons.chevron_left, color: color_secondary),
+                  leftChevronIcon:
+                      Icon(Icons.chevron_left, color: color_secondary),
                   rightChevronIcon:
-                  Icon(Icons.chevron_right, color: color_secondary),
+                      Icon(Icons.chevron_right, color: color_secondary),
                 ),
               ),
             ),

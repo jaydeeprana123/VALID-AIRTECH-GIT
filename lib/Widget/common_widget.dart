@@ -198,6 +198,9 @@ Future<String> selectPhoto(BuildContext context) async {
   return imagePathOfFile;
 }
 
+
+
+
 Future showImagePicker(context) {
   // imagePath = null;
   Future<void> future = showModalBottomSheet<void>(

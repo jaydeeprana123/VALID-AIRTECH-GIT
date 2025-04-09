@@ -52,7 +52,7 @@ class AdminLeaveRequestController extends GetxController {
   }
 
 
-  /// Instrument list api call
+  /// Workman list api call
   void callWorkmanList() async {
     try {
       isLoading.value = true;

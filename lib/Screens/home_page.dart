@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:valid_airtech/Screens/Appointment/View/appointment_screen.dart';
 import 'package:valid_airtech/Screens/Authentication/View/profile_screen_view.dart';
+import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_list_screen.dart';
+import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_screen.dart';
 import 'package:valid_airtech/Screens/Planning/View/planning_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_screen.dart';
 import 'package:valid_airtech/utils/helper.dart';
@@ -12,7 +14,9 @@ import '../Styles/my_colors.dart';
 import '../Styles/my_icons.dart';
 import 'AdminLeaveRequest/View/admin_leave_request_list_screen.dart';
 import 'AdminLeaveRequest/View/select_workman_calender_leave_request_screen.dart';
+import 'Circular/View/circular_list_screen.dart';
 import 'Master/View/master_index_screen.dart';
+import 'Notes/View/notes_screen.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -86,12 +90,20 @@ class HomePage extends StatelessWidget {
                 InkWell(onTap: (){
                   Get.to(WorkReportScreen());
                 },child: _buildGridItem('Work Report', Icons.work_history_outlined)),
-                _buildGridItem('Allowance', Icons.monetization_on_sharp),
+                InkWell(onTap: (){
+                  Get.to(HomeAllowanceScreen());
+                },child: _buildGridItem('Allowance', Icons.monetization_on_sharp)),
                 InkWell(onTap: (){
                   Get.to(SelectWorkmanLeaveRequestScreen());
                 },child: _buildGridItem('Leave Request', Icons.note_add_outlined)),
-                _buildGridItem('Note', Icons.note_alt),
-                _buildGridItem('Circular', Icons.newspaper),
+                InkWell(onTap: (){
+                  Get.to(NotesScreen());
+                },child: _buildGridItem('Note', Icons.note_alt)),
+                InkWell(
+                  onTap: (){
+                    Get.to(CircularListScreen());
+                  }
+                    ,child: _buildGridItem('Circular', Icons.newspaper)),
                 _buildGridItem('Query', Icons.contact_support),
               ],
             ),

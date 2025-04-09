@@ -1,14 +1,17 @@
 import 'dart:developer';
-
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Planning/Controller/planning_controller.dart';
 import 'package:valid_airtech/Screens/Planning/View/add_plannig_screen.dart';
+import 'package:valid_airtech/Screens/Planning/View/planning_list_by_date_screen.dart';
+import 'package:valid_airtech/Screens/Planning/View/planning_list_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_list_screen.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
+import '../../../Widget/common_widget.dart';
 
 
 
@@ -22,6 +25,14 @@ class _PlanningScreenState extends State<PlanningScreen> {
   DateTime? _selectedDay;
 
   PlanningController planningController = Get.put(PlanningController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+     planningController.getLoginData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +88,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                     ),
                   ),
                   onPressed: () {
-                    Get.to(WorkReportListScreen());
+                    Get.to(PlanningListScreen());
                   },
                   child: Text(
                     'View All >',
@@ -118,6 +129,15 @@ class _PlanningScreenState extends State<PlanningScreen> {
                   setState(() {
                     _selectedDay = selectedDay;
                     _focusedDay = focusedDay;
+
+                    String formattedDate =
+                    DateFormat('dd-MM-yyyy').format(selectedDay);
+                    printData("selected day", formattedDate);
+
+                    Get.to(PlanningListByDateScreen(
+                     date: formattedDate,
+                    ));
+
                   });
                 },
                 calendarStyle: CalendarStyle(

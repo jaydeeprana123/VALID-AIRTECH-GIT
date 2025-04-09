@@ -9,7 +9,7 @@ import 'package:valid_airtech/Screens/Allowance/Model/create_allowance_request.d
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/create_conveyance_request.dart';
 import 'package:valid_airtech/Screens/Head/Model/head_list_response.dart';
-import 'package:valid_airtech/Screens/HeadConveyance/Model/head_conveyance_list_response.dart';
+import 'package:valid_airtech/Screens/Conveyance/Model/head_conveyance_list_response.dart';
 import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controller.dart';
 import 'package:valid_airtech/Screens/Instruments/Model/create_instrument_request.dart';
 import 'package:valid_airtech/Screens/Instruments/Model/head_instrument_list_response.dart';

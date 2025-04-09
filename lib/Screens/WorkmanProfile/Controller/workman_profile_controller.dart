@@ -17,7 +17,6 @@ import '../../../utils/helper.dart';
 import '../../../utils/preference_utils.dart';
 import '../../../utils/share_predata.dart';
 import '../../Authentication/Model/login_response.dart';
-import '../../HeadConveyance/Model/head_conveyance_list_response.dart';
 import '../../Sites/Model/add_contact_model.dart';
 import '../Model/create_workman_request.dart';
 import '../Model/workman_list_response.dart';
@@ -46,6 +45,10 @@ class WorkmanProfileController extends GetxController {
   Rx<TextEditingController> birthDateController = TextEditingController().obs;
   Rx<TextEditingController> aadharCardNoController =
       TextEditingController().obs;
+  Rx<TextEditingController> startTimeController = TextEditingController().obs;
+
+  Rx<TextEditingController> endTimeController = TextEditingController().obs;
+
   Rx<TextEditingController> licenseNoController = TextEditingController().obs;
   Rx<TextEditingController> epfNoController = TextEditingController().obs;
   Rx<TextEditingController> esiNoController = TextEditingController().obs;
@@ -185,7 +188,7 @@ class WorkmanProfileController extends GetxController {
       if (response.status ?? false) {
         Get.back();
         printData("response", response.message ?? "");
-        Get.snackbar("Success", "Service deleted successfully");
+        Get.snackbar("Success", "Workman deleted successfully");
       } else if (response.code == 401) {
         Helper().logout();
       } else {

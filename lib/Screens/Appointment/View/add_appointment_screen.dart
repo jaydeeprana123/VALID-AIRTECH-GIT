@@ -5,14 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Appointment/Controller/appointment_controller.dart';
+import 'package:valid_airtech/Screens/Appointment/Model/appointment_contact_list_response.dart';
+import 'package:valid_airtech/Screens/Appointment/Model/create_appointment_request.dart';
 import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
-
-
+import '../../../Widget/common_widget.dart';
 
 class AddAppointmentScreen extends StatefulWidget {
   @override
@@ -20,8 +21,8 @@ class AddAppointmentScreen extends StatefulWidget {
 }
 
 class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
-
-  AppointmentController appointmentController = Get.find<AppointmentController>();
+  AppointmentController appointmentController =
+      Get.find<AppointmentController>();
 
   DateTime? selectedDate;
   TimeOfDay? siteInTime;
@@ -65,9 +66,10 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
   @override
   void initState() {
     super.initState();
+
+    appointmentController.appointmentContactList.clear();
     appointmentController.callSiteList();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,15 +80,13 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: color_secondary),
           onPressed: () {
-
             Navigator.pop(context);
-
           },
         ),
         title: Text(
           'Add Appointment',
-          style: AppTextStyle.largeBold.copyWith(fontSize: 18
-              , color: color_secondary),
+          style: AppTextStyle.largeBold
+              .copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
         actions: [
@@ -96,44 +96,99 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
           ),
         ],
       ),
-      body: Obx(() =>SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
+      body: Obx(() => Stack(
+        children: [
+          SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 16,
+                    ),
 
-            SizedBox(height: 16,),
+                    _buildDatePicker(),
 
-            _buildDatePicker(),
+                    SizedBox(
+                      height: 28,
+                    ),
 
+                    _buildDropdown(appointmentController.siteList, selectedSite,
+                        (val) {
 
-            SizedBox(height: 28,),
+                          setState(() {
+                            appointmentController.appointmentContactList.clear();
+                            selectedSite = val;
+                            contactPerson = null;
 
-            _buildDropdown(appointmentController.siteList, selectedSite, (val) => setState(() => selectedSite = val), "Select Site"),
-
-            SizedBox(height: 28,),
-         //   _buildDropdown(contactPersons, contactPerson, (val) => setState(() => contactPerson = val), "Select Contact Person"),
-
-
-            SizedBox(height: 20,),
-
-            // Login Button
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: 20, vertical: 20),
-              child: CommonButton(
-                titleText: "Save",
-                textColor: Colors.white,
-                onCustomButtonPressed: () async {
+                            printData("here", "contactPerson null");
+                          });
 
 
-                },
-                borderColor: color_primary,
-                borderWidth: 0,
+                          appointmentController.callContactListList(selectedSite??"");
+
+                        } , "Select Site"),
+
+                    SizedBox(
+                      height: 28,
+                    ),
+
+                    _buildDropdownContactList(appointmentController.appointmentContactList, contactPerson,
+                            (val) {
+
+                          setState(() {
+                            contactPerson = val;
+
+                          });
+
+                        } , "Select Contact Person"),
+
+
+
+                    SizedBox(
+                      height: 20,
+                    ),
+
+                    // Login Button
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      child: CommonButton(
+                        titleText: "Save",
+                        textColor: Colors.white,
+                        onCustomButtonPressed: () async {
+
+                          if(selectedDate == null){
+                            snackBar(context, "Select Date");
+                            return;
+                          }
+
+                          if(selectedSite == null){
+                            snackBar(context, "Select Site");
+                            return;
+                          }
+
+                          if(contactPerson == null){
+                            snackBar(context, "Select Contact Person");
+                            return;
+                          }
+
+
+                          appointmentController.createAppointmentRequest.value = CreateAppointmentRequest();
+                          appointmentController.createAppointmentRequest.value.siteId = selectedSite;
+                          appointmentController.createAppointmentRequest.value.headId = contactPerson;
+                          appointmentController.createAppointmentRequest.value.date = DateFormat('dd-MM-yyyy').format(selectedDate!);
+                          appointmentController.callCreateAppointment();
+
+                        },
+                        borderColor: color_primary,
+                        borderWidth: 0,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+         if(appointmentController.isLoading.value)Center(child: CircularProgressIndicator(),)
+        ],
       )),
     );
   }
@@ -141,8 +196,8 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: AppTextStyle.largeRegular.copyWith(fontSize: 17
-          , color: Colors.black),
+      style:
+          AppTextStyle.largeRegular.copyWith(fontSize: 17, color: Colors.black),
     );
   }
 
@@ -159,9 +214,14 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(selectedDate == null ? 'Select Appointment Date' : DateFormat('dd/MM/yyyy').format(selectedDate!),
-                style: AppTextStyle.largeMedium.copyWith(fontSize: 15
-                    , color: selectedDate == null ?color_hint_text:Colors.black)),
+            Text(
+                selectedDate == null
+                    ? 'Select Appointment Date'
+                    : DateFormat('dd/MM/yyyy').format(selectedDate!),
+                style: AppTextStyle.largeMedium.copyWith(
+                    fontSize: 15,
+                    color:
+                        selectedDate == null ? color_hint_text : Colors.black)),
             Icon(Icons.calendar_month_sharp, color: Colors.red),
           ],
         ),
@@ -169,19 +229,25 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
     );
   }
 
-  Widget _buildDropdown(List<SiteData> items, String? selectedValue, Function(String?) onChanged, String hint) {
+  Widget _buildDropdown(List<SiteData> items, String? selectedValue,
+      Function(String?) onChanged, String hint) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         contentPadding: EdgeInsets.only(bottom: 10),
         alignLabelWithHint: true,
 
-        labelText: hint, // Moves up as a floating label when a value is selected
-        floatingLabelBehavior: FloatingLabelBehavior.auto, // Auto float when selecting
-        hintText:hint, // Hint text
-        hintStyle:AppTextStyle.largeMedium.copyWith(fontSize: 15
-            , color: color_hint_text), // Hint text style
-        labelStyle:AppTextStyle.largeMedium.copyWith(fontSize: 15
-            , color: color_hint_text), // Hint text style
+        labelText: hint,
+        // Moves up as a floating label when a value is selected
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when selecting
+        hintText: hint,
+        // Hint text
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: Colors.grey), // Bottom-only border
         ),
@@ -190,12 +256,54 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
         ),
       ),
       value: selectedValue,
-      isExpanded: true, // Ensures dropdown takes full width
-      items: items.map((e) => DropdownMenuItem(value: e.id.toString(), child: Text(e.headName??""))).toList(),
+      isExpanded: true,
+      // Ensures dropdown takes full width
+      items: items
+          .map((e) => DropdownMenuItem(
+              value: e.id.toString(), child: Text(e.headName ?? "")))
+          .toList(),
       onChanged: onChanged,
     );
     ;
+  }
 
+
+  Widget _buildDropdownContactList(List<AppointmentContactData> items, String? selectedValue,
+      Function(String?) onChanged, String hint) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 10),
+        alignLabelWithHint: true,
+
+        labelText: hint,
+        // Moves up as a floating label when a value is selected
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when selecting
+        hintText: hint,
+        // Hint text
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey), // Bottom-only border
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue), // Bottom border on focus
+        ),
+      ),
+      value: selectedValue,
+      isExpanded: true,
+      // Ensures dropdown takes full width
+      items: items
+          .map((e) => DropdownMenuItem(
+          value: e.id.toString(), child: Text(e.contactName ?? "")))
+          .toList(),
+      onChanged: onChanged,
+    );
+    ;
   }
 
   Widget _buildTimePicker(String title, TimeOfDay? time, VoidCallback onTap) {
@@ -213,7 +321,7 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
               ),
             ),
           Container(
-            padding: EdgeInsets.only(bottom: 4,  right: 10),
+            padding: EdgeInsets.only(bottom: 4, right: 10),
             decoration: const BoxDecoration(
               border: Border(
                 bottom: BorderSide(color: Colors.grey), // Bottom-only border
@@ -235,8 +343,7 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
           ),
         ],
       ),
-    )
-    ;
+    );
   }
 
   Widget _buildTextField(TextEditingController controller, String hint) {
@@ -245,18 +352,18 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
       decoration: InputDecoration(
         contentPadding: EdgeInsets.only(bottom: 0),
         alignLabelWithHint: true,
-        labelText: hint, // Display hint as title when typing
+        labelText: hint,
+        // Display hint as title when typing
         hintText: hint,
-        floatingLabelBehavior: FloatingLabelBehavior.auto, // Auto float when typing
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when typing
         border: UnderlineInputBorder(),
-        hintStyle: AppTextStyle.largeRegular.copyWith(fontSize: 16
-            , color: color_hint_text) ,
+        hintStyle: AppTextStyle.largeRegular
+            .copyWith(fontSize: 16, color: color_hint_text),
 
-        labelStyle: AppTextStyle.largeRegular.copyWith(fontSize: 16
-            , color: color_hint_text) ,
+        labelStyle: AppTextStyle.largeRegular
+            .copyWith(fontSize: 16, color: color_hint_text),
       ),
     );
   }
 }
-
-

@@ -4,14 +4,23 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:valid_airtech/Screens/Conveyance/Model/conveyance_list_response.dart';
+import 'package:valid_airtech/Screens/Conveyance/Model/head_conveyance_list_response.dart';
+import 'package:valid_airtech/Screens/Instruments/Model/head_instrument_list_response.dart';
 import 'package:valid_airtech/Screens/Planning/Controller/planning_controller.dart';
+import 'package:valid_airtech/Screens/Planning/Model/add_planning_request.dart';
 import 'package:valid_airtech/Screens/Planning/Model/convey_model.dart';
 import 'package:valid_airtech/Screens/Planning/Model/instrument_model.dart';
 import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
+import 'package:valid_airtech/Screens/WorkmanProfile/Model/workman_list_response.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
+import '../../../Widget/common_widget.dart';
+import '../../Appointment/Model/appointment_contact_list_response.dart';
+import '../../Instruments/Model/isntrument_list_response.dart';
+import '../../Sites/Model/site_list_response.dart';
 
 class AddPlanningScreen extends StatefulWidget {
   @override
@@ -27,9 +36,6 @@ class _AddPlanningScreenState extends State<AddPlanningScreen> {
   String? selectedSite;
   String? contactPerson;
 
-  final List<String> siteOptions = ['Office', 'Factory', 'Field Work'];
-  final List<String> contactPersons = ['John Doe', 'Jane Smith', 'Bob Johnson'];
-  final List<String> conveyOptions = ['Bike', 'Motor', 'On Leave'];
 
   void _pickDate() async {
     DateTime? picked = await showDatePicker(
@@ -67,14 +73,23 @@ class _AddPlanningScreenState extends State<AddPlanningScreen> {
     super.initState();
 
 
-    planningController.instrumentList.clear();
-    planningController.instrumentList.add(InstrumentModel(null, null));
-    planningController.conveysList.clear();
-    planningController.conveysList.add(ConveyanceModel(null, null));
-    planningController.workmanList.clear();
-    planningController.workmanList.add(TextEditingController());
+    planningController.selectedInstrumentList.clear();
+    planningController.selectedInstrumentList.add(AddInstrumentForPlanning());
+    planningController.selectedConveysList.clear();
+    planningController.selectedConveysList.add(AddConveyanceForPlanning());
+    planningController.selectedWorkmanList.clear();
+    planningController.selectedWorkmanList.add(AddWorkman());
     planningController.notesList.clear();
     planningController.notesList.add(TextEditingController());
+
+
+    planningController.callSiteList();
+    planningController.callWorkmanList();
+    planningController.callHeadConveyanceList();
+    planningController.callConveyanceList();
+    planningController.callHeadInstrumentList();
+    planningController.callInstrumentList();
+
   }
 
   @override
@@ -102,346 +117,390 @@ class _AddPlanningScreenState extends State<AddPlanningScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 16,
-            ),
+      body: Obx(() =>Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 16,
+                ),
 
-            _buildDatePicker(),
+                _buildDatePicker(),
 
-            SizedBox(
-              height: 28,
-            ),
+                SizedBox(
+                  height: 28,
+                ),
 
-            _buildDropdown(siteOptions, selectedSite,
-                (val) => setState(() => selectedSite = val), "Select Site"),
+                _buildDropdownSite(planningController.siteList, selectedSite,
+                        (val) {
 
-            SizedBox(
-              height: 28,
-            ),
-            _buildDropdown(
-                contactPersons,
-                contactPerson,
-                (val) => setState(() => contactPerson = val),
-                "Select Contact Person"),
+                      setState(() {
+                        planningController.appointmentContactList.clear();
+                        selectedSite = val;
+                        contactPerson = null;
 
-            SizedBox(
-              height: 38,
-            ),
+                        printData("here", "contactPerson null");
+                      });
 
-            _buildSectionTitle("Workman's"),
 
-            SizedBox(
-              height: 4,
-            ),
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                border: Border.all(color: color_hint_text, width: 0.5),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Column(
-                children: [
-                  for (int i = 0;
-                      i < planningController.workmanList.length;
-                      i++)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                      planningController.callContactListList(selectedSite??"");
+
+                    } , "Select Site"),
+
+                SizedBox(
+                  height: 28,
+                ),
+
+                _buildDropdownContactList(planningController.appointmentContactList, contactPerson,
+                        (val) {
+
+                      setState(() {
+                        contactPerson = val;
+
+                      });
+
+                    } , "Select Contact Person"),
+
+
+                SizedBox(
+                  height: 38,
+                ),
+
+                _buildSectionTitle("Workman's"),
+
+                SizedBox(
+                  height: 4,
+                ),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: color_hint_text, width: 0.5),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Column(
+                    children: [
+                      for (int i = 0;
+                          i < planningController.selectedWorkmanList.length;
+                          i++)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                                child: _buildTextField(
-                                    planningController.workmanList[i],
-                                    'Workman ${i + 1}')),
-                             (i ==
-                                (planningController.workmanList.length - 1))?
-                              InkWell(
-                                  onTap: () {
-                                    planningController.workmanList
-                                        .add(TextEditingController());
-                                    setState(() {});
-                                  },
-                                  child: Icon(
-                                    Icons.add_circle,
-                                    size: 30,
-                                    color: color_brown_title,
-                                  )):InkWell(
-                                 onTap: () {
-                                   planningController.workmanList.removeAt(i);
-                                   setState(() {});
-                                 },
-                                 child: Icon(
-                                   Icons.remove_circle,
-                                   size: 30,
-                                   color: color_primary,
-                                 ))
-                          ],
-                        ),
-                        SizedBox(
-                          height: 12,
-                        ),
-                      ],
-                    )
-                ],
-              ),
-            ),
-
-            SizedBox(
-              height: 38,
-            ),
-
-            _buildSectionTitle("Conveyance's"),
-
-            SizedBox(
-              height: 4,
-            ),
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                border: Border.all(color: color_hint_text, width: 0.5),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Column(
-                children: [
-                  for (int i = 0;
-                      i < planningController.conveysList.length;
-                      i++)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                                child: Column(
+                            Row(
                               children: [
-                                _buildDropdown(
-                                    conveyOptions,
-                                    planningController.conveysList[i].through,
-                                    (val) =>
-                                        setState(() => planningController.conveysList[i].through = val),
-                                    "Conveyance Through ${i+1}"),
-                                SizedBox(
-                                  height: 12,
-                                ),
-                                _buildDropdown(
-                                    conveyOptions,
-                                    planningController.conveysList[i].name,
-                                        (val) =>
-                                        setState(() => planningController.conveysList[i].name = val),
-                                    "Conveyor Name ${i+1}"),
+                                Expanded(
+                                    child: _buildDropdownWorkman(planningController.workmanList, planningController.selectedWorkmanList[i].workmanId,
+                                            (val) {
+
+                                          setState(() {
+                                            planningController.selectedWorkmanList[i].workmanId = val;
+
+                                          });
+
+                                        } , "Workman ${i + 1}"),),
+                                 (i ==
+                                    (planningController.selectedWorkmanList.length - 1))?
+                                  InkWell(
+                                      onTap: () {
+                                        planningController.selectedWorkmanList
+                                            .add(AddWorkman());
+                                        setState(() {});
+                                      },
+                                      child: Icon(
+                                        Icons.add_circle,
+                                        size: 30,
+                                        color: color_brown_title,
+                                      )):InkWell(
+                                     onTap: () {
+                                       planningController.selectedWorkmanList.removeAt(i);
+                                       setState(() {});
+                                     },
+                                     child: Icon(
+                                       Icons.remove_circle,
+                                       size: 30,
+                                       color: color_primary,
+                                     ))
                               ],
-                            )),
-
-                             SizedBox(width: 12,),
-                             (i ==
-                                (planningController.conveysList.length - 1))?
-                              InkWell(
-                                  onTap: () {
-                                    planningController.conveysList
-                                        .add(ConveyanceModel(null, null));
-                                    setState(() {});
-                                  },
-                                  child: Icon(
-                                    Icons.add_circle,
-                                    size: 30,
-                                    color: color_brown_title,
-                                  )): InkWell(
-                                 onTap: () {
-                                   planningController.conveysList.removeAt(i);
-                                   setState(() {});
-                                 },
-                                 child: Icon(
-                                   Icons.remove_circle,
-                                   size: 30,
-                                   color: color_primary,
-                                 ))
+                            ),
+                            SizedBox(
+                              height: 12,
+                            ),
                           ],
-                        ),
-                        SizedBox(
-                          height: 24,
-                        ),
-                      ],
-                    )
-                ],
-              ),
-            ),
+                        )
+                    ],
+                  ),
+                ),
 
+                SizedBox(
+                  height: 38,
+                ),
 
-            SizedBox(
-              height: 38,
-            ),
+                _buildSectionTitle("Conveyance's"),
 
-            _buildSectionTitle("Instrument's"),
-
-            SizedBox(
-              height: 4,
-            ),
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                border: Border.all(color: color_hint_text, width: 0.5),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Column(
-                children: [
-                  for (int i = 0;
-                  i < planningController.instrumentList.length;
-                  i++)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                SizedBox(
+                  height: 4,
+                ),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: color_hint_text, width: 0.5),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Column(
+                    children: [
+                      for (int i = 0;
+                          i < planningController.selectedConveysList.length;
+                          i++)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                                child: Column(
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                    child: Column(
                                   children: [
-                                    _buildDropdown(
-                                        conveyOptions,
-                                        planningController.instrumentList[i].name,
-                                            (val) =>
-                                            setState(() => planningController.instrumentList[i].name = val),
-                                        "Instrument Name ${i+1}"),
+                                    _buildDropdownConveyThroughList(planningController.headConveysList, planningController.selectedConveysList[i].headId,
+                                            (val) {
+
+                                          setState(() {
+                                            planningController.selectedConveysList[i].headId = val;
+                                            planningController.filteredConveysList.clear();
+                                            planningController.callFilterConveyanceList(val??"");
+
+
+                                          });
+
+                                        } , "Conveyance Through ${i + 1}"),
                                     SizedBox(
                                       height: 12,
                                     ),
-                                    _buildDropdown(
-                                        conveyOptions,
-                                        planningController.instrumentList[i].idNo,
-                                            (val) =>
-                                            setState(() => planningController.instrumentList[i].idNo = val),
-                                        "Instrument ID NO. ${i+1}"),
+                                    _buildDropdownConveyorList(planningController.filteredConveysList, planningController.selectedConveysList[i].conveyanceId,
+                                            (val) {
+
+                                          setState(() {
+                                            planningController.selectedConveysList[i].conveyanceId = val;
+
+                                          });
+
+                                        } , "Conveyor Name ${i + 1}"),
                                   ],
                                 )),
 
-                             SizedBox(width: 12,),
-                             (i ==
-                                (planningController.instrumentList.length - 1))?
-                              InkWell(
-                                  onTap: () {
-                                    planningController.instrumentList
-                                        .add(InstrumentModel(null, null));
-                                    setState(() {});
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.only(left: 16),
+                                 SizedBox(width: 12,),
+                                 (i ==
+                                    (planningController.selectedConveysList.length - 1))?
+                                  InkWell(
+                                      onTap: () {
+                                        planningController.selectedConveysList
+                                            .add(AddConveyanceForPlanning());
+                                        setState(() {});
+                                      },
+                                      child: Icon(
+                                        Icons.add_circle,
+                                        size: 30,
+                                        color: color_brown_title,
+                                      )): InkWell(
+                                     onTap: () {
+                                       planningController.selectedConveysList.removeAt(i);
+                                       setState(() {});
+                                     },
+                                     child: Icon(
+                                       Icons.remove_circle,
+                                       size: 30,
+                                       color: color_primary,
+                                     ))
+                              ],
+                            ),
+                            SizedBox(
+                              height: 24,
+                            ),
+                          ],
+                        )
+                    ],
+                  ),
+                ),
+
+
+                SizedBox(
+                  height: 38,
+                ),
+
+                _buildSectionTitle("Instrument's"),
+
+                SizedBox(
+                  height: 4,
+                ),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: color_hint_text, width: 0.5),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Column(
+                    children: [
+                      for (int i = 0;
+                      i < planningController.selectedInstrumentList.length;
+                      i++)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                    child: Column(
+                                      children: [
+                                        _buildDropdownInstrumentHeadList(planningController.headInstrumentList, planningController.selectedInstrumentList[i].headId,
+                                                (val) {
+
+                                              setState(() {
+                                                planningController.selectedInstrumentList[i].headId = val;
+                                                planningController.filteredInstrumentList.clear();
+                                                planningController.callFilterInstrumentList(val??"");
+                                              });
+
+                                            } , "Instrument Name ${i + 1}"),
+                                        SizedBox(
+                                          height: 12,
+                                        ),
+                                        _buildDropdownInstrumentList(planningController.filteredInstrumentList, planningController.selectedInstrumentList[i].instrumentId,
+                                                (val) {
+
+                                              setState(() {
+                                                planningController.selectedInstrumentList[i].instrumentId = val;
+
+                                              });
+
+                                            } , "Instrument ID. ${i + 1}"),
+                                      ],
+                                    )),
+
+                                SizedBox(width: 12,),
+                                (i ==
+                                    (planningController.selectedInstrumentList.length - 1))?
+                                InkWell(
+                                    onTap: () {
+                                      planningController.selectedInstrumentList
+                                          .add(AddInstrumentForPlanning());
+                                      setState(() {});
+                                    },
                                     child: Icon(
                                       Icons.add_circle,
                                       size: 30,
                                       color: color_brown_title,
-                                    ),
-                                  )): InkWell(
-                                 onTap: () {
-                                   planningController.instrumentList.removeAt(i);
-                                   setState(() {});
-                                 },
-                                 child: Icon(
-                                   Icons.remove_circle,
-                                   size: 30,
-                                   color: color_primary,
-                                 ))
+                                    )): InkWell(
+                                    onTap: () {
+                                      planningController.selectedInstrumentList.removeAt(i);
+                                      setState(() {});
+                                    },
+                                    child: Icon(
+                                      Icons.remove_circle,
+                                      size: 30,
+                                      color: color_primary,
+                                    ))
+                              ],
+                            ),
+                            SizedBox(
+                              height: 24,
+                            ),
                           ],
-                        ),
-                        SizedBox(
-                          height: 24,
-                        ),
-                      ],
-                    )
-                ],
-              ),
-            ),
+                        )
+                    ],
+                  ),
+                ),
 
 
-            SizedBox(
-              height: 38,
-            ),
+                SizedBox(
+                  height: 38,
+                ),
 
-            _buildSectionTitle("Note's"),
+                _buildSectionTitle("Note's"),
 
-            SizedBox(
-              height: 4,
-            ),
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                border: Border.all(color: color_hint_text, width: 0.5),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Column(
-                children: [
-                  for (int i = 0;
-                  i < planningController.notesList.length;
-                  i++)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                SizedBox(
+                  height: 4,
+                ),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: color_hint_text, width: 0.5),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Column(
+                    children: [
+                      for (int i = 0;
+                      i < planningController.notesList.length;
+                      i++)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                                child: _buildTextField(
-                                    planningController.notesList[i],
-                                    'Note ${i + 1}')),
+                            Row(
+                              children: [
+                                Expanded(
+                                    child: _buildTextField(
+                                        planningController.notesList[i],
+                                        'Note ${i + 1}')),
 
-                             SizedBox(width: 12,),
+                                 SizedBox(width: 12,),
 
-                             (i ==
-                                (planningController.notesList.length - 1))?
-                              InkWell(
-                                  onTap: () {
-                                    planningController.notesList
-                                        .add(TextEditingController());
-                                    setState(() {});
-                                  },
-                                  child: Icon(
-                                    Icons.add_circle,
-                                    size: 30,
-                                    color: color_brown_title,
-                                  )):  InkWell(
-                                 onTap: () {
-                                   planningController.notesList.removeAt(i);
-                                   setState(() {});
-                                 },
-                                 child: Icon(
-                                   Icons.remove_circle,
-                                   size: 30,
-                                   color: color_primary,
-                                 ))
+                                 (i ==
+                                    (planningController.notesList.length - 1))?
+                                  InkWell(
+                                      onTap: () {
+                                        planningController.notesList
+                                            .add(TextEditingController());
+                                        setState(() {});
+                                      },
+                                      child: Icon(
+                                        Icons.add_circle,
+                                        size: 30,
+                                        color: color_brown_title,
+                                      )):  InkWell(
+                                     onTap: () {
+                                       planningController.notesList.removeAt(i);
+                                       setState(() {});
+                                     },
+                                     child: Icon(
+                                       Icons.remove_circle,
+                                       size: 30,
+                                       color: color_primary,
+                                     ))
+                              ],
+                            ),
+                            SizedBox(
+                              height: 12,
+                            ),
                           ],
-                        ),
-                        SizedBox(
-                          height: 12,
-                        ),
-                      ],
-                    )
-                ],
-              ),
-            ),
+                        )
+                    ],
+                  ),
+                ),
 
 
-            SizedBox(
-              height: 20,
-            ),
+                SizedBox(
+                  height: 20,
+                ),
 
-            // Login Button
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: CommonButton(
-                titleText: "Save",
-                textColor: Colors.white,
-                onCustomButtonPressed: () async {},
-                borderColor: color_primary,
-                borderWidth: 0,
-              ),
+                // Login Button
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: CommonButton(
+                    titleText: "Save",
+                    textColor: Colors.white,
+                    onCustomButtonPressed: () async {},
+                    borderColor: color_primary,
+                    borderWidth: 0,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+
+          if(planningController.isLoading.value)Center(child: CircularProgressIndicator(),)
+        ],
+      )),
     );
   }
 
@@ -468,7 +527,7 @@ class _AddPlanningScreenState extends State<AddPlanningScreen> {
           children: [
             Text(
                 selectedDate == null
-                    ? 'Select Appointment Date'
+                    ? 'Select Planning Date'
                     : DateFormat('dd/MM/yyyy').format(selectedDate!),
                 style: AppTextStyle.largeMedium.copyWith(
                     fontSize: 15,
@@ -480,6 +539,277 @@ class _AddPlanningScreenState extends State<AddPlanningScreen> {
       ),
     );
   }
+
+
+
+  Widget _buildDropdownWorkman(List<WorkmanData> items, String? selectedValue,
+      Function(String?) onChanged, String hint) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 10),
+        alignLabelWithHint: true,
+
+        labelText: hint,
+        // Moves up as a floating label when a value is selected
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when selecting
+        hintText: hint,
+        // Hint text
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey), // Bottom-only border
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue), // Bottom border on focus
+        ),
+      ),
+      value: selectedValue,
+      isExpanded: true,
+      // Ensures dropdown takes full width
+      items:
+      items.map((e) => DropdownMenuItem(value: e.id.toString(), child: Text(e.name??""))).toList(),
+      onChanged: onChanged,
+    );
+    ;
+  }
+
+  Widget _buildDropdownSite(List<SiteData> items, String? selectedValue,
+      Function(String?) onChanged, String hint) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 10),
+        alignLabelWithHint: true,
+
+        labelText: hint,
+        // Moves up as a floating label when a value is selected
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when selecting
+        hintText: hint,
+        // Hint text
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey), // Bottom-only border
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue), // Bottom border on focus
+        ),
+      ),
+      value: selectedValue,
+      isExpanded: true,
+      // Ensures dropdown takes full width
+      items: items
+          .map((e) => DropdownMenuItem(
+          value: e.id.toString(), child: Text(e.headName ?? "")))
+          .toList(),
+      onChanged: onChanged,
+    );
+    ;
+  }
+
+
+  Widget _buildDropdownContactList(List<AppointmentContactData> items, String? selectedValue,
+      Function(String?) onChanged, String hint) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 10),
+        alignLabelWithHint: true,
+
+        labelText: hint,
+        // Moves up as a floating label when a value is selected
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when selecting
+        hintText: hint,
+        // Hint text
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey), // Bottom-only border
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue), // Bottom border on focus
+        ),
+      ),
+      value: selectedValue,
+      isExpanded: true,
+      // Ensures dropdown takes full width
+      items: items
+          .map((e) => DropdownMenuItem(
+          value: e.id.toString(), child: Text(e.contactName ?? "")))
+          .toList(),
+      onChanged: onChanged,
+    );
+    ;
+  }
+
+  Widget _buildDropdownConveyThroughList(List<HeadConveyanceData> items, String? selectedValue,
+      Function(String?) onChanged, String hint) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 10),
+        alignLabelWithHint: true,
+
+        labelText: hint,
+        // Moves up as a floating label when a value is selected
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when selecting
+        hintText: hint,
+        // Hint text
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey), // Bottom-only border
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue), // Bottom border on focus
+        ),
+      ),
+      value: selectedValue,
+      isExpanded: true,
+      // Ensures dropdown takes full width
+      items: items
+          .map((e) => DropdownMenuItem(
+          value: e.id.toString(), child: Text(e.name ?? "")))
+          .toList(),
+      onChanged: onChanged,
+    );
+    ;
+  }
+
+  Widget _buildDropdownConveyorList(List<ConveyanceData> items, String? selectedValue,
+      Function(String?) onChanged, String hint) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 10),
+        alignLabelWithHint: true,
+
+        labelText: hint,
+        // Moves up as a floating label when a value is selected
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when selecting
+        hintText: hint,
+        // Hint text
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey), // Bottom-only border
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue), // Bottom border on focus
+        ),
+      ),
+      value: selectedValue,
+      isExpanded: true,
+      // Ensures dropdown takes full width
+      items: items
+          .map((e) => DropdownMenuItem(
+          value: e.id.toString(), child: Text(e.name ?? "")))
+          .toList(),
+      onChanged: onChanged,
+    );
+    ;
+  }
+
+
+
+  Widget _buildDropdownInstrumentHeadList(List<HeadInstrumentData> items, String? selectedValue,
+      Function(String?) onChanged, String hint) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 10),
+        alignLabelWithHint: true,
+
+        labelText: hint,
+        // Moves up as a floating label when a value is selected
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when selecting
+        hintText: hint,
+        // Hint text
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey), // Bottom-only border
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue), // Bottom border on focus
+        ),
+      ),
+      value: selectedValue,
+      isExpanded: true,
+      // Ensures dropdown takes full width
+      items: items
+          .map((e) => DropdownMenuItem(
+          value: e.id.toString(), child: Text(e.name ?? "")))
+          .toList(),
+      onChanged: onChanged,
+    );
+    ;
+  }
+
+  Widget _buildDropdownInstrumentList(List<InstrumentData> items, String? selectedValue,
+      Function(String?) onChanged, String hint) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 10),
+        alignLabelWithHint: true,
+
+        labelText: hint,
+        // Moves up as a floating label when a value is selected
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when selecting
+        hintText: hint,
+        // Hint text
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey), // Bottom-only border
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue), // Bottom border on focus
+        ),
+      ),
+      value: selectedValue,
+      isExpanded: true,
+      // Ensures dropdown takes full width
+      items: items
+          .map((e) => DropdownMenuItem(
+          value: e.id.toString(), child: Text(e.instrumentIdNo ?? "")))
+          .toList(),
+      onChanged: onChanged,
+    );
+    ;
+  }
+
+
 
   Widget _buildDropdown(List<String> items, String? selectedValue,
       Function(String?) onChanged, String hint) {

@@ -16,7 +16,7 @@ import '../../../utils/helper.dart';
 import '../../../utils/preference_utils.dart';
 import '../../../utils/share_predata.dart';
 import '../../Authentication/Model/login_response.dart';
-import '../../HeadConveyance/Model/head_conveyance_list_response.dart';
+import '../../Conveyance/Model/head_conveyance_list_response.dart';
 import '../../Sites/Model/add_contact_model.dart';
 import '../Model/convey_model.dart';
 import '../Model/create_instrument_request.dart';

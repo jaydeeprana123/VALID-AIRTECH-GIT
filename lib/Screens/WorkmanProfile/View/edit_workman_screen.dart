@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/create_conveyance_request.dart';
 import 'package:valid_airtech/Screens/Head/Model/head_list_response.dart';
-import 'package:valid_airtech/Screens/HeadConveyance/Model/head_conveyance_list_response.dart';
 import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controller.dart';
 import 'package:valid_airtech/Screens/Instruments/Model/create_instrument_request.dart';
 import 'package:valid_airtech/Screens/Instruments/Model/head_instrument_list_response.dart';
@@ -22,6 +21,7 @@ import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/Controller/workman_profile_controller.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/add_childern_model.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/create_workman_request.dart';
+import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
@@ -39,6 +39,9 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
   String? selectedInstrumentName;
   DateTime? selectedDate;
   String? selectedBloodGroup; // Initially null
+
+  TimeOfDay _selectedTime = TimeOfDay.now();
+  TimeOfDay selectedEndTime = TimeOfDay.now();
   @override
   void initState() {
     // TODO: implement initState
@@ -47,6 +50,16 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       workmanController.isEdit.value = false;
       workmanController.childrenList.clear();
+
+      if((workmanController.selectedWorkman.value.dateOfBirth??"").isNotEmpty){
+        DateFormat format = DateFormat("dd-MM-yyyy");
+        selectedDate = format.parse(workmanController.selectedWorkman.value.dateOfBirth??"");
+
+        setState(() {
+
+        });
+      }
+
       selectedBloodGroup =
           workmanController.selectedWorkman.value.bloodGroup ?? "";
       workmanController.nameController.value.text =
@@ -89,6 +102,11 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
           workmanController.selectedWorkman.value.wifeAddharNo ?? "";
       workmanController.birthDateController.value.text =
           workmanController.selectedWorkman.value.dateOfBirth ?? "";
+
+      workmanController.startTimeController.value.text =
+          workmanController.selectedWorkman.value.startTime ?? "";
+      workmanController.endTimeController.value.text =
+          workmanController.selectedWorkman.value.endTime ?? "";
 
       if ((workmanController.selectedWorkman.value.children ?? []).isNotEmpty) {
         for (int i = 0;
@@ -233,6 +251,7 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
                       height: 16,
                     ),
 
+
                     _buildTextField(
                         workmanController.aadharCardNoController.value,
                         "Aadhar Card No."),
@@ -240,6 +259,26 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
                     SizedBox(
                       height: 16,
                     ),
+
+
+                    _buildTextFieldOnlyReadableStartTime(
+                      workmanController.startTimeController.value,
+                      "Start Time"
+                    ),
+
+                    SizedBox(
+                      height: 16,
+                    ),
+
+
+                    _buildTextFieldOnlyReadableEndTime(
+                        workmanController.endTimeController.value,
+                        "End Time"
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+
 
                     DropdownButton<String>(
                       value: workmanController.bloodGroups
@@ -435,13 +474,27 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
                     ),
 
                     // Login Button
-                    Padding(
+                    workmanController.isEdit.value?Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                       child: CommonButton(
                         titleText: "Save",
                         textColor: Colors.white,
                         onCustomButtonPressed: () async {
+
+                         await validateWorkmanDetails(context);
+
+                          if(selectedBloodGroup == null){
+                            snackBar(context, "Select blood group");
+
+                            return;
+                          }
+
+                         if(selectedDate == null){
+                           snackBar(context, "Select DOB");
+                           return;
+                         }
+
                           workmanController.createWorkmanRequest.value =
                               CreateWorkmanRequest();
                           workmanController.createWorkmanRequest.value.id =
@@ -470,9 +523,14 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
                                   .createWorkmanRequest.value.residentAddress =
                               workmanController
                                   .residentAddressController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.dateOfBirth =
-                              DateFormat('dd-MM-yyyy').format(selectedDate!);
+
+                          if(selectedDate != null){
+                            workmanController
+                                .createWorkmanRequest.value.dateOfBirth =
+                                DateFormat('dd-MM-yyyy').format(selectedDate!);
+                          }
+
+
                           workmanController
                                   .createWorkmanRequest.value.addharNo =
                               workmanController
@@ -514,16 +572,21 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
                                   .createWorkmanRequest.value.wifeAddharNo =
                               workmanController
                                   .wifeAadharCardNoController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.bloodGroup =
-                              selectedBloodGroup;
+
+                          if(selectedBloodGroup != null){
+                            workmanController
+                                .createWorkmanRequest.value.bloodGroup =
+                            ((workmanController.bloodGroups.value.indexOf(selectedBloodGroup??"")) +1).toString();
+
+                          }
 
                           workmanController
-                              .createWorkmanRequest.value.startTime = workmanController.selectedWorkman.value.startTime??"";
+                              .createWorkmanRequest.value.startTime =  workmanController.startTimeController.value.text;
                           workmanController
-                              .createWorkmanRequest.value.endTime = workmanController.selectedWorkman.value.endTime??"";
+                              .createWorkmanRequest.value.endTime =  workmanController.endTimeController.value.text;
 
-
+                          workmanController
+                              .createWorkmanRequest.value.status = (workmanController.selectedWorkman.value.status == "Active")?"1":"0";
                           workmanController
                               .createWorkmanRequest.value.children = [];
 
@@ -550,7 +613,7 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
                         borderColor: color_primary,
                         borderWidth: 0,
                       ),
-                    ),
+                    ):SizedBox(),
                   ],
                 ),
               ),
@@ -706,6 +769,59 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
     );
   }
 
+  Widget _buildTextFieldOnlyReadableStartTime(TextEditingController controller, String hint) {
+    return TextField(
+      controller: controller,
+      readOnly: true, // Makes the field non-editable
+      onTap: (){
+        _selectTime(context);
+      },
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 0),
+        alignLabelWithHint: true,
+        labelText: hint,
+
+        // Display hint as title when typing
+        hintText: hint,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when typing
+        border: UnderlineInputBorder(),
+        hintStyle: AppTextStyle.largeRegular
+            .copyWith(fontSize: 16, color: color_hint_text),
+
+        labelStyle: AppTextStyle.largeRegular
+            .copyWith(fontSize: 16, color: color_hint_text),
+
+      ),
+    );
+  }
+  Widget _buildTextFieldOnlyReadableEndTime(TextEditingController controller, String hint) {
+    return TextField(
+      controller:  controller,
+      readOnly: true, // Makes the field non-editable
+      onTap: (){
+        selectTimeEnd(context);
+      },
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 0),
+        alignLabelWithHint: true,
+        labelText: hint,
+
+        // Display hint as title when typing
+        hintText: hint,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when typing
+        border: UnderlineInputBorder(),
+        hintStyle: AppTextStyle.largeRegular
+            .copyWith(fontSize: 16, color: color_hint_text),
+
+        labelStyle: AppTextStyle.largeRegular
+            .copyWith(fontSize: 16, color: color_hint_text),
+
+      ),
+    );
+  }
+
   Widget _buildMultilineTextField(
       TextEditingController controller, String hint) {
     return TextField(
@@ -771,5 +887,113 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
       });
     }
   }
+
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime,
+    );
+
+    if (picked != null && picked != _selectedTime) {
+      printData("picked","picked");
+      setState(() {
+        _selectedTime = picked;
+        final now = DateTime.now();
+        final formattedTime = DateFormat("HH:mm:ss").format(
+          DateTime(now.year, now.month, now.day, _selectedTime.hour, _selectedTime.minute),
+        );
+        workmanController.startTimeController.value.text = formattedTime;
+
+        printData("startTimeController",workmanController.startTimeController.value.text);
+      });
+    }else{
+
+      final now = DateTime.now();
+      final formattedTime = DateFormat("HH:mm:ss").format(
+        DateTime(now.year, now.month, now.day, _selectedTime.hour, _selectedTime.minute),
+      );
+
+      workmanController.startTimeController.value.text = formattedTime;
+      printData("picked","nnpicked");
+    }
+  }
+
+  Future<void> selectTimeEnd(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: selectedEndTime,
+
+    );
+
+    if (picked != null && picked != selectedEndTime) {
+      setState(() {
+
+
+
+        selectedEndTime = picked;
+        final now = DateTime.now();
+        final formattedTime = DateFormat("HH:mm:ss").format(
+          DateTime(now.year, now.month, now.day, selectedEndTime.hour, selectedEndTime.minute),
+        );
+
+        workmanController.endTimeController.value.text = formattedTime;
+      });
+    }else{
+      final now = DateTime.now();
+      final formattedTime = DateFormat("HH:mm:ss").format(
+        DateTime(now.year, now.month, now.day, selectedEndTime.hour, selectedEndTime.minute),
+      );
+
+      printData("picked","nnpicked" + (selectedEndTime.format(context)));
+      workmanController.endTimeController.value.text = formattedTime;
+    }
+  }
+
+
+  Future validateWorkmanDetails(BuildContext context) async{
+    // Define all controllers and their respective field names
+    Map<TextEditingController, String> fields = {
+      workmanController.nameController.value: "Please enter name",
+      workmanController.workmanPasswordController.value: "Please enter password",
+      workmanController.userNameController.value: "Please enter username",
+      workmanController.contactNoController.value: "Please enter contact number",
+      workmanController.workmanNoController.value: "Please enter workman number",
+      workmanController.permanentAddressController.value: "Please enter permanent address",
+      workmanController.residentAddressController.value: "Please enter resident address",
+      workmanController.aadharCardNoController.value: "Please enter Aadhar number",
+      workmanController.licenseNoController.value: "Please enter license number",
+      workmanController.epfNoController.value: "Please enter EPF number",
+      workmanController.esiNoController.value: "Please enter ESI number",
+      workmanController.bankNameController.value: "Please enter bank name",
+      workmanController.ifscCodeController.value: "Please enter IFSC code",
+      workmanController.accountNoController.value: "Please enter account number",
+      workmanController.fatherNameController.value: "Please enter father’s name",
+      workmanController.fatherAadharCardNoController.value: "Please enter father’s Aadhar number",
+      workmanController.motherNameController.value: "Please enter mother’s name",
+      workmanController.motherAadharCardNoController.value: "Please enter mother’s Aadhar number",
+      workmanController.wifeNameController.value: "Please enter wife’s name",
+      workmanController.wifeAadharCardNoController.value: "Please enter wife’s Aadhar number",
+      workmanController.birthDateController.value: "Please enter birth date",
+      workmanController.startTimeController.value: "Please enter start time",
+      workmanController.endTimeController.value: "Please enter end time",
+    };
+
+
+
+
+    // Loop through all controllers and validate
+    for (var entry in fields.entries) {
+      if (entry.key.text.trim().isEmpty) {
+        printData("fields", "isEmpty");
+        snackBar(context, entry.value); // Show respective error message
+        return;
+      }
+    }
+
+    // If all fields are filled, proceed
+    print("All fields are valid!");
+  }
+
 
 }

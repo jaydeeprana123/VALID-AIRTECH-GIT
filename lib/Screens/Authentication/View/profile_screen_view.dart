@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:valid_airtech/Screens/Authentication/Model/change_password_request.dart';
+import 'package:valid_airtech/Screens/Authentication/View/change_password_screen_view.dart';
 import 'package:valid_airtech/Screens/Authentication/View/edit_profile_screen_view.dart';
 import 'package:valid_airtech/Styles/my_colors.dart';
 import 'package:get/get.dart';
@@ -21,8 +23,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     loginController = Get.put(LoginController());
 
-    loginController.getLoginData();
+    initialize();
 
+  }
+
+  initialize()async{
+   await loginController.getLoginData();
+  // loginController.callProfileDetailsAPI();
   }
 
   @override
@@ -79,9 +86,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                profileButton(Icons.edit, "Edit Profile", color_primary),
+                profileButton(Icons.edit, "Edit Profile", color_primary, true),
                 const SizedBox(width: 10),
-                profileButton(Icons.help_outline, "Change Password", color_primary),
+                profileButton(Icons.help_outline, "Change Password", color_primary, false),
               ],
             ),
             const Spacer(),
@@ -114,11 +121,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget profileButton(IconData icon, String label, Color color) {
+  Widget profileButton(IconData icon, String label, Color color, bool isEdit) {
     return ElevatedButton.icon(
       onPressed: () {
 
-        Get.to(EditProfileScreen());
+        if(isEdit){
+          Get.to(EditProfileScreen());
+        }else{
+          Get.to(ChangePasswordScreen());
+        }
+
       },
       icon: Icon(icon, color: Colors.white),
       label: Text(label, style: AppTextStyle.largeRegular.copyWith(fontSize: 13, color: Colors.white)),

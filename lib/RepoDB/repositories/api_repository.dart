@@ -4,16 +4,23 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:valid_airtech/Screens/AdminLeaveRequest/Model/admin_leave_request_list_response.dart';
 import 'package:valid_airtech/Screens/Allowance/Model/allowance_list_response.dart';
+import 'package:valid_airtech/Screens/Appointment/Model/appointment_contact_list_response.dart';
+import 'package:valid_airtech/Screens/Appointment/Model/appointment_list_response.dart';
+import 'package:valid_airtech/Screens/Appointment/Model/create_appointment_request.dart';
 import 'package:valid_airtech/Screens/Authentication/Model/change_password_request.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/conveyance_list_response.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/create_conveyance_request.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/update_conveyance_request.dart';
 import 'package:valid_airtech/Screens/EmpLeaveRequest/Model/emp_leave_request_list_response.dart';
 import 'package:valid_airtech/Screens/Head/Model/create_head_request.dart';
-import 'package:valid_airtech/Screens/HeadConveyance/Model/head_conveyance_list_response.dart';
+import 'package:valid_airtech/Screens/Conveyance/Model/head_conveyance_list_response.dart';
+import 'package:valid_airtech/Screens/HomeAllowance/model/create_home_allowance_request.dart';
+import 'package:valid_airtech/Screens/HomeAllowance/model/home_allowance_list_response.dart';
 import 'package:valid_airtech/Screens/Instruments/Model/create_instrument_request.dart';
 import 'package:valid_airtech/Screens/Instruments/Model/head_instrument_list_response.dart';
 import 'package:valid_airtech/Screens/Instruments/Model/isntrument_list_response.dart';
+import 'package:valid_airtech/Screens/Notes/Model/create_notes_request.dart';
+import 'package:valid_airtech/Screens/Planning/Model/add_planning_request.dart';
 import 'package:valid_airtech/Screens/Service/Model/service_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/create_site_request.dart';
 import 'package:valid_airtech/Screens/Sites/Model/driver_list_response.dart';
@@ -23,15 +30,15 @@ import 'package:valid_airtech/Screens/Sites/Model/test_type_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/transportation_list_response.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/create_workman_request.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/workman_list_response.dart';
-
-
-
+import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../Screens/Allowance/Model/create_allowance_request.dart';
 import '../../Screens/Authentication/Model/login_request.dart';
 import '../../Screens/Authentication/Model/login_response.dart';
 import '../../Screens/Authentication/Model/reset_password_response.dart';
-
+import '../../Screens/Circular/Model/circular_list_response.dart';
 import '../../Screens/Head/Model/head_list_response.dart';
+import '../../Screens/Notes/Model/note_list_response.dart';
+import '../../Screens/Planning/Model/planning_list_response.dart';
 import '../../Screens/Service/Model/create_service_request.dart';
 import '../../base_model.dart';
 import 'api/api.dart';
@@ -82,7 +89,7 @@ class APIRepository {
       // var user = {'mail': email, "password" : password};
       var formData = FormData.fromMap(changePasswordRequest.toJson());
 
-      Response response = await api.dio.post("/profile/change-password",
+      Response response = await api.dio.post("/user/change-password",
           data: formData,
           options: Options(
             headers: {
@@ -127,8 +134,139 @@ class APIRepository {
     }
   }
 
+  /// Get Appointment List
+  Future<AppointmentListResponse> appointmentList(String token) async {
+    try {
+
+      Response response = await api.dio.get("/appointment/list",
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return AppointmentListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Get Appointment List By Date
+  Future<AppointmentListResponse> appointmentListByDate(String token, String date) async {
+    try {
+
+      var data = json.encode({
+        "date": date,
+      });
+
+      Response response = await api.dio.post("/appointment/calender-list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return AppointmentListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Get Appointment List By Date
+  Future<AppointmentContactListResponse> appointmentContactList(String token, String headId) async {
+    try {
+
+      var data = json.encode({
+        "head_id": headId,
+      });
+
+      Response response = await api.dio.post("/appointment/contact-list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return AppointmentContactListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
 
 
+
+
+
+  /// Create Appointment
+  Future<BaseModel> createAppointment(String token, CreateAppointmentRequest createAppointmentRequest) async {
+    try {
+      Response response = await api.dio.post("/appointment/create",
+          data: createAppointmentRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Update Appointment
+  Future<BaseModel> updateAppointment(String token, CreateAppointmentRequest createAppointmentRequest) async {
+    try {
+      Response response = await api.dio.post("/appointment/update",
+          data: createAppointmentRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Delete Appointment
+  Future<BaseModel> deleteAppointment(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/appointment/delete",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
 
   /// Get Site List
   Future<SiteListResponse> siteList(String token) async {
@@ -420,6 +558,46 @@ class APIRepository {
     }
   }
 
+  ///Home Allowance List
+  Future<HomeAllowanceListResponse> homeAllowanceList(String token) async {
+    try {
+
+      Response response = await api.dio.get("/home_allowance/list",
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return HomeAllowanceListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  ///Home Allowance List
+  Future<HomeAllowanceListResponse> homeAllowanceListByDate(String token, String date) async {
+    try {
+
+      var user = {"date": date};
+      var formData = FormData.fromMap(user);
+
+      Response response = await api.dio.post("/home_allowance/calender-list",
+          data: formData,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return HomeAllowanceListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
 
   /// Create Allowance
   Future<BaseModel> createAllowance(String token, CreateAllowanceRequest createAllowanceRequest) async {
@@ -428,6 +606,73 @@ class APIRepository {
 
       Response response = await api.dio.post("/allowance/create",
           data: createAllowanceRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Delete Allowance
+  Future<BaseModel> deleteHomeAllowance(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/home_allowance/delete",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Create Home Allowance
+  Future<BaseModel> createHomeAllowance(String token, CreateHomeAllowanceRequest createHomeAllowanceRequest) async {
+    try {
+      Response response = await api.dio.post("/home_allowance/create",
+          data: createHomeAllowanceRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Update Home Allowance
+  Future<BaseModel> updateHomeAllowance(String token, CreateHomeAllowanceRequest createHomeAllowanceRequest) async {
+    try {
+      Response response = await api.dio.post("/home_allowance/update",
+          data: createHomeAllowanceRequest.toJson(),
           options: Options(
             headers: {
               'Content-Type': 'application/json',
@@ -863,6 +1108,348 @@ class APIRepository {
       rethrow;
     }
   }
+
+
+
+
+  /// Note List
+  Future<NoteListResponse> noteList(String token, String empId) async {
+    try {
+      var user = {'emp_id': empId};
+      var formData = FormData.fromMap(user);
+      Response response = await api.dio.post("/note/list",
+          data: formData,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return NoteListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Note List
+  Future<NoteListResponse> noteListByDate(String token, String date, String empId) async {
+    try {
+
+      var user = {"date": date,'emp_id':empId};
+      var formData = FormData.fromMap(user);
+
+      Response response = await api.dio.post("/note/calender-list",
+          data: formData,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return NoteListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Create Note
+  Future<BaseModel> createNote(String token, CreateNotesRequest createNoteRequest) async {
+    try {
+      Response response = await api.dio.post("/note/create",
+          data: createNoteRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Update Note
+  Future<BaseModel> updateNote(String token, CreateNotesRequest createNoteRequest) async {
+    try {
+
+
+      Response response = await api.dio.post("/note/update",
+          data: createNoteRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Delete Note
+  Future<BaseModel> deleteNote(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/note/delete",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+
+  /// Planning List
+  Future<PlanningListResponse> planningList(String token) async {
+    try {
+
+      Response response = await api.dio.post("/planning/list",
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return PlanningListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Planning List
+  Future<PlanningListResponse> planningListByDate(String token, String date) async {
+    try {
+
+      var user = {"date": date};
+      var formData = FormData.fromMap(user);
+
+      Response response = await api.dio.post("/planning/calender-list",
+          data: formData,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return PlanningListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Create Planning
+  Future<BaseModel> createPlanning(String token, AddPlanningRequest addPlanningRequest) async {
+    try {
+      Response response = await api.dio.post("/planning/create",
+          data: addPlanningRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Update Planning
+  Future<BaseModel> updatePlanning(String token, AddPlanningRequest addPlanningRequest) async {
+    try {
+
+
+      Response response = await api.dio.post("/planning/update",
+          data: addPlanningRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Delete Planning
+  Future<BaseModel> deletePlanning(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/planning/delete",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+
+
+  /// Circular List
+  Future<CircularListResponse> circularList(String token, String empId) async {
+    try {
+      var user = {'emp_id': empId};
+      var formData = FormData.fromMap(user);
+      Response response = await api.dio.post("/employee-circular/list",
+          data: formData,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return CircularListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Create Circular
+  Future<BaseModel> createCircular(String token, String empId, String date,String title, String pdfPath,String fileName) async {
+    try {
+
+      printData("pdfPath 11", pdfPath);
+
+      var data = FormData.fromMap({
+        'pdf': [
+          await MultipartFile.fromFile(pdfPath, filename: fileName)
+        ],
+        'emp_id': empId,
+        'date': date,
+        'title': title
+      });
+
+      Response response = await api.dio.post("/employee-circular/create",
+          data: data ,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Update Circular
+  Future<BaseModel> updateCircular(String token, String id, String empId, String date,String title, String pdfPath) async {
+    try {
+
+      var data = FormData.fromMap({
+        if(pdfPath.isNotEmpty)'pdf': [
+          await MultipartFile.fromFile(pdfPath, filename: '')
+        ],
+        'id': id,
+        'emp_id': empId,
+        'date': date,
+        'title': title
+      });
+      Response response = await api.dio.post("/employee-circular/update",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Delete Circular
+  Future<BaseModel> deleteCircular(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/employee-circular/delete",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+
+
+
 
 
   /// Workman List

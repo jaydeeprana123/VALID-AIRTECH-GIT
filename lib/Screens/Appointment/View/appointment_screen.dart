@@ -1,13 +1,16 @@
 import 'dart:developer';
-
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Appointment/Controller/appointment_controller.dart';
 import 'package:valid_airtech/Screens/Appointment/View/add_appointment_screen.dart';
+import 'package:valid_airtech/Screens/Appointment/View/appointment_list_by_date_screen.dart';
+import 'package:valid_airtech/Screens/Appointment/View/appointment_list_screen.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
+import '../../../Widget/common_widget.dart';
 
 
 class AppointmentScreen extends StatefulWidget {
@@ -81,7 +84,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.to(AppointmentListScreen());
+                  },
                   child: Text(
                     'View All >',
                     style:AppTextStyle.largeBold.copyWith(fontSize: 13
@@ -123,6 +128,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   setState(() {
                     _selectedDay = selectedDay;
                     _focusedDay = focusedDay;
+
+                    String formattedDate =
+                    DateFormat('dd-MM-yyyy').format(selectedDay);
+                    printData("selected day", formattedDate);
+
+                    Get.to(AppointmentListByDateScreen(
+                      date: formattedDate,
+                    ));
                   });
                 },
                 calendarStyle: CalendarStyle(

@@ -52,7 +52,7 @@ class LoginController extends GetxController {
   Future getLoginData()async{
     loginData.value =  await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel)??LoginData();
 
-    callProfileDetailsAPI();
+    // callProfileDetailsAPI();
 
   }
 
