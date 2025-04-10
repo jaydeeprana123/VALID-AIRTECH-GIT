@@ -100,7 +100,7 @@ class PlanningController extends GetxController {
 
 
   /// Service list api call
-  void callServiceListList() async {
+  Future callServiceListList() async {
     try {
       isLoading.value = true;
 
@@ -177,7 +177,7 @@ class PlanningController extends GetxController {
   }
 
   /// Head Instrument list api call
-  void callHeadInstrumentList() async {
+  Future callHeadInstrumentList() async {
     try {
       isLoading.value = true;
 
@@ -204,7 +204,7 @@ class PlanningController extends GetxController {
   }
 
   /// Instrument list api call
-  void callInstrumentList() async {
+  Future callInstrumentList() async {
     try {
       isLoading.value = true;
 
@@ -231,7 +231,7 @@ class PlanningController extends GetxController {
   }
 
   /// Head Conveyance list api call
-  void callHeadConveyanceList() async {
+  Future callHeadConveyanceList() async {
     try {
       isLoading.value = true;
 
@@ -256,7 +256,7 @@ class PlanningController extends GetxController {
   }
 
   /// Conveyance list api call
-  void callConveyanceList() async {
+  Future callConveyanceList() async {
     try {
       isLoading.value = true;
 
@@ -352,7 +352,7 @@ class PlanningController extends GetxController {
 
 
   /// Workman list api call
-  void callWorkmanList() async {
+  Future callWorkmanList() async {
     try {
       isLoading.value = true;
 

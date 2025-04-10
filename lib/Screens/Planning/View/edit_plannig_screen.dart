@@ -74,8 +74,11 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
     super.initState();
     planningController.isEdit.value = false;
 
+    initiate();
+
     selectedSite = planningController.selectedPlanning.value.siteId.toString();
     contactPerson = planningController.selectedPlanning.value.headId.toString();
+
 
     if((planningController.selectedPlanning.value.workman??[]).isNotEmpty){
       for(int i=0; i<(planningController.selectedPlanning.value.workman??[]).length; i++){
@@ -95,6 +98,8 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
         addInstrumentForPlanning.id = planningController.selectedPlanning.value.instrument?[i].id.toString();
         addInstrumentForPlanning.headId = planningController.selectedPlanning.value.instrument?[i].headId.toString();
         addInstrumentForPlanning.instrumentId = planningController.selectedPlanning.value.instrument?[i].instrumentId.toString();
+
+        printData("addInstrumentForPlanning.headId", addInstrumentForPlanning.headId??"");
 
         planningController.selectedInstrumentList.add(addInstrumentForPlanning);
       }
@@ -167,13 +172,18 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
     }
 
 
-    planningController.callSiteList();
-    planningController.callWorkmanList();
-    planningController.callHeadConveyanceList();
-    planningController.callConveyanceList();
-    planningController.callHeadInstrumentList();
-    planningController.callInstrumentList();
-    planningController.callServiceListList();
+
+  }
+
+
+  initiate()async{
+   await planningController.callSiteList();
+   await planningController.callWorkmanList();
+   await planningController.callHeadConveyanceList();
+   await  planningController.callConveyanceList();
+   await  planningController.callHeadInstrumentList();
+   await planningController.callInstrumentList();
+   await  planningController.callServiceListList();
   }
 
   @override
