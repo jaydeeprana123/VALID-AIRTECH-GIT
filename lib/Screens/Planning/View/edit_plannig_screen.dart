@@ -23,12 +23,12 @@ import '../../Appointment/Model/appointment_contact_list_response.dart';
 import '../../Instruments/Model/isntrument_list_response.dart';
 import '../../Sites/Model/site_list_response.dart';
 
-class AddPlanningScreen extends StatefulWidget {
+class EditPlanningScreen extends StatefulWidget {
   @override
-  _AddPlanningScreenState createState() => _AddPlanningScreenState();
+  _EditPlanningScreenState createState() => _EditPlanningScreenState();
 }
 
-class _AddPlanningScreenState extends State<AddPlanningScreen> {
+class _EditPlanningScreenState extends State<EditPlanningScreen> {
   PlanningController planningController = Get.find<PlanningController>();
 
   DateTime? selectedDate;
@@ -72,23 +72,100 @@ class _AddPlanningScreenState extends State<AddPlanningScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    planningController.isEdit.value = false;
 
-    planningController.selectedInstrumentList.clear();
-    planningController.selectedInstrumentList.add(AddInstrumentForPlanning());
-    planningController.selectedConveysList.clear();
-    planningController.selectedConveysList.add(AddConveyanceForPlanning());
-    planningController.selectedWorkmanList.clear();
-    planningController.selectedWorkmanList.add(AddWorkman());
+    selectedSite = planningController.selectedPlanning.value.siteId.toString();
+    contactPerson = planningController.selectedPlanning.value.headId.toString();
 
-    planningController.addPlanningList.add(AddPlanningModel());
-    planningController.addPlanningList[0].system = [];
-    planningController.addPlanningList[0].system?.add(SystemAddPlanning());
-    planningController.addPlanningList[0].system?[0].service = [];
-    planningController.addPlanningList[0].system?[0].service
-        ?.add(ServiceAddPlanning());
+    if((planningController.selectedPlanning.value.workman??[]).isNotEmpty){
+      for(int i=0; i<(planningController.selectedPlanning.value.workman??[]).length; i++){
+        AddWorkman addWorkman = AddWorkman();
+        addWorkman.id = planningController.selectedPlanning.value.workman?[i].id.toString();
+        addWorkman.workmanId = planningController.selectedPlanning.value.workman?[i].workmanId.toString();
+        planningController.selectedWorkmanList.add(addWorkman);
+      }
+    }else{
+      planningController.selectedWorkmanList.add(AddWorkman());
+    }
 
-    planningController.notesList.clear();
-    planningController.notesList.add(NoteAddPlanning());
+
+    if((planningController.selectedPlanning.value.instrument??[]).isNotEmpty){
+      for(int i=0; i<(planningController.selectedPlanning.value.instrument??[]).length; i++){
+        AddInstrumentForPlanning addInstrumentForPlanning = AddInstrumentForPlanning();
+        addInstrumentForPlanning.id = planningController.selectedPlanning.value.instrument?[i].id.toString();
+        addInstrumentForPlanning.headId = planningController.selectedPlanning.value.instrument?[i].headId.toString();
+        addInstrumentForPlanning.instrumentId = planningController.selectedPlanning.value.instrument?[i].instrumentId.toString();
+
+        planningController.selectedInstrumentList.add(addInstrumentForPlanning);
+      }
+    }else{
+      planningController.selectedInstrumentList.add(AddInstrumentForPlanning());
+    }
+
+
+
+    if((planningController.selectedPlanning.value.conveyance??[]).isNotEmpty){
+      for(int i=0; i<(planningController.selectedPlanning.value.conveyance??[]).length; i++){
+        AddConveyanceForPlanning addConveyanceForPlanning = AddConveyanceForPlanning();
+        addConveyanceForPlanning.id = planningController.selectedPlanning.value.conveyance?[i].id.toString();
+        addConveyanceForPlanning.headId = planningController.selectedPlanning.value.conveyance?[i].headId.toString();
+        addConveyanceForPlanning.conveyanceId = planningController.selectedPlanning.value.conveyance?[i].conveyanceId.toString();
+
+        planningController.selectedConveysList.add(addConveyanceForPlanning);
+      }
+    }else{
+      planningController.selectedConveysList.add(AddConveyanceForPlanning());
+    }
+
+
+    if((planningController.selectedPlanning.value.planning??[]).isNotEmpty){
+      for(int i=0; i<(planningController.selectedPlanning.value.planning??[]).length; i++){
+        AddPlanningModel addPlanningModel = AddPlanningModel();
+        addPlanningModel.id = planningController.selectedPlanning.value.planning?[i].id.toString();
+        addPlanningModel.location = planningController.selectedPlanning.value.planning?[i].location??"";
+        addPlanningModel.locationTextEditingController.text = planningController.selectedPlanning.value.planning?[i].location??"";
+
+        addPlanningModel.system = [];
+
+        SystemAddPlanning systemAddPlanning =SystemAddPlanning();
+        systemAddPlanning.id = planningController.selectedPlanning.value.planning?[i].system?[0].id.toString();
+        systemAddPlanning.title = planningController.selectedPlanning.value.planning?[i].system?[0].title??"";
+        systemAddPlanning.airSystemTextEditingController.text = planningController.selectedPlanning.value.planning?[i].system?[0].title??"";
+        addPlanningModel.system?.add(systemAddPlanning);
+        addPlanningModel.system?[0].service = [];
+        for(int j=0; j<(planningController.selectedPlanning.value.planning?[i].system?[0].service??[]).length; j++){
+
+          ServiceAddPlanning serviceAddPlanning = ServiceAddPlanning();
+          serviceAddPlanning.id = planningController.selectedPlanning.value.planning?[i].system?[0].service?[j].id.toString();
+          serviceAddPlanning.serviceId = planningController.selectedPlanning.value.planning?[i].system?[0].service?[j].serviceId.toString();
+          addPlanningModel.system?[0].service?.add(serviceAddPlanning);
+        }
+
+        planningController.addPlanningList.add(addPlanningModel);
+      }
+    }else{
+      planningController.addPlanningList.add(AddPlanningModel());
+      planningController.addPlanningList[0].system = [];
+      planningController.addPlanningList[0].system?.add(SystemAddPlanning());
+      planningController.addPlanningList[0].system?[0].service = [];
+      planningController.addPlanningList[0].system?[0].service
+          ?.add(ServiceAddPlanning());
+    }
+
+
+    if((planningController.selectedPlanning.value.note??[]).isNotEmpty){
+      for(int i=0; i<(planningController.selectedPlanning.value.note??[]).length; i++){
+        NoteAddPlanning noteAddPlanning = NoteAddPlanning();
+        noteAddPlanning.id = planningController.selectedPlanning.value.note?[i].id.toString();
+        noteAddPlanning.title = planningController.selectedPlanning.value.note?[i].title??"";
+        noteAddPlanning.titleTextEditingController.text = planningController.selectedPlanning.value.note?[i].title??"";
+
+        planningController.notesList.add(noteAddPlanning);
+      }
+    }else{
+      planningController.notesList.add(NoteAddPlanning());
+    }
+
 
     planningController.callSiteList();
     planningController.callWorkmanList();
@@ -112,15 +189,45 @@ class _AddPlanningScreenState extends State<AddPlanningScreen> {
           },
         ),
         title: Text(
-          'Add Appointment',
+          'Edit Planning',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.home, color: color_secondary),
-            onPressed: () {},
+            icon: Icon(Icons.edit_calendar, color: color_secondary),
+            onPressed: () {
+              planningController.isEdit.value = true;
+            },
+          ),
+
+          IconButton(
+            icon: Icon(Icons.delete_forever, color: color_secondary),
+            onPressed: () {
+              Get.defaultDialog(
+                  title: "DELETE",
+                  middleText:
+                  "Are you sure want to delete this Planning?",
+                  barrierDismissible: false,
+                  titlePadding: const EdgeInsets.only(
+                      left: 20, right: 20, top: 10),
+                  textConfirm: "Yes",
+                  textCancel: "No",
+                  titleStyle: TextStyle(
+                      fontSize: 15),
+                  buttonColor: Colors.white,
+                  confirmTextColor: color_primary,
+                  onCancel: () {
+                    Navigator.pop(context);
+
+                  },
+                  onConfirm: () async {
+                    Navigator.pop(context);
+                    planningController.callDeletePlanning(planningController.selectedPlanning.value.id.toString());
+
+                  });
+            },
           ),
         ],
       ),
@@ -763,7 +870,7 @@ class _AddPlanningScreenState extends State<AddPlanningScreen> {
                     ),
 
                     // Login Button
-                    Padding(
+                    planningController.isEdit.value?Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                       child: CommonButton(
@@ -772,6 +879,8 @@ class _AddPlanningScreenState extends State<AddPlanningScreen> {
                         onCustomButtonPressed: () async {
                           planningController.addPlanningRequest.value =
                               AddPlanningRequest();
+
+                          planningController.addPlanningRequest.value.id = planningController.selectedPlanning.value.id.toString();
 
                           if (selectedDate != null) {
                             planningController.addPlanningRequest.value.date =
@@ -808,7 +917,7 @@ class _AddPlanningScreenState extends State<AddPlanningScreen> {
                         borderColor: color_primary,
                         borderWidth: 0,
                       ),
-                    ),
+                    ):SizedBox(),
                   ],
                 ),
               ),

@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+
 AddPlanningRequest addPlanningRequestFromJson(String str) => AddPlanningRequest.fromJson(json.decode(str));
 
 String addPlanningRequestToJson(AddPlanningRequest data) => json.encode(data.toJson());
@@ -16,8 +18,8 @@ class AddPlanningRequest {
   List<AddWorkman>? workman;
   List<AddConveyanceForPlanning>? conveyance;
   List<AddInstrumentForPlanning>? instrument;
-  List<Planning>? planning;
-  List<Note>? note;
+  List<AddPlanningModel>? planning;
+  List<NoteAddPlanning>? note;
   List<RemovedWorkman>? removedWorkman;
   List<RemovedConveyance>? removedConveyance;
   List<RemovedInstrument>? removedInstrument;
@@ -53,8 +55,8 @@ class AddPlanningRequest {
     workman: json["workman"] == null ? [] : List<AddWorkman>.from(json["workman"]!.map((x) => AddWorkman.fromJson(x))),
     conveyance: json["conveyance"] == null ? [] : List<AddConveyanceForPlanning>.from(json["conveyance"]!.map((x) => AddConveyanceForPlanning.fromJson(x))),
     instrument: json["instrument"] == null ? [] : List<AddInstrumentForPlanning>.from(json["instrument"]!.map((x) => AddInstrumentForPlanning.fromJson(x))),
-    planning: json["planning"] == null ? [] : List<Planning>.from(json["planning"]!.map((x) => Planning.fromJson(x))),
-    note: json["note"] == null ? [] : List<Note>.from(json["note"]!.map((x) => Note.fromJson(x))),
+    planning: json["planning"] == null ? [] : List<AddPlanningModel>.from(json["planning"]!.map((x) => AddPlanningModel.fromJson(x))),
+    note: json["note"] == null ? [] : List<NoteAddPlanning>.from(json["note"]!.map((x) => NoteAddPlanning.fromJson(x))),
     removedWorkman: json["removed_workman"] == null ? [] : List<RemovedWorkman>.from(json["removed_workman"]!.map((x) => RemovedWorkman.fromJson(x))),
     removedConveyance: json["removed_conveyance"] == null ? [] : List<RemovedConveyance>.from(json["removed_conveyance"]!.map((x) => RemovedConveyance.fromJson(x))),
     removedInstrument: json["removed_instrument"] == null ? [] : List<RemovedInstrument>.from(json["removed_instrument"]!.map((x) => RemovedInstrument.fromJson(x))),
@@ -132,16 +134,17 @@ class AddInstrumentForPlanning {
   };
 }
 
-class Note {
+class NoteAddPlanning {
   String? id;
   String? title;
+  TextEditingController titleTextEditingController = TextEditingController();
 
-  Note({
+  NoteAddPlanning({
     this.id,
     this.title,
   });
 
-  factory Note.fromJson(Map<String, dynamic> json) => Note(
+  factory NoteAddPlanning.fromJson(Map<String, dynamic> json) => NoteAddPlanning(
     id: json["id"],
     title: json["title"],
   );
@@ -152,21 +155,23 @@ class Note {
   };
 }
 
-class Planning {
+class AddPlanningModel {
   String? id;
   String? location;
-  List<System>? system;
+  TextEditingController locationTextEditingController = TextEditingController();
 
-  Planning({
+  List<SystemAddPlanning>? system;
+
+  AddPlanningModel({
     this.id,
     this.location,
     this.system,
   });
 
-  factory Planning.fromJson(Map<String, dynamic> json) => Planning(
+  factory AddPlanningModel.fromJson(Map<String, dynamic> json) => AddPlanningModel(
     id: json["id"],
     location: json["location"],
-    system: json["system"] == null ? [] : List<System>.from(json["system"]!.map((x) => System.fromJson(x))),
+    system: json["system"] == null ? [] : List<SystemAddPlanning>.from(json["system"]!.map((x) => SystemAddPlanning.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -176,21 +181,23 @@ class Planning {
   };
 }
 
-class System {
+class SystemAddPlanning {
   String? id;
   String? title;
-  List<Service>? service;
+  TextEditingController airSystemTextEditingController = TextEditingController();
 
-  System({
+  List<ServiceAddPlanning>? service;
+
+  SystemAddPlanning({
     this.id,
     this.title,
     this.service,
   });
 
-  factory System.fromJson(Map<String, dynamic> json) => System(
+  factory SystemAddPlanning.fromJson(Map<String, dynamic> json) => SystemAddPlanning(
     id: json["id"],
     title: json["title"],
-    service: json["service"] == null ? [] : List<Service>.from(json["service"]!.map((x) => Service.fromJson(x))),
+    service: json["service"] == null ? [] : List<ServiceAddPlanning>.from(json["service"]!.map((x) => ServiceAddPlanning.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -200,16 +207,16 @@ class System {
   };
 }
 
-class Service {
+class ServiceAddPlanning {
   String? id;
   String? serviceId;
 
-  Service({
+  ServiceAddPlanning({
     this.id,
     this.serviceId,
   });
 
-  factory Service.fromJson(Map<String, dynamic> json) => Service(
+  factory ServiceAddPlanning.fromJson(Map<String, dynamic> json) => ServiceAddPlanning(
     id: json["id"],
     serviceId: json["service_id"],
   );

@@ -18,6 +18,7 @@ import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controll
 import 'package:valid_airtech/Screens/Instruments/View/add_instrument_screen.dart';
 import 'package:valid_airtech/Screens/Notes/Controller/notes_controller.dart';
 import 'package:valid_airtech/Screens/Planning/Controller/planning_controller.dart';
+import 'package:valid_airtech/Screens/Planning/View/edit_plannig_screen.dart';
 import 'package:valid_airtech/Screens/Service/Controller/service_controller.dart';
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/View/add_site_screen.dart';
@@ -145,7 +146,7 @@ class _PlanningListByDateScreenState extends State<PlanningListByDateScreen> {
                     return InkWell(
                       onTap: (){
                         planningController.selectedPlanning.value = planningController.planningList[index];
-                        Get.to(EditAppointmentScreen())?.then((value) {
+                        Get.to(EditPlanningScreen())?.then((value) {
                           planningController.isLoading.value = false;
                           planningController.callPlanningListByDate(widget.date);
                         });

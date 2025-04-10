@@ -28,6 +28,7 @@ import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../AdminLeaveRequest/View/leave_filter_dialog.dart';
 import '../../Notes/View/edit_note_screen.dart';
+import 'edit_plannig_screen.dart';
 
 
 class PlanningListScreen extends StatefulWidget {
@@ -138,7 +139,7 @@ class _PlanningListScreenState extends State<PlanningListScreen> {
                     return InkWell(
                       onTap: (){
                         planningController.selectedPlanning.value = planningController.planningList[index];
-                        Get.to(EditAppointmentScreen())?.then((value) {
+                        Get.to(EditPlanningScreen())?.then((value) {
                           planningController.isLoading.value = false;
                           planningController.callPlanningListByDate("02-03-2025");
                         });

@@ -21,6 +21,7 @@ import '../../Conveyance/Model/conveyance_list_response.dart';
 import '../../Conveyance/Model/head_conveyance_list_response.dart';
 import '../../Instruments/Model/head_instrument_list_response.dart';
 import '../../Instruments/Model/isntrument_list_response.dart';
+import '../../Service/Model/service_list_response.dart';
 import '../../Sites/Model/site_list_response.dart';
 import '../../WorkmanProfile/Model/workman_list_response.dart';
 import '../Model/convey_model.dart';
@@ -32,8 +33,9 @@ import '../Model/planning_list_response.dart';
 class PlanningController extends GetxController {
   Rx<bool> isLoading = false.obs;
   var errorMessage = ''.obs;
+  RxBool isEdit = false.obs;
   APIRepository postRepository = APIRepository();
-  RxList<TextEditingController> notesList = <TextEditingController>[].obs;
+  RxList<NoteAddPlanning> notesList = <NoteAddPlanning>[].obs;
   Rx<AddPlanningRequest> addPlanningRequest = AddPlanningRequest().obs;
   RxList<WorkmanData> workmanList = <WorkmanData>[].obs;
   RxList<AddWorkman> selectedWorkmanList = <AddWorkman>[].obs;
@@ -53,6 +55,10 @@ class PlanningController extends GetxController {
   Rx<LoginData> loginData = LoginData().obs;
   RxList<SiteData> siteList = <SiteData>[].obs;
   RxList<AppointmentContactData> appointmentContactList = <AppointmentContactData>[].obs;
+
+  RxList<ServiceData> serviceList = <ServiceData>[].obs;
+  RxList<AddPlanningModel> addPlanningList = <AddPlanningModel>[].obs;
+
 
   final Rx<TextEditingController> controllerTrain = TextEditingController(text: "0")
       .obs;
@@ -92,6 +98,31 @@ class PlanningController extends GetxController {
     loginData.value =  await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel)??LoginData();
   }
 
+
+  /// Service list api call
+  void callServiceListList() async {
+    try {
+      isLoading.value = true;
+
+      ServiceListResponse response = await postRepository.serviceList(loginData.value.token??"");
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        serviceList.value = response.data??[];
+      } else if(response.code == 401){
+        Helper().logout();
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
 
   /// site list api call
   Future callSiteList() async {
@@ -285,6 +316,40 @@ class PlanningController extends GetxController {
     }
   }
 
+  /// Planning update api call
+  Future<void> callUpdatePlanning() async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.updatePlanning(loginData.value.token ?? "",addPlanningRequest.value);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.back();
+        Get.snackbar("Success", response.message??"");
+        printData("response", response.message??"");
+
+
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
 
   /// Workman list api call
   void callWorkmanList() async {
@@ -299,6 +364,40 @@ class PlanningController extends GetxController {
       if (response.status??false) {
 
         workmanList.value = response.data??[];
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+
+  /// Planning delete api call
+  Future<void> callDeletePlanning(String id) async {
+    try {
+      isLoading.value = true;
+
+      printData("site ", "api called");
+
+      BaseModel response =
+      await postRepository.deletePlanning(loginData.value.token ?? "",id);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        Get.back();
+        printData("response", response.message??"");
+
+        Get.snackbar("Success", "Planning deleted successfully");
       } else if (response.code == 401) {
         Helper().logout();
       }else {
