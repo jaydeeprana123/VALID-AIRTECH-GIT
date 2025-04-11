@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Authentication/Model/login_response.dart';
 import 'package:valid_airtech/Screens/Authentication/View/login_screen_view.dart';
+import 'package:valid_airtech/Screens/emp_home_page.dart';
 import 'package:valid_airtech/Screens/home_page.dart';
 import 'package:valid_airtech/Screens/login_screen.dart';
 import '../Styles/my_colors.dart';
@@ -74,7 +75,14 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel);
 
       if (loginResponseModel != null && ((loginResponseModel.userName??"").isNotEmpty)) {
-        Get.offAll(HomePage());
+
+        if(loginResponseModel.roleId == 1){
+          Get.offAll(HomePage());
+        }else{
+          Get.offAll(EmpHomePage());
+        }
+
+
       } else {
          Get.off(() => LoginScreenView());
       }

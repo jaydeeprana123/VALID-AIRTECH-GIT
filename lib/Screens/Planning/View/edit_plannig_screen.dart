@@ -70,110 +70,151 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     planningController.isEdit.value = false;
+    planningController.addPlanningRequest.value = AddPlanningRequest();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Safe to use context here
+      _initData(); // async method to handle initialization
+      // OR visitChildElements, show dialogs, etc.
+    });
 
-    initiate();
+
+  }
+
+  void _initData() async {
+    planningController.selectedConveysList.clear();
+    planningController.selectedInstrumentList.clear();
+    planningController.selectedWorkmanList.clear();
+    planningController.addPlanningList.clear();
+
+    if((planningController.selectedPlanning.value.date??"").isNotEmpty){
+      DateFormat format = DateFormat("dd-MM-yyyy");
+      selectedDate = format.parse(planningController.selectedPlanning.value.date??"");
+
+      setState(() {
+
+      });
+    }
+
+
+    await initiate(); // make sure all lists are loaded
 
     selectedSite = planningController.selectedPlanning.value.siteId.toString();
     contactPerson = planningController.selectedPlanning.value.headId.toString();
 
+    planningController
+        .callContactListList(selectedSite ?? "");
 
-    if((planningController.selectedPlanning.value.workman??[]).isNotEmpty){
-      for(int i=0; i<(planningController.selectedPlanning.value.workman??[]).length; i++){
-        AddWorkman addWorkman = AddWorkman();
-        addWorkman.id = planningController.selectedPlanning.value.workman?[i].id.toString();
-        addWorkman.workmanId = planningController.selectedPlanning.value.workman?[i].workmanId.toString();
-        planningController.selectedWorkmanList.add(addWorkman);
+
+    // Workman
+    if ((planningController.selectedPlanning.value.workman ?? []).isNotEmpty) {
+      for (var item in planningController.selectedPlanning.value.workman!) {
+        planningController.selectedWorkmanList.add(
+          AddWorkman()
+            ..id = item.id.toString()
+            ..workmanId = item.workmanId.toString(),
+        );
       }
-    }else{
+    } else {
       planningController.selectedWorkmanList.add(AddWorkman());
     }
 
+    // Instrument
+    if ((planningController.selectedPlanning.value.instrument ?? []).isNotEmpty) {
+      for (var item in planningController.selectedPlanning.value.instrument!) {
 
-    if((planningController.selectedPlanning.value.instrument??[]).isNotEmpty){
-      for(int i=0; i<(planningController.selectedPlanning.value.instrument??[]).length; i++){
         AddInstrumentForPlanning addInstrumentForPlanning = AddInstrumentForPlanning();
-        addInstrumentForPlanning.id = planningController.selectedPlanning.value.instrument?[i].id.toString();
-        addInstrumentForPlanning.headId = planningController.selectedPlanning.value.instrument?[i].headId.toString();
-        addInstrumentForPlanning.instrumentId = planningController.selectedPlanning.value.instrument?[i].instrumentId.toString();
+        addInstrumentForPlanning.id = item.id.toString();
+        addInstrumentForPlanning.headId = item.headId.toString();
+        addInstrumentForPlanning.instrumentId = item.instrumentId.toString();
 
-        printData("addInstrumentForPlanning.headId", addInstrumentForPlanning.headId??"");
+        addInstrumentForPlanning = await planningController.callFilterInstrumentListAndGet(item.headId.toString(), addInstrumentForPlanning);
 
         planningController.selectedInstrumentList.add(addInstrumentForPlanning);
+
+        setState(() {
+
+        });
+
       }
-    }else{
+    } else {
       planningController.selectedInstrumentList.add(AddInstrumentForPlanning());
     }
 
+    // Conveyance
+    if ((planningController.selectedPlanning.value.conveyance ?? []).isNotEmpty) {
 
+      final conveyanceList = planningController.selectedPlanning.value.conveyance ?? [];
+      for (int i = 0; i < conveyanceList.length; i++) {
+        var item = conveyanceList[i];
 
-    if((planningController.selectedPlanning.value.conveyance??[]).isNotEmpty){
-      for(int i=0; i<(planningController.selectedPlanning.value.conveyance??[]).length; i++){
         AddConveyanceForPlanning addConveyanceForPlanning = AddConveyanceForPlanning();
-        addConveyanceForPlanning.id = planningController.selectedPlanning.value.conveyance?[i].id.toString();
-        addConveyanceForPlanning.headId = planningController.selectedPlanning.value.conveyance?[i].headId.toString();
-        addConveyanceForPlanning.conveyanceId = planningController.selectedPlanning.value.conveyance?[i].conveyanceId.toString();
+        addConveyanceForPlanning.id = item.id.toString();
+        addConveyanceForPlanning.headId = item.headId.toString();
+        addConveyanceForPlanning.conveyanceId = item.conveyanceId.toString();
+
+        addConveyanceForPlanning = await planningController.callFilterConveyanceListAndGet(item.headId.toString(), addConveyanceForPlanning);
 
         planningController.selectedConveysList.add(addConveyanceForPlanning);
+
+        setState(() {
+
+        });
+
       }
-    }else{
+
+
+    } else {
       planningController.selectedConveysList.add(AddConveyanceForPlanning());
     }
 
+    // Planning
+    if ((planningController.selectedPlanning.value.planning ?? []).isNotEmpty) {
+      for (var pItem in planningController.selectedPlanning.value.planning!) {
+        final addPlanning = AddPlanningModel()
+          ..id = pItem.id.toString()
+          ..location = pItem.location ?? ""
+          ..locationTextEditingController.text = pItem.location ?? ""
+          ..system = [];
 
-    if((planningController.selectedPlanning.value.planning??[]).isNotEmpty){
-      for(int i=0; i<(planningController.selectedPlanning.value.planning??[]).length; i++){
-        AddPlanningModel addPlanningModel = AddPlanningModel();
-        addPlanningModel.id = planningController.selectedPlanning.value.planning?[i].id.toString();
-        addPlanningModel.location = planningController.selectedPlanning.value.planning?[i].location??"";
-        addPlanningModel.locationTextEditingController.text = planningController.selectedPlanning.value.planning?[i].location??"";
+        final system = SystemAddPlanning()
+          ..id = pItem.system?[0].id.toString()
+          ..title = pItem.system?[0].title ?? ""
+          ..airSystemTextEditingController.text = pItem.system?[0].title ?? ""
+          ..service = [];
 
-        addPlanningModel.system = [];
-
-        SystemAddPlanning systemAddPlanning =SystemAddPlanning();
-        systemAddPlanning.id = planningController.selectedPlanning.value.planning?[i].system?[0].id.toString();
-        systemAddPlanning.title = planningController.selectedPlanning.value.planning?[i].system?[0].title??"";
-        systemAddPlanning.airSystemTextEditingController.text = planningController.selectedPlanning.value.planning?[i].system?[0].title??"";
-        addPlanningModel.system?.add(systemAddPlanning);
-        addPlanningModel.system?[0].service = [];
-        for(int j=0; j<(planningController.selectedPlanning.value.planning?[i].system?[0].service??[]).length; j++){
-
-          ServiceAddPlanning serviceAddPlanning = ServiceAddPlanning();
-          serviceAddPlanning.id = planningController.selectedPlanning.value.planning?[i].system?[0].service?[j].id.toString();
-          serviceAddPlanning.serviceId = planningController.selectedPlanning.value.planning?[i].system?[0].service?[j].serviceId.toString();
-          addPlanningModel.system?[0].service?.add(serviceAddPlanning);
+        for (var sItem in pItem.system?[0].service ?? []) {
+          system.service?.add(ServiceAddPlanning()
+            ..id = sItem.id.toString()
+            ..serviceId = sItem.serviceId.toString());
         }
 
-        planningController.addPlanningList.add(addPlanningModel);
+        addPlanning.system?.add(system);
+        planningController.addPlanningList.add(addPlanning);
       }
-    }else{
-      planningController.addPlanningList.add(AddPlanningModel());
-      planningController.addPlanningList[0].system = [];
-      planningController.addPlanningList[0].system?.add(SystemAddPlanning());
-      planningController.addPlanningList[0].system?[0].service = [];
-      planningController.addPlanningList[0].system?[0].service
-          ?.add(ServiceAddPlanning());
+    } else {
+      planningController.addPlanningList.add(AddPlanningModel()
+        ..system = [
+          SystemAddPlanning()..service = [ServiceAddPlanning()]
+        ]);
     }
 
-
-    if((planningController.selectedPlanning.value.note??[]).isNotEmpty){
-      for(int i=0; i<(planningController.selectedPlanning.value.note??[]).length; i++){
-        NoteAddPlanning noteAddPlanning = NoteAddPlanning();
-        noteAddPlanning.id = planningController.selectedPlanning.value.note?[i].id.toString();
-        noteAddPlanning.title = planningController.selectedPlanning.value.note?[i].title??"";
-        noteAddPlanning.titleTextEditingController.text = planningController.selectedPlanning.value.note?[i].title??"";
-
-        planningController.notesList.add(noteAddPlanning);
+    // Notes
+    if ((planningController.selectedPlanning.value.note ?? []).isNotEmpty) {
+      for (var note in planningController.selectedPlanning.value.note!) {
+        planningController.notesList.add(
+          NoteAddPlanning()
+            ..id = note.id.toString()
+            ..title = note.title ?? ""
+            ..titleTextEditingController.text = note.title ?? "",
+        );
       }
-    }else{
+    } else {
       planningController.notesList.add(NoteAddPlanning());
     }
-
-
-
   }
+
 
 
   initiate()async{
@@ -342,6 +383,11 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
                                             ))
                                         : InkWell(
                                             onTap: () {
+
+                                              planningController.addPlanningRequest.value.removedWorkman ??= [];
+                                              planningController.addPlanningRequest.value.removedWorkman?.add(RemovedWorkmanAddPlanning(removedWorkmanId: planningController
+                                                  .selectedWorkmanList[i].id));
+
                                               planningController
                                                   .selectedWorkmanList
                                                   .removeAt(i);
@@ -401,12 +447,12 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
                                             planningController
                                                 .selectedConveysList[i]
                                                 .headId = val;
-                                            planningController
+                                            planningController.selectedConveysList[i]
                                                 .filteredConveysList
                                                 .clear();
                                             planningController
                                                 .callFilterConveyanceList(
-                                                    val ?? "");
+                                                    val ?? "", i);
                                           });
                                         }, "Conveyance Through ${i + 1}"),
                                         SizedBox(
@@ -414,6 +460,7 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
                                         ),
                                         _buildDropdownConveyorList(
                                             planningController
+                                                .selectedConveysList[i]
                                                 .filteredConveysList,
                                             planningController
                                                 .selectedConveysList[i]
@@ -449,6 +496,11 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
                                             ))
                                         : InkWell(
                                             onTap: () {
+
+                                              planningController.addPlanningRequest.value.removedConveyance ??= [];
+                                              planningController.addPlanningRequest.value.removedConveyance?.add(RemovedConveyance(removedConveyanceId: planningController
+                                                  .selectedConveysList[i].id));
+
                                               planningController
                                                   .selectedConveysList
                                                   .removeAt(i);
@@ -512,11 +564,12 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
                                                 .selectedInstrumentList[i]
                                                 .headId = val;
                                             planningController
+                                                .selectedInstrumentList[i]
                                                 .filteredInstrumentList
                                                 .clear();
                                             planningController
                                                 .callFilterInstrumentList(
-                                                    val ?? "");
+                                                    val ?? "", i);
                                           });
                                         }, "Instrument Name ${i + 1}"),
                                         SizedBox(
@@ -524,6 +577,7 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
                                         ),
                                         _buildDropdownInstrumentList(
                                             planningController
+                                                .selectedInstrumentList[i]
                                                 .filteredInstrumentList,
                                             planningController
                                                 .selectedInstrumentList[i]
@@ -559,6 +613,11 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
                                             ))
                                         : InkWell(
                                             onTap: () {
+
+                                              planningController.addPlanningRequest.value.removedInstrument ??= [];
+                                              planningController.addPlanningRequest.value.removedInstrument?.add(RemovedInstrument(removedInstrumentId: planningController
+                                                  .selectedInstrumentList[i].id));
+
                                               planningController
                                                   .selectedInstrumentList
                                                   .removeAt(i);
@@ -705,6 +764,13 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
                                                                     .add(
                                                                         ServiceAddPlanning());
                                                               } else {
+
+                                                                planningController.addPlanningRequest.value.removedService ??= [];
+                                                                planningController.addPlanningRequest.value.removedService?.add(RemovedService(removedServiceId:  planningController
+                                                                    .addPlanningList[
+                                                                i]
+                                                                    .system![0]
+                                                                    .service?[j].id));
                                                                 planningController
                                                                     .addPlanningList[
                                                                         i]
@@ -774,6 +840,12 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
                                           planningController.addPlanningList
                                               .add(newPlanning);
                                         } else {
+
+
+                                          planningController.addPlanningRequest.value.removedPlanning ??= [];
+                                          planningController.addPlanningRequest.value.removedPlanning?.add(RemovedPlanning(removedPlanningId: planningController
+                                              .addPlanningList[i].id));
+
                                           planningController.addPlanningList
                                               .removeAt(i);
                                         }
@@ -855,6 +927,11 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
                                             ))
                                         : InkWell(
                                             onTap: () {
+
+                                              planningController.addPlanningRequest.value.removedNote ??= [];
+                                              planningController.addPlanningRequest.value.removedNote?.add(RemovedNote(removedNoteId: planningController
+                                                  .notesList[i].id));
+
                                               planningController.notesList
                                                   .removeAt(i);
                                               setState(() {});
@@ -887,8 +964,6 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
                         titleText: "Save",
                         textColor: Colors.white,
                         onCustomButtonPressed: () async {
-                          planningController.addPlanningRequest.value =
-                              AddPlanningRequest();
 
                           planningController.addPlanningRequest.value.id = planningController.selectedPlanning.value.id.toString();
 
@@ -921,7 +996,7 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
 
                           planningController.addPlanningRequest.value.note = planningController.notesList;
 
-                          planningController.callCreatePlanning();
+                          planningController.callUpdatePlanning();
 
                         },
                         borderColor: color_primary,

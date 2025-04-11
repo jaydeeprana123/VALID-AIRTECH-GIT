@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Authentication/View/login_screen_view.dart';
+import 'package:valid_airtech/Screens/emp_home_page.dart';
 import 'package:valid_airtech/Screens/home_page.dart';
 
 import '../../../RepoDB/repositories/api_repository.dart';
@@ -81,7 +82,13 @@ class LoginController extends GetxController {
         await MySharedPref().setLoginModel(
             loginData, SharePreData.keySaveLoginModel);
 
-        Get.offAll(HomePage());
+        if(loginData.roleId == 1){
+          Get.offAll(HomePage());
+        }else{
+          Get.offAll(EmpHomePage());
+        }
+
+
       } else {
         errorMessage.value = response.message ?? 'Unknown error';
         Get.snackbar('Error', errorMessage.value);

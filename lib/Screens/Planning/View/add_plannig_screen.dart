@@ -285,11 +285,12 @@ class _AddPlanningScreenState extends State<AddPlanningScreen> {
                                                 .selectedConveysList[i]
                                                 .headId = val;
                                             planningController
+                                                .selectedConveysList[i]
                                                 .filteredConveysList
                                                 .clear();
                                             planningController
                                                 .callFilterConveyanceList(
-                                                    val ?? "");
+                                                    val ?? "", i);
                                           });
                                         }, "Conveyance Through ${i + 1}"),
                                         SizedBox(
@@ -297,6 +298,7 @@ class _AddPlanningScreenState extends State<AddPlanningScreen> {
                                         ),
                                         _buildDropdownConveyorList(
                                             planningController
+                                                .selectedConveysList[i]
                                                 .filteredConveysList,
                                             planningController
                                                 .selectedConveysList[i]
@@ -394,19 +396,19 @@ class _AddPlanningScreenState extends State<AddPlanningScreen> {
                                             planningController
                                                 .selectedInstrumentList[i]
                                                 .headId = val;
-                                            planningController
+                                            planningController.selectedInstrumentList[i]
                                                 .filteredInstrumentList
                                                 .clear();
                                             planningController
                                                 .callFilterInstrumentList(
-                                                    val ?? "");
+                                                    val ?? "", i);
                                           });
                                         }, "Instrument Name ${i + 1}"),
                                         SizedBox(
                                           height: 12,
                                         ),
                                         _buildDropdownInstrumentList(
-                                            planningController
+                                            planningController.selectedInstrumentList[i]
                                                 .filteredInstrumentList,
                                             planningController
                                                 .selectedInstrumentList[i]

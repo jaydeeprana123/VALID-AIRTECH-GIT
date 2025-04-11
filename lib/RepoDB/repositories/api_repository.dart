@@ -11,6 +11,7 @@ import 'package:valid_airtech/Screens/Authentication/Model/change_password_reque
 import 'package:valid_airtech/Screens/Conveyance/Model/conveyance_list_response.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/create_conveyance_request.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/update_conveyance_request.dart';
+import 'package:valid_airtech/Screens/EmpLeaveRequest/Model/add_leave_request.dart';
 import 'package:valid_airtech/Screens/EmpLeaveRequest/Model/emp_leave_request_list_response.dart';
 import 'package:valid_airtech/Screens/Head/Model/create_head_request.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/head_conveyance_list_response.dart';
@@ -1560,6 +1561,79 @@ class APIRepository {
       rethrow;
     }
   }
+
+
+  /// Create EmpLeaveRequest
+  Future<BaseModel> createEmpLeaveRequest(String token, AddLeaveRequest addLeaveRequest) async {
+    try {
+
+
+      Response response = await api.dio.post("/employee-leave-request/create",
+          data: addLeaveRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Update EmpLeaveRequest
+  Future<BaseModel> updateEmpLeaveRequest(String token, AddLeaveRequest addLeaveRequest) async {
+    try {
+
+
+      Response response = await api.dio.post("/employee-leave-request/update",
+          data: addLeaveRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Delete EmpLeaveRequest
+  Future<BaseModel> deleteEmpLeaveRequest(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/employee-leave-request/delete",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
 
   /// Admin leave requet list
   Future<AdminLeaveRequestListResponse> adminLeaveRequestList(String token) async {

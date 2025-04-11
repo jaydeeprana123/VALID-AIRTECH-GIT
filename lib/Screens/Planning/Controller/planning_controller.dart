@@ -41,7 +41,8 @@ class PlanningController extends GetxController {
   RxList<AddWorkman> selectedWorkmanList = <AddWorkman>[].obs;
   RxList<PlanningData> planningList = <PlanningData>[].obs;
   RxList<ConveyanceData> conveysList = <ConveyanceData>[].obs;
-  RxList<ConveyanceData> filteredConveysList = <ConveyanceData>[].obs;
+
+  // RxList<ConveyanceData> filteredConveysList = <ConveyanceData>[].obs;
 
   RxList<AddConveyanceForPlanning> selectedConveysList = <AddConveyanceForPlanning>[].obs;
   Rx<PlanningData> selectedPlanning = PlanningData().obs;
@@ -49,7 +50,7 @@ class PlanningController extends GetxController {
 
   RxList<HeadInstrumentData> headInstrumentList = <HeadInstrumentData>[].obs;
   RxList<InstrumentData> instrumentList = <InstrumentData>[].obs;
-  RxList<InstrumentData> filteredInstrumentList = <InstrumentData>[].obs;
+  // RxList<InstrumentData> filteredInstrumentList = <InstrumentData>[].obs;
 
   RxList<AddInstrumentForPlanning> selectedInstrumentList = <AddInstrumentForPlanning>[].obs;
   Rx<LoginData> loginData = LoginData().obs;
@@ -482,22 +483,48 @@ class PlanningController extends GetxController {
     controllerPassword.value.clear();
   }
 
-  callFilterConveyanceList(String headId){
-    filteredConveysList.clear();
+  callFilterConveyanceList(String headId, int position){
+    selectedConveysList[position]
+        .filteredConveysList.clear();
     for(int i=0; i<conveysList.length; i++){
       if(conveysList[i].headConveyanceId.toString() == headId){
-        filteredConveysList.add(conveysList[i]);
+        selectedConveysList[position]
+            .filteredConveysList.add(conveysList[i]);
       }
     }
   }
 
-
-  callFilterInstrumentList(String headId){
-    filteredInstrumentList.clear();
-    for(int i=0; i<instrumentList.length; i++){
-      if(instrumentList[i].headInstrumentId.toString() == headId){
-        filteredInstrumentList.add(instrumentList[i]);
+ Future<AddConveyanceForPlanning> callFilterConveyanceListAndGet(String headId, AddConveyanceForPlanning addConveyanceForPlanning) async {
+    addConveyanceForPlanning
+        .filteredConveysList.clear();
+    for(int i=0; i<conveysList.length; i++){
+      if(conveysList[i].headConveyanceId.toString() == headId){
+        addConveyanceForPlanning
+            .filteredConveysList.add(conveysList[i]);
       }
     }
+
+    return addConveyanceForPlanning;
+  }
+
+
+  callFilterInstrumentList(String headId, int position){
+    selectedInstrumentList[position].filteredInstrumentList.clear();
+    for(int i=0; i<instrumentList.length; i++){
+      if(instrumentList[i].headInstrumentId.toString() == headId){
+        selectedInstrumentList[position].filteredInstrumentList.add(instrumentList[i]);
+      }
+    }
+  }
+
+  Future<AddInstrumentForPlanning> callFilterInstrumentListAndGet(String headId, AddInstrumentForPlanning addInstrumentForPlanning)async{
+    addInstrumentForPlanning.filteredInstrumentList.clear();
+    for(int i=0; i<instrumentList.length; i++){
+      if(instrumentList[i].headInstrumentId.toString() == headId){
+        addInstrumentForPlanning.filteredInstrumentList.add(instrumentList[i]);
+      }
+    }
+
+    return addInstrumentForPlanning;
   }
 }

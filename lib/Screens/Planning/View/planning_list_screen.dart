@@ -52,7 +52,7 @@ class _PlanningListScreenState extends State<PlanningListScreen> {
 
     printData("_initializeData", "_initializeData");
 
-    planningController.callPlanningListByDate("02-03-2025");
+    planningController.callPlanningListByDate("11-04-2025");
   }
 
   @override
@@ -141,7 +141,7 @@ class _PlanningListScreenState extends State<PlanningListScreen> {
                         planningController.selectedPlanning.value = planningController.planningList[index];
                         Get.to(EditPlanningScreen())?.then((value) {
                           planningController.isLoading.value = false;
-                          planningController.callPlanningListByDate("02-03-2025");
+                          planningController.callPlanningListByDate("11-04-2025");
                         });
                       },
                       child: Card(

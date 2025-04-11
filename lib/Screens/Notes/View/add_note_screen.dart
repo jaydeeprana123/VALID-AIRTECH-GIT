@@ -202,7 +202,6 @@ class _AddNotesScreenState extends State<AddNotesScreen> {
 
                       }
 
-                      notesController.callCreateNote();
 
                     },
                     borderColor: color_primary,

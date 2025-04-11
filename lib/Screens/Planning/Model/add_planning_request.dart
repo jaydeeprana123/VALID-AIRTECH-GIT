@@ -6,6 +6,9 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 
+import '../../Conveyance/Model/conveyance_list_response.dart';
+import '../../Instruments/Model/isntrument_list_response.dart';
+
 AddPlanningRequest addPlanningRequestFromJson(String str) => AddPlanningRequest.fromJson(json.decode(str));
 
 String addPlanningRequestToJson(AddPlanningRequest data) => json.encode(data.toJson());
@@ -20,7 +23,7 @@ class AddPlanningRequest {
   List<AddInstrumentForPlanning>? instrument;
   List<AddPlanningModel>? planning;
   List<NoteAddPlanning>? note;
-  List<RemovedWorkman>? removedWorkman;
+  List<RemovedWorkmanAddPlanning>? removedWorkman;
   List<RemovedConveyance>? removedConveyance;
   List<RemovedInstrument>? removedInstrument;
   List<RemovedNote>? removedNote;
@@ -57,7 +60,7 @@ class AddPlanningRequest {
     instrument: json["instrument"] == null ? [] : List<AddInstrumentForPlanning>.from(json["instrument"]!.map((x) => AddInstrumentForPlanning.fromJson(x))),
     planning: json["planning"] == null ? [] : List<AddPlanningModel>.from(json["planning"]!.map((x) => AddPlanningModel.fromJson(x))),
     note: json["note"] == null ? [] : List<NoteAddPlanning>.from(json["note"]!.map((x) => NoteAddPlanning.fromJson(x))),
-    removedWorkman: json["removed_workman"] == null ? [] : List<RemovedWorkman>.from(json["removed_workman"]!.map((x) => RemovedWorkman.fromJson(x))),
+    removedWorkman: json["removed_workman"] == null ? [] : List<RemovedWorkmanAddPlanning>.from(json["removed_workman"]!.map((x) => RemovedWorkmanAddPlanning.fromJson(x))),
     removedConveyance: json["removed_conveyance"] == null ? [] : List<RemovedConveyance>.from(json["removed_conveyance"]!.map((x) => RemovedConveyance.fromJson(x))),
     removedInstrument: json["removed_instrument"] == null ? [] : List<RemovedInstrument>.from(json["removed_instrument"]!.map((x) => RemovedInstrument.fromJson(x))),
     removedNote: json["removed_note"] == null ? [] : List<RemovedNote>.from(json["removed_note"]!.map((x) => RemovedNote.fromJson(x))),
@@ -90,6 +93,8 @@ class AddConveyanceForPlanning {
   String? id;
   String? headId;
   String? conveyanceId;
+  List<ConveyanceData> filteredConveysList = <ConveyanceData>[];
+
 
   AddConveyanceForPlanning({
     this.id,
@@ -114,6 +119,7 @@ class AddInstrumentForPlanning {
   String? id;
   String? headId;
   String? instrumentId;
+  List<InstrumentData> filteredInstrumentList = <InstrumentData>[];
 
   AddInstrumentForPlanning({
     this.id,
@@ -323,14 +329,14 @@ class RemovedSystem {
   };
 }
 
-class RemovedWorkman {
+class RemovedWorkmanAddPlanning {
   String? removedWorkmanId;
 
-  RemovedWorkman({
+  RemovedWorkmanAddPlanning({
     this.removedWorkmanId,
   });
 
-  factory RemovedWorkman.fromJson(Map<String, dynamic> json) => RemovedWorkman(
+  factory RemovedWorkmanAddPlanning.fromJson(Map<String, dynamic> json) => RemovedWorkmanAddPlanning(
     removedWorkmanId: json["removed_workman_id"],
   );
 
