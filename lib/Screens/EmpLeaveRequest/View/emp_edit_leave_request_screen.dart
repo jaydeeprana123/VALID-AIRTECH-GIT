@@ -285,7 +285,6 @@ class _EmpEditLeaveRequestScreenState extends State<EmpEditLeaveRequestScreen> {
                           empLeaveRequestController.addLeaveRequest.value.reason = empLeaveRequestController.controllerReason.value.text;
                           empLeaveRequestController.addLeaveRequest.value.numberOfLeaveDays = empLeaveRequestController.controllerNumOfLeaves.value.text;
                           empLeaveRequestController.addLeaveRequest.value.leaveRequestType = selectedOption;
-
                           empLeaveRequestController.callUpdateService();
 
                         },

@@ -443,7 +443,6 @@ class PlanningController extends GetxController {
   void callPlanningListByDate(String date) async {
     try {
       isLoading.value = true;
-
       PlanningListResponse response = await postRepository.planningListByDate(loginData.value.token??"", date);
       isLoading.value = false;
 
@@ -463,6 +462,9 @@ class PlanningController extends GetxController {
       Get.snackbar('Error', errorMessage.value);
     }
   }
+
+
+
 
 
   @override

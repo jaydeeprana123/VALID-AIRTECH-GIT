@@ -72,6 +72,60 @@ class CircularController extends GetxController {
     }
   }
 
+  /// Employee Circular list api call
+  void callEmployeeCircularList() async {
+    try {
+      isLoading.value = true;
+
+      CircularListResponse response = await postRepository.employeeCircularList(loginData.value.token??"", loginData.value.id.toString());
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        circularList.value = response.data??[];
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Employee Circular list by date api call
+  void callEmployeeCircularListByDate(String date) async {
+    try {
+      isLoading.value = true;
+
+      CircularListResponse response = await postRepository.employeeCircularListByDate(loginData.value.token??"", loginData.value.id.toString(), date);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        circularList.value = response.data??[];
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
 
   /// Circular create api call
   Future<void> callCreateCircular(String date) async {

@@ -1335,15 +1335,53 @@ class APIRepository {
     }
   }
 
-
-
-
   /// Circular List
   Future<CircularListResponse> circularList(String token, String empId) async {
     try {
       var user = {'emp_id': empId};
       var formData = FormData.fromMap(user);
       Response response = await api.dio.post("/employee-circular/list",
+          data: formData,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return CircularListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Circular List
+  Future<CircularListResponse> employeeCircularList(String token, String empId) async {
+    try {
+      var user = {'emp_id': empId};
+      var formData = FormData.fromMap(user);
+      Response response = await api.dio.post("/employee-circular/list",
+          data: formData,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return CircularListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Circular List By date
+  Future<CircularListResponse> employeeCircularListByDate(String token, String empId, String date) async {
+    try {
+      var user = {'emp_id': empId, "date" :date};
+      var formData = FormData.fromMap(user);
+      Response response = await api.dio.post("/employee-circular/calender-list",
           data: formData,
           options: Options(
             headers: {

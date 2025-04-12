@@ -7,6 +7,7 @@ import 'package:valid_airtech/Screens/Authentication/View/profile_screen_view.da
 import 'package:valid_airtech/Screens/EmpLeaveRequest/View/emp_leave_request_list_screen.dart';
 import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_list_screen.dart';
 import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_screen.dart';
+import 'package:valid_airtech/Screens/Planning/View/emp_planning_screen.dart';
 import 'package:valid_airtech/Screens/Planning/View/planning_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_screen.dart';
 import 'package:valid_airtech/utils/helper.dart';
@@ -16,6 +17,7 @@ import '../Styles/my_icons.dart';
 import 'AdminLeaveRequest/View/admin_leave_request_list_screen.dart';
 import 'AdminLeaveRequest/View/select_workman_calender_leave_request_screen.dart';
 import 'Circular/View/circular_list_screen.dart';
+import 'Circular/View/emp_circular_screen.dart';
 import 'Master/View/master_index_screen.dart';
 import 'Notes/View/notes_screen.dart';
 
@@ -84,7 +86,7 @@ class EmpHomePage extends StatelessWidget {
               children: [
 
                 InkWell(onTap: (){
-                  Get.to(PlanningScreen());
+                  Get.to(EmpPlanningScreen());
                 },child: _buildGridItem('Planning', Icons.schedule)),
 
 
@@ -110,7 +112,7 @@ class EmpHomePage extends StatelessWidget {
                 },child: _buildGridItem('Note', Icons.note_alt)),
                 InkWell(
                   onTap: (){
-                    Get.to(CircularListScreen());
+                    Get.to(EmployeeCircularScreen());
                   }
                     ,child: _buildGridItem('Circular', Icons.newspaper)),
                 _buildGridItem('Help/Query', Icons.contact_support),
