@@ -4,5 +4,6 @@ enum MasterScreenEnum {
   instruments,
   service,
   allowance,
-  workmanProfile
+  workmanProfile,
+  office
 }

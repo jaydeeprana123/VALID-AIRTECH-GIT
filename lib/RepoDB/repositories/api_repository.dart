@@ -21,6 +21,7 @@ import 'package:valid_airtech/Screens/Instruments/Model/create_instrument_reques
 import 'package:valid_airtech/Screens/Instruments/Model/head_instrument_list_response.dart';
 import 'package:valid_airtech/Screens/Instruments/Model/isntrument_list_response.dart';
 import 'package:valid_airtech/Screens/Notes/Model/create_notes_request.dart';
+import 'package:valid_airtech/Screens/Offices/Model/office_list_response.dart';
 import 'package:valid_airtech/Screens/Planning/Model/add_planning_request.dart';
 import 'package:valid_airtech/Screens/Service/Model/service_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/create_site_request.dart';
@@ -39,6 +40,7 @@ import '../../Screens/Authentication/Model/reset_password_response.dart';
 import '../../Screens/Circular/Model/circular_list_response.dart';
 import '../../Screens/Head/Model/head_list_response.dart';
 import '../../Screens/Notes/Model/note_list_response.dart';
+import '../../Screens/Offices/Model/create_office_request.dart';
 import '../../Screens/Planning/Model/planning_list_response.dart';
 import '../../Screens/Service/Model/create_service_request.dart';
 import '../../base_model.dart';
@@ -269,6 +271,7 @@ class APIRepository {
     }
   }
 
+
   /// Get Site List
   Future<SiteListResponse> siteList(String token) async {
     try {
@@ -319,6 +322,95 @@ class APIRepository {
       });
 
       Response response = await api.dio.post("/site/delete",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Get Office List
+  Future<OfficeListResponse> officeList(String token) async {
+    try {
+
+      Response response = await api.dio.get("/office/list",
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return OfficeListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Create Office
+  Future<BaseModel> createOffice(String token, CreateOfficeRequest createOfficeRequest) async {
+    try {
+
+
+      Response response = await api.dio.post("/office/create",
+          data: createOfficeRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Update Office
+  Future<BaseModel> updateOffice(String token, CreateOfficeRequest createOfficeRequest) async {
+    try {
+
+      Response response = await api.dio.post("/office/update",
+          data: createOfficeRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Delete Allowance
+  Future<BaseModel> deleteOffice(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/office/delete",
           data: data,
           options: Options(
             headers: {

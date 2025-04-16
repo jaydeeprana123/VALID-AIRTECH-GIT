@@ -4,6 +4,7 @@ import 'package:valid_airtech/Enums/master_screen_enum.dart';
 import 'package:valid_airtech/Screens/Allowance/View/allowance_list_screen.dart';
 import 'package:valid_airtech/Screens/Conveyance/View/conveyance_list_screen.dart';
 import 'package:valid_airtech/Screens/Instruments/View/instrument_list_screen.dart';
+import 'package:valid_airtech/Screens/Offices/View/office_list_screen.dart';
 import 'package:valid_airtech/Screens/Service/View/service_list_screen.dart';
 import 'package:valid_airtech/Screens/Sites/View/site_list_screen.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/View/workman_list_screen.dart';
@@ -74,6 +75,8 @@ class MasterIndexScreen extends StatelessWidget {
                   _buildGridButton(Icons.handyman, 'Service',MasterScreenEnum.service.index),
                   _buildGridButton(Icons.attach_money, 'Allowance', MasterScreenEnum.allowance.index),
                   _buildGridButton(Icons.person, 'Workman Profile', MasterScreenEnum.workmanProfile.index),
+                  _buildGridButton(Icons.person, 'Office', MasterScreenEnum.office.index),
+
                 ],
               ),
             ),
@@ -131,6 +134,11 @@ class MasterIndexScreen extends StatelessWidget {
       case MasterScreenEnum.workmanProfile:
         Get.to(WorkmanListScreen());
         break;
+
+      case MasterScreenEnum.office:
+        Get.to(OfficeListScreen());
+        break;
+
     }
   }
 
