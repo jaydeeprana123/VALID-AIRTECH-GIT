@@ -3,39 +3,62 @@ import 'dart:developer';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
+import '../Controller/work_report_controller.dart';
+import 'edit_work_report_screen.dart';
 
-class WorkReportDetailsScreen extends StatelessWidget {
+class WorkReportDetailsScreen extends StatefulWidget {
+
+  final String attendanceId;
+  final String date;
+
+  WorkReportDetailsScreen({
+    Key? key,
+    required this.attendanceId,
+    required this.date
+  }) : super(key: key);
+
+  @override
+  _WorkReportDetailsScreenState createState() => _WorkReportDetailsScreenState();
+}
+
+class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
+  WorkReportController workReportController = Get.find<WorkReportController>();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  AppBar(
+      appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: color_secondary),
           onPressed: () {
-
             Navigator.pop(context);
-
           },
         ),
         title: Text(
           'Work Report',
-          style: AppTextStyle.largeBold.copyWith(fontSize: 18
-              , color: color_secondary),
+          style: AppTextStyle.largeBold.copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.home, color: color_secondary),
-            onPressed: () {},
+            icon: Icon(Icons.edit, color: color_secondary),
+            onPressed: () {
+              Get.to(EditWorkReportScreen(attendanceId: widget.attendanceId,date: widget.date, siteId: workReportController.selectedWorkReportData.value.siteId.toString(),));
+            },
           ),
         ],
       ),
@@ -46,74 +69,76 @@ class WorkReportDetailsScreen extends StatelessWidget {
           children: [
             Center(child: SectionHeader(title: 'Site Details')),
             SizedBox(height: 8.0),
-            InfoRow(label: 'Work Report Date', value: '09/07/2024 (Tuesday)'),
-            InfoRow(label: 'Attendance Status', value: 'Present'),
-            InfoRow(label: 'Site Name', value: 'Office_Valid Airtech'),
-            InfoRow(label: 'Contact Person Name', value: 'Ishan Chokshi'),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                InfoRow(label: 'Site In Time', value: '10:00'),
-                InfoRow(label: 'Site Out Time', value: '18:00'),
-              ],
-            ),
-            SizedBox(height: 16.0),
+            InfoRow(label: 'Work Report Date', value: widget.date),
+
             Center(child: SectionHeader(title: 'Remarks')),
             SizedBox(height: 8.0),
-            InfoRow(label: 'Remark 1', value: 'NA'),
+
+            for(int i=0; i<(workReportController.selectedWorkReportData.value.remark??[]).length;i++)
+            InfoRow(label: 'Remark ${i+1}', value: workReportController.selectedWorkReportData.value.remark?[i].remark??""),
+
             SizedBox(height: 16.0),
             Center(child: SectionHeader(title: 'Expense Details')),
             SizedBox(height: 8.0),
-            ExpenseRow(label: 'Train', value: '0.00'),
-            ExpenseRow(label: 'Bus', value: '0.00'),
-            ExpenseRow(label: 'Auto', value: '0.00'),
-            ExpenseRow(label: 'Fuel', value: '0.00'),
-            ExpenseRow(label: 'Food Amount', value: '0.00'),
-            ExpenseRow(label: 'Others', value: '0.00'),
-            Divider(thickness: 1, color: Colors.black),
-            ExpenseRow(label: 'Total', value: '0.00', isBold: true),
+            ExpenseRow(label: 'Train', value: workReportController.selectedWorkReportData.value.train??"0"),
+            ExpenseRow(label: 'Bus', value: workReportController.selectedWorkReportData.value.bus??"0"),
+            ExpenseRow(label: 'Auto', value: workReportController.selectedWorkReportData.value.auto??"0"),
+            ExpenseRow(label: 'Fuel', value: workReportController.selectedWorkReportData.value.fuel??"0"),
+            ExpenseRow(label: 'Food Amount', value: workReportController.selectedWorkReportData.value.foodAmount??"0"),
+            ExpenseRow(label: 'Others', value:workReportController.selectedWorkReportData.value.other??"0"),
+            // Divider(thickness: 1, color: Colors.black),
+            // ExpenseRow(label: 'Total', value: '0.00', isBold: true),
             SizedBox(height: 8.0),
             InfoRow(label: 'Remark For Others', value: 'NA'),
             SizedBox(height: 16.0),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 30),
-                  child: CommonButton(
-                    titleText: "Edit Work Report",
-                    textColor: Colors.white,
-                    onCustomButtonPressed: () async {
 
-                    },
-                    borderColor: color_primary,
-                    borderWidth: 0,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 30, vertical: 20),
-                  child: CommonButton(
-                    titleText: "Delete Work Report",
-                    textColor: Colors.white,
-                    onCustomButtonPressed: () async {
+            for(int i=0; i<(workReportController.selectedWorkReportData.value.workReportExpensesBill??[]).length;i++)
+              SingleChildScrollView(scrollDirection: Axis.horizontal,child: Row(children: [
+                Image.network(workReportController.selectedWorkReportData.value.workReportExpensesBill?[i].photo??"", width: 160, height: 160,),
+                SizedBox(width: 22,)
+              ],),),
 
-                    },
-                    borderColor: Colors.red,
-                    borderWidth: 0,
-                    buttonColor: Colors.red,
-                  ),
-                ),
-              ],
-            ),
+            SizedBox(height: 22,),
+
+
+            // Column(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   children: [
+            //     Padding(
+            //       padding: EdgeInsets.symmetric(horizontal: 30),
+            //       child: CommonButton(
+            //         titleText: "Edit Work Report",
+            //         textColor: Colors.white,
+            //         onCustomButtonPressed: () async {
+            //           Get.to(EditWorkReportScreen(attendanceId: widget.attendanceId,date: widget.date, siteId: workReportController.selectedWorkReportData.value.siteId.toString(),));
+            //         },
+            //         borderColor: color_primary,
+            //         borderWidth: 0,
+            //       ),
+            //     ),
+            //     Padding(
+            //       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+            //       child: CommonButton(
+            //         titleText: "Delete Work Report",
+            //         textColor: Colors.white,
+            //         onCustomButtonPressed: () async {
+            //           // TODO: handle delete
+            //         },
+            //         borderColor: Colors.red,
+            //         borderWidth: 0,
+            //         buttonColor: Colors.red,
+            //       ),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),
     );
   }
 }
+
 
 class SectionHeader extends StatelessWidget {
   final String title;

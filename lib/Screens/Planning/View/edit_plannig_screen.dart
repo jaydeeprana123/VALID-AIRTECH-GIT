@@ -13,7 +13,7 @@ import 'package:valid_airtech/Screens/Planning/Model/convey_model.dart';
 import 'package:valid_airtech/Screens/Planning/Model/instrument_model.dart';
 import 'package:valid_airtech/Screens/Service/Model/service_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
-import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
+
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/workman_list_response.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';

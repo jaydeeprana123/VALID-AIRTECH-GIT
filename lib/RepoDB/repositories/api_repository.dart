@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:valid_airtech/Screens/AdminLeaveRequest/Model/admin_leave_request_list_response.dart';
 import 'package:valid_airtech/Screens/Allowance/Model/allowance_list_response.dart';
 import 'package:valid_airtech/Screens/Appointment/Model/appointment_contact_list_response.dart';
@@ -30,10 +31,13 @@ import 'package:valid_airtech/Screens/Sites/Model/employee_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/test_type_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/transportation_list_response.dart';
+import 'package:valid_airtech/Screens/WorkReport/Model/work_report_list_response.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/create_workman_request.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/workman_list_response.dart';
 import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../Screens/Allowance/Model/create_allowance_request.dart';
+import '../../Screens/Attendance/Model/attendance_list_response.dart';
+import '../../Screens/Attendance/Model/create_attendance_in_request.dart';
 import '../../Screens/Authentication/Model/login_request.dart';
 import '../../Screens/Authentication/Model/login_response.dart';
 import '../../Screens/Authentication/Model/reset_password_response.dart';
@@ -136,6 +140,89 @@ class APIRepository {
       rethrow;
     }
   }
+
+
+  /// Get Attendance List
+  Future<AttendanceListResponse> attendanceList(String token, String empId) async {
+    try {
+
+      Response response = await api.dio.get("/attendence/list",
+          queryParameters: {'emp_id': empId}, // <-- This is the right way
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return AttendanceListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Get Attendance List
+  Future<AttendanceListResponse> attendanceListByDate(String token, String empId, String date) async {
+    try {
+
+      Response response = await api.dio.get("/attendence/calender-list",
+          queryParameters: {'emp_id': empId, "date":date}, // <-- This is the right way
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return AttendanceListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Create Attendance
+  Future<BaseModel> createAttendanceIn(String token, CreateAttendanceInRequest createAttendanceRequest) async {
+    try {
+      Response response = await api.dio.post("/attendence/in",
+          data: createAttendanceRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Create Attendance
+  Future<BaseModel> createAttendanceOut(String token, CreateAttendanceInRequest createAttendanceRequest) async {
+    try {
+      Response response = await api.dio.post("/attendence/out",
+          data: createAttendanceRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
 
   /// Get Appointment List
   Future<AppointmentListResponse> appointmentList(String token) async {
@@ -271,6 +358,24 @@ class APIRepository {
     }
   }
 
+  /// Get Site List
+  Future<SiteListResponse> empSiteList(String token, String empId) async {
+    try {
+      var user = {'emp_id': empId};
+      var formData = FormData.fromMap(user);
+      Response response = await api.dio.post("/attendence/site-list",
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return SiteListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
 
   /// Get Site List
   Future<SiteListResponse> siteList(String token) async {
@@ -358,11 +463,228 @@ class APIRepository {
   }
 
 
-  /// Create Office
-  Future<BaseModel> createOffice(String token, CreateOfficeRequest createOfficeRequest) async {
+  /// Get Office List
+  Future<OfficeListResponse> empOfficeList(String token, String empId) async {
+    try {
+
+      var data = json.encode({
+        "emp_id": empId,
+      });
+
+
+      Response response = await api.dio.post("/attendence/office-list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return OfficeListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Get Work report List
+  Future<WorkReportListResponse> workReportList(String token, String attendanceId) async {
+    try {
+
+      var data = json.encode({
+        "attendence_id": attendanceId,
+      });
+
+
+      Response response = await api.dio.get("/work-report/list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return WorkReportListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Create Work report
+  Future<BaseModel> createWorkReport(String token, String attendanceId,
+      String siteId, String train, String bus, String auto,
+      String fuel, String foodAmount, String other, String remarkForOther, List<RemarkWorkReport> remaksList, List<WorkReportExpensesBill> bills) async {
+    try {
+
+      var remarkMap = {
+        for (int i = 0; i < remaksList.length; i++) 'remark[$i][remark]': remaksList[i].remarkTextEditingController.text,
+      };
+
+
+      var billNamekMap = {
+        for (int i = 0; i < bills.length; i++) 'expence_bill[$i][bill_name]': bills[i].billNameTextEditingController.text,
+      };
+
+
+      Map<String, dynamic> photoFileMap = {};
+
+      for (int i = 0; i < bills.length; i++) {
+        final filePath = bills[i].path;
+        final fileName = filePath?.split('/').last;
+
+        photoFileMap['expence_bill[$i][photo]'] = await MultipartFile.fromFile(
+          filePath??"",
+          filename: fileName,
+        );
+      }
+
+      var data = FormData.fromMap({
+
+        'attendence_id': attendanceId,
+        'site_id': siteId,
+        'train': train,
+        'bus': bus,
+        'auto': auto,
+        'fuel': fuel,
+        'food_amount': foodAmount,
+        'other':other,
+        'remark_for_other': remarkForOther,
+        ...remarkMap, // spread remarks into the main map
+        ...billNamekMap,
+        ...photoFileMap,
+      });
+
+      Response response = await api.dio.post("/work-report/create",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// eDIT Work report
+  Future<BaseModel> updateWorkReport(String id, String token, String attendanceId,
+      String siteId, String train, String bus, String auto,
+      String fuel, String foodAmount, String other, String remarkForOther, List<RemarkWorkReport> remaksList, List<WorkReportExpensesBill> bills, List<String> removedRemarksIds, List<String> removedBillIds) async {
     try {
 
 
+      var remarkIdMap = {
+        for (int i = 0; i < remaksList.length; i++) if((remaksList[i].id??0) != 0)'remark[$i][id]': remaksList[i].id,
+      };
+
+
+      var remarkMap = {
+        for (int i = 0; i < remaksList.length; i++) 'remark[$i][remark]': remaksList[i].remarkTextEditingController.text,
+      };
+
+
+      var removedRemarkMap = {
+        for (int i = 0; i < removedRemarksIds.length; i++) 'removed_remark[$i][id]': removedRemarksIds[i],
+      };
+
+      var billNamekMap = {
+        for (int i = 0; i < bills.length; i++) if((bills[i].path??"").isNotEmpty)'expence_bill[$i][bill_name]': bills[i].billNameTextEditingController.text,
+      };
+
+      var removedBillkMap = {
+        for (int i = 0; i < removedBillIds.length; i++) 'removed_expence_bill[$i][id]': removedBillIds[i],
+      };
+
+
+      Map<String, dynamic> photoFileMap = {};
+
+      for (int i = 0; i < bills.length; i++) {
+
+        if((bills[i].path??"").isNotEmpty){
+          final filePath = bills[i].path;
+          final fileName = filePath?.split('/').last;
+
+          photoFileMap['expence_bill[$i][photo]'] = await MultipartFile.fromFile(
+            filePath??"",
+            filename: fileName,
+          );
+        }
+
+      }
+
+      printData("photoFileMap", photoFileMap.length.toString());
+
+      var data = FormData.fromMap({
+        'id': id,
+        'attendence_id': attendanceId,
+        'site_id': siteId,
+        'train': train,
+        'bus': bus,
+        'auto': auto,
+        'fuel': fuel,
+        'food_amount': foodAmount,
+        'other':other,
+        'remark_for_other': remarkForOther,
+        if(remarkIdMap.isNotEmpty)...remarkIdMap,
+        if(remarkMap.isNotEmpty)...remarkMap, // spread remarks into the main map
+        if(billNamekMap.isNotEmpty)...billNamekMap,
+        if(photoFileMap.isNotEmpty)...photoFileMap,
+        if(removedRemarkMap.isNotEmpty)...removedRemarkMap,
+        if(removedBillkMap.isNotEmpty) ...removedBillkMap,
+      });
+
+      Response response = await api.dio.post("/work-report/update",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+
+
+  /// Delete Allowance
+  Future<BaseModel> deleteWorkReport(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/work-report/delete",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Create Office
+  Future<BaseModel> createOffice(String token, CreateOfficeRequest createOfficeRequest) async {
+    try {
       Response response = await api.dio.post("/office/create",
           data: createOfficeRequest.toJson(),
           options: Options(

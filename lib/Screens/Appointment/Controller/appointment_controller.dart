@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:valid_airtech/Screens/Appointment/Model/appointment_contact_list_response.dart';
 import 'package:valid_airtech/Screens/Appointment/Model/appointment_list_response.dart';
 import 'package:valid_airtech/Screens/Appointment/Model/create_appointment_request.dart';
-import 'package:valid_airtech/Screens/WorkReport/Model/bills_model.dart';
+
 
 import '../../../RepoDB/repositories/api_repository.dart';
 import '../../../Widget/common_widget.dart';

@@ -1,26 +1,39 @@
 import 'dart:developer';
-
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:valid_airtech/Screens/WorkReport/View/work_report_list_screen.dart';
+import 'package:valid_airtech/Screens/Appointment/Controller/appointment_controller.dart';
+import 'package:valid_airtech/Screens/Appointment/View/add_appointment_screen.dart';
+import 'package:valid_airtech/Screens/Appointment/View/appointment_list_by_date_screen.dart';
+import 'package:valid_airtech/Screens/Appointment/View/appointment_list_screen.dart';
+import 'package:valid_airtech/Screens/Attendance/View/attendance_list_screen.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
-import '../Controller/work_report_controller.dart';
-import 'add_work_report_screen.dart';
+import '../../../Widget/common_widget.dart';
+import '../Controller/attendance_controller.dart';
+import 'add_attendance_in_screen.dart';
+import 'attendance_list_by_date_screen.dart';
 
 
-class WorkReportScreen extends StatefulWidget {
+class EmpAttendanceScreen extends StatefulWidget {
   @override
-  _WorkReportScreenState createState() => _WorkReportScreenState();
+  _EmpAttendanceScreenState createState() => _EmpAttendanceScreenState();
 }
 
-class _WorkReportScreenState extends State<WorkReportScreen> {
+class _EmpAttendanceScreenState extends State<EmpAttendanceScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  AttendanceController attendanceController = Get.put(AttendanceController());
 
-  WorkReportController workReportController = Get.put(WorkReportController());
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    attendanceController.getLoginData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +70,7 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
             padding: EdgeInsets.symmetric(vertical: 10),
             child: Center(
               child: Text(
-                'Work Report',
+                'Attendance',
                   style: AppTextStyle.largeBold.copyWith(fontSize: 16
                       , color: Colors.white),
               ),
@@ -76,7 +89,7 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                     ),
                   ),
                   onPressed: () {
-                   // Get.to(WorkReportListScreen(attendanceId: ,));
+                    Get.to(AttendanceListScreen());
                   },
                   child: Text(
                     'View All >',
@@ -92,7 +105,9 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                     ),
                   ),
                   onPressed: () {
-                   // Get.to(AddWorkReportScreen());
+
+                    Get.to(AddAttendanceInScreen());
+
                   },
                   child: Text(
                     '+Add',
@@ -117,6 +132,14 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                   setState(() {
                     _selectedDay = selectedDay;
                     _focusedDay = focusedDay;
+
+                    String formattedDate =
+                    DateFormat('dd-MM-yyyy').format(selectedDay);
+                    printData("selected day", formattedDate);
+
+                    Get.to(AttendanceListByDateScreen(
+                      date: formattedDate,
+                    ));
                   });
                 },
                 calendarStyle: CalendarStyle(

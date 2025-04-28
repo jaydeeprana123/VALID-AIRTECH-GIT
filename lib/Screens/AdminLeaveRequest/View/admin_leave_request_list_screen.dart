@@ -166,7 +166,7 @@ class _AdminLeaveRequestListScreenState extends State<AdminLeaveRequestListScree
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
-                        Get.to(WorkReportDetailsScreen());
+                      //  Get.to(WorkReportDetailsScreen());
                       },
                       child: Card(
                         elevation: 2,

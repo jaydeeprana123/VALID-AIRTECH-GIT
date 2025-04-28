@@ -12,15 +12,13 @@ import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
 
-
-
-class AddWorkReportScreen extends StatefulWidget {
+class EditWorkReportScreen extends StatefulWidget {
 
   final String attendanceId;
   final String date;
   final String siteId;
 
-  AddWorkReportScreen({
+  EditWorkReportScreen({
     Key? key,
     required this.attendanceId,
     required this.date,
@@ -28,10 +26,10 @@ class AddWorkReportScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _AddWorkReportScreenState createState() => _AddWorkReportScreenState();
+  _EditWorkReportScreenState createState() => _EditWorkReportScreenState();
 }
 
-class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
+class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
 
   WorkReportController workReportController = Get.find<WorkReportController>();
 
@@ -41,7 +39,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
   String? attendanceStatus;
   String? selectedSite;
   String? contactPerson;
-
+  TextEditingController remarksController = TextEditingController();
 
   void _pickDate() async {
     DateTime? picked = await showDatePicker(
@@ -77,10 +75,37 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    workReportController.isEdit.value = false;
     workReportController.remarksList.clear();
+
+    workReportController.controllerTrain.value.text = workReportController.selectedWorkReportData.value.train??"0";
+
+    if((workReportController.selectedWorkReportData.value.remark??[]).isNotEmpty){
+      for(int i=0; i<(workReportController.selectedWorkReportData.value.remark??[]).length; i++){
+        workReportController.selectedWorkReportData.value.remark?[i].remarkTextEditingController.text = workReportController.selectedWorkReportData.value.remark?[i].remark??"";
+        workReportController.remarksList.add(workReportController.selectedWorkReportData.value.remark?[i]??RemarkWorkReport());
+      }
+    }else{
+      workReportController.remarksList.add(RemarkWorkReport());
+    }
+
     workReportController.billsList.clear();
-    workReportController.remarksList.add(RemarkWorkReport());
-    workReportController.billsList.add(WorkReportExpensesBill());
+    if((workReportController.selectedWorkReportData.value.workReportExpensesBill??[]).isNotEmpty){
+      for(int i=0; i<(workReportController.selectedWorkReportData.value.workReportExpensesBill??[]).length; i++){
+        workReportController.selectedWorkReportData.value.workReportExpensesBill?[i].billNameTextEditingController.text = workReportController.selectedWorkReportData.value.remark?[i].remark??"";
+        workReportController.billsList.add(workReportController.selectedWorkReportData.value.workReportExpensesBill?[i]??WorkReportExpensesBill());
+      }
+    }else{
+      workReportController.billsList.add(WorkReportExpensesBill());
+    }
+
+
+    workReportController.controllerTrain.value.text = workReportController.selectedWorkReportData.value.train??"";
+    workReportController.controllerBus.value.text = workReportController.selectedWorkReportData.value.bus??"";
+    workReportController.controllerAuto.value.text = workReportController.selectedWorkReportData.value.auto??"";
+    workReportController.controllerFuel.value.text = workReportController.selectedWorkReportData.value.fuel??"";
+    workReportController.controllerFoodAmount.value.text = workReportController.selectedWorkReportData.value.foodAmount??"";
+    workReportController.controllerOther.value.text = workReportController.selectedWorkReportData.value.other??"";
   }
 
 
@@ -99,15 +124,45 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
           },
         ),
         title: Text(
-          'Add Work Report',
+          'Edit Work Report',
           style: AppTextStyle.largeBold.copyWith(fontSize: 18
               , color: color_secondary),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.home, color: color_secondary),
-            onPressed: () {},
+            icon: Icon(Icons.edit_calendar, color: color_secondary),
+            onPressed: () {
+              workReportController.isEdit.value = true;
+            },
+          ),
+
+          IconButton(
+            icon: Icon(Icons.delete_forever, color: color_secondary),
+            onPressed: () {
+              Get.defaultDialog(
+                  title: "DELETE",
+                  middleText:
+                  "Are you sure want to delete this Work Report?",
+                  barrierDismissible: false,
+                  titlePadding: const EdgeInsets.only(
+                      left: 20, right: 20, top: 10),
+                  textConfirm: "Yes",
+                  textCancel: "No",
+                  titleStyle: TextStyle(
+                      fontSize: 15),
+                  buttonColor: Colors.white,
+                  confirmTextColor: color_primary,
+                  onCancel: () {
+                    Navigator.pop(context);
+
+                  },
+                  onConfirm: () async {
+                    Navigator.pop(context);
+                    workReportController.callDeleteWorkReport(workReportController.selectedWorkReportData.value.id.toString());
+
+                  });
+            },
           ),
         ],
       ),
@@ -184,6 +239,8 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                                  });
                                },child: Icon(Icons.add_circle,size: 30,color: color_brown_title,)):InkWell(
                                    onTap: () {
+                                     
+                                     workReportController.removedRemarkIds.add(workReportController.remarksList[i].id.toString());
                                      workReportController.remarksList.removeAt(i);
                                      setState(() {});
                                    },
@@ -281,7 +338,8 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                                           fit: BoxFit.cover,
                                           height: 160,
                                           width: double.infinity,
-                                        ): Container(width: double.infinity,height: 150,color: Colors.grey.shade300,margin: EdgeInsets.only(right: 10),),
+                                        ):(workReportController.billsList[i].photo??"").isNotEmpty?Image.network(workReportController.billsList[i].photo??"",fit: BoxFit.cover,
+                                          height: 160,): Container(width: double.infinity,height: 150,color: Colors.grey.shade300,margin: EdgeInsets.only(right: 10),),
                                         Align(alignment: Alignment.bottomRight,child: Icon(Icons.edit,size: 30,color: color_primary,))
                                       ],
                                     ),
@@ -291,6 +349,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                                 SizedBox(width: 12,),
 
                                 InkWell(onTap: (){
+                                  workReportController.removedBillIds.add(workReportController.billsList[i].id.toString());
                                   workReportController.billsList.removeAt(i);
                                   setState(() {
 
@@ -327,7 +386,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                 SizedBox(height: 20),
 
                 // Login Button
-                Padding(
+                workReportController.isEdit.value?Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: 20, vertical: 20),
                   child: CommonButton(
@@ -339,13 +398,13 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                         return;
                       }
 
-                      workReportController.callCreateWorkReportList(widget.attendanceId, widget.siteId);
+                      workReportController.callUpdateWorkReportList(widget.attendanceId, widget.siteId);
 
                     },
                     borderColor: color_primary,
                     borderWidth: 0,
                   ),
-                ),
+                ):SizedBox(),
               ],
             ),
           ),

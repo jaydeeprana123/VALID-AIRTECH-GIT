@@ -97,7 +97,7 @@ class _AdminLeaveRequestPendingListScreenState extends State<AdminLeaveRequestPe
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
-                        Get.to(WorkReportDetailsScreen());
+                       // Get.to(WorkReportDetailsScreen());
                       },
                       child: Card(
                         elevation: 2,

@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Appointment/Controller/appointment_controller.dart';
 import 'package:valid_airtech/Screens/Appointment/Model/appointment_contact_list_response.dart';
 import 'package:valid_airtech/Screens/Appointment/Model/create_appointment_request.dart';
+import 'package:valid_airtech/Screens/Attendance/Model/create_attendance_in_request.dart';
+import 'package:valid_airtech/Screens/Offices/Model/office_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
 
@@ -14,23 +16,24 @@ import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
 import '../../../Widget/common_widget.dart';
+import '../Controller/attendance_controller.dart';
 
-class EditAppointmentScreen extends StatefulWidget {
+class AddAttendanceInScreen extends StatefulWidget {
   @override
-  _EditAppointmentScreenState createState() => _EditAppointmentScreenState();
+  _AddAttendanceInScreenState createState() => _AddAttendanceInScreenState();
 }
 
-class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
-  AppointmentController appointmentController =
-      Get.find<AppointmentController>();
+class _AddAttendanceInScreenState extends State<AddAttendanceInScreen> {
+  AttendanceController attendanceController =
+      Get.find<AttendanceController>();
 
   DateTime? selectedDate;
   TimeOfDay? siteInTime;
   TimeOfDay? siteOutTime;
-  String? attendanceStatus;
   String? selectedSite;
-  String? contactPerson;
+  String? selectedOffice;
 
+  final List<String> contactPersons = ['John Doe', 'Jane Smith', 'Bob Johnson'];
 
   void _pickDate() async {
     DateTime? picked = await showDatePicker(
@@ -65,40 +68,8 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
   @override
   void initState() {
     super.initState();
-    appointmentController.isEdit.value = false;
-    appointmentController.siteList.clear();
-    appointmentController.appointmentContactList.clear();
-
-    initialize();
-
-
-  }
-
-  initialize() async{
-
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
-      await appointmentController.callSiteList();
-
-      selectedSite = appointmentController.selectedAppointment.value.siteId.toString();
-
-      await appointmentController.callContactListList(selectedSite??"");
-
-      contactPerson =  appointmentController.selectedAppointment.value.headId.toString();
-
-      if((appointmentController.selectedAppointment.value.date??"").isNotEmpty){
-        DateFormat format = DateFormat("dd-MM-yyyy");
-        selectedDate = format.parse(appointmentController.selectedAppointment.value.date??"");
-
-        setState(() {
-
-        });
-      }
-    });
-
-
-
-
+    attendanceController.callSiteList();
+    attendanceController.callOfficeList();
   }
 
   @override
@@ -114,45 +85,15 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
           },
         ),
         title: Text(
-          'Appointment',
+          'Add Appointment',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.edit_calendar, color: color_secondary),
-            onPressed: () {
-              appointmentController.isEdit.value = true;
-            },
-          ),
-
-          IconButton(
-            icon: Icon(Icons.delete_forever, color: color_secondary),
-            onPressed: () {
-              Get.defaultDialog(
-                  title: "DELETE",
-                  middleText:
-                  "Are you sure want to delete this Appointment?",
-                  barrierDismissible: false,
-                  titlePadding: const EdgeInsets.only(
-                      left: 20, right: 20, top: 10),
-                  textConfirm: "Yes",
-                  textCancel: "No",
-                  titleStyle: TextStyle(
-                      fontSize: 15),
-                  buttonColor: Colors.white,
-                  confirmTextColor: color_primary,
-                  onCancel: () {
-                    Navigator.pop(context);
-
-                  },
-                  onConfirm: () async {
-                    Navigator.pop(context);
-                    appointmentController.callDeleteAppointment(appointmentController.selectedAppointment.value.id.toString());
-
-                  });
-            },
+            icon: Icon(Icons.home, color: color_secondary),
+            onPressed: () {},
           ),
         ],
       ),
@@ -173,19 +114,12 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                       height: 28,
                     ),
 
-                    _buildDropdown(appointmentController.siteList, selectedSite,
+                    _buildDropdown(attendanceController.siteList, selectedSite,
                         (val) {
 
-                          setState(() {
-                            appointmentController.appointmentContactList.clear();
-                            selectedSite = val;
-                            contactPerson = null;
-
-                            printData("here", "contactPerson null");
-                          });
-
-
-                          appointmentController.callContactListList(selectedSite??"");
+                      setState(() {
+                        selectedSite = val;
+                      });
 
                         } , "Select Site"),
 
@@ -193,27 +127,28 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                       height: 28,
                     ),
 
-                    _buildDropdownContactList(appointmentController.appointmentContactList, contactPerson,
+                    _buildDropdownOfficeList(attendanceController.officeList, selectedOffice,
                             (val) {
 
                           setState(() {
-                            contactPerson = val;
+                            selectedOffice = val;
 
                           });
 
-                        } , "Select Contact Person"),
+                        } , "Select Office"),
 
 
 
                     SizedBox(
-                      height: 20,
+                      height: 28,
                     ),
 
+
                     // Login Button
-                    appointmentController.isEdit.value?Padding(
+                    Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                       child: CommonButton(
-                        titleText: "Save",
+                        titleText: "Sign In",
                         textColor: Colors.white,
                         onCustomButtonPressed: () async {
 
@@ -222,33 +157,36 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                             return;
                           }
 
-                          if(selectedSite == null){
-                            snackBar(context, "Select Site");
-                            return;
-                          }
-
-                          if(contactPerson == null){
-                            snackBar(context, "Select Contact Person");
+                          if(selectedSite == null && selectedOffice == null){
+                            snackBar(context, "Select Site or office");
                             return;
                           }
 
 
-                          appointmentController.createAppointmentRequest.value = CreateAppointmentRequest();
-                          appointmentController.createAppointmentRequest.value.id = appointmentController.selectedAppointment.value.id.toString();
-                              appointmentController.createAppointmentRequest.value.siteId = selectedSite;
-                          appointmentController.createAppointmentRequest.value.headId = contactPerson;
-                          appointmentController.createAppointmentRequest.value.date = DateFormat('dd-MM-yyyy').format(selectedDate!);
-                          appointmentController.callUpdateAppointment();
+                          attendanceController.createAttendanceInRequest.value = CreateAttendanceInRequest();
+                          attendanceController.createAttendanceInRequest.value.empId = attendanceController.loginData.value.id.toString();
+                          attendanceController.createAttendanceInRequest.value.headId = selectedSite;
+                          attendanceController.createAttendanceInRequest.value.officeId = selectedOffice;
+                          attendanceController.createAttendanceInRequest.value.date = DateFormat('dd-MM-yyyy').format(selectedDate!);
+                          DateTime now = DateTime.now();
+                          String formattedTime = DateFormat('HH:mm:ss').format(now); // 24-hour format
+                          attendanceController.createAttendanceInRequest.value.time = formattedTime;
+                          attendanceController.createAttendanceInRequest.value.status = "1";
+                          attendanceController.createAttendanceInRequest.value.typeLocation = selectedSite != null?"2":"1";
+
+                          attendanceController.callCreateAttendanceIn();
+
+
 
                         },
                         borderColor: color_primary,
                         borderWidth: 0,
                       ),
-                    ):Center(),
+                    ),
                   ],
                 ),
               ),
-         if(appointmentController.isLoading.value)Center(child: CircularProgressIndicator(),)
+         if(attendanceController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
     );
@@ -277,7 +215,7 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
           children: [
             Text(
                 selectedDate == null
-                    ? 'Select Appointment Date'
+                    ? 'Select Attendance Date'
                     : DateFormat('dd/MM/yyyy').format(selectedDate!),
                 style: AppTextStyle.largeMedium.copyWith(
                     fontSize: 15,
@@ -329,7 +267,7 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
   }
 
 
-  Widget _buildDropdownContactList(List<AppointmentContactData> items, String? selectedValue,
+  Widget _buildDropdownOfficeList(List<OfficeData> items, String? selectedValue,
       Function(String?) onChanged, String hint) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
@@ -360,7 +298,46 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
       // Ensures dropdown takes full width
       items: items
           .map((e) => DropdownMenuItem(
-          value: e.id.toString(), child: Text(e.contactName ?? "")))
+          value: e.id.toString(), child: Text(e.title ?? "")))
+          .toList(),
+      onChanged: onChanged,
+    );
+    ;
+  }
+
+
+  Widget _buildDropdownStatus(List<String> items, String? selectedValue,
+      Function(String?) onChanged, String hint) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 10),
+        alignLabelWithHint: true,
+
+        labelText: hint,
+        // Moves up as a floating label when a value is selected
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when selecting
+        hintText: hint,
+        // Hint text
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey), // Bottom-only border
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue), // Bottom border on focus
+        ),
+      ),
+      value: selectedValue,
+      isExpanded: true,
+      // Ensures dropdown takes full width
+      items: items
+          .map((e) => DropdownMenuItem(
+          value: e, child: Text(e)))
           .toList(),
       onChanged: onChanged,
     );

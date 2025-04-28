@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:valid_airtech/Screens/Appointment/View/appointment_screen.dart';
+import 'package:valid_airtech/Screens/Attendance/View/emp_attendance_screen.dart';
 import 'package:valid_airtech/Screens/Authentication/View/profile_screen_view.dart';
 import 'package:valid_airtech/Screens/EmpLeaveRequest/View/emp_leave_request_list_screen.dart';
 import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_list_screen.dart';
@@ -10,6 +11,7 @@ import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_screen.d
 import 'package:valid_airtech/Screens/Planning/View/emp_planning_screen.dart';
 import 'package:valid_airtech/Screens/Planning/View/planning_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_screen.dart';
+import 'package:valid_airtech/Screens/attendance_screen.dart';
 import 'package:valid_airtech/utils/helper.dart';
 import '../Styles/app_text_style.dart';
 import '../Styles/my_colors.dart';
@@ -90,12 +92,12 @@ class EmpHomePage extends StatelessWidget {
                 },child: _buildGridItem('Planning', Icons.schedule)),
 
 
-                InkWell(onTap: (){
-                  Get.to(WorkReportScreen());
-                },child: _buildGridItem('Work Report', Icons.work_history_outlined)),
+                // InkWell(onTap: (){
+                //   Get.to(WorkReportScreen());
+                // },child: _buildGridItem('Work Report', Icons.work_history_outlined)),
 
                 InkWell(onTap: (){
-                  Get.to(AppointmentScreen());
+                  Get.to(EmpAttendanceScreen());
                 },child: _buildGridItem('Attendance Status', Icons.event_note)),
 
 
