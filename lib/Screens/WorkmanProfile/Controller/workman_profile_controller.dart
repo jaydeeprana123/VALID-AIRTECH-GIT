@@ -74,7 +74,7 @@ class WorkmanProfileController extends GetxController {
 
   Rx<LoginData> loginData = LoginData().obs;
 
-  Future getLoginData() async {
+  Future<void> getLoginData() async {
     loginData.value =
         await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel) ??
             LoginData();
@@ -107,6 +107,38 @@ class WorkmanProfileController extends GetxController {
       Get.snackbar('Error', errorMessage.value);
     }
   }
+
+
+  /// Instrument list api call
+  void callWorkmanListForAdmin() async {
+    try {
+      isLoading.value = true;
+
+      WorkmanListResponse response =
+      await postRepository.workmanList(loginData.value.token ?? "");
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        workmanList.clear();
+        workmanList.add(WorkmanData(id: 0, name: "All"));
+        workmanList.addAll(response.data ?? []);
+      } else if (response.code == 401) {
+        Helper().logout();
+      } else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
 
   /// Workman create api call
   Future<void> callCreateWorkman() async {

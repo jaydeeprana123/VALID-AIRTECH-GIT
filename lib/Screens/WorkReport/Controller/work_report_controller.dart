@@ -5,8 +5,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:valid_airtech/Screens/WorkReport/Model/admin_work_report_list_response.dart';
 
 import 'package:valid_airtech/Screens/WorkReport/Model/work_report_list_response.dart';
+import 'package:intl/intl.dart';
 
 import '../../../RepoDB/repositories/api_repository.dart';
 import '../../../Widget/common_widget.dart';
@@ -24,6 +26,7 @@ class WorkReportController extends GetxController {
   var errorMessage = ''.obs;
   APIRepository postRepository = APIRepository();
   RxBool isEdit = false.obs;
+  RxList<AdminWorkReportData> adminWorkReportList = <AdminWorkReportData>[].obs;
 
   RxList<RemarkWorkReport> remarksList = <RemarkWorkReport>[].obs;
   RxList<String> removedRemarkIds = <String>[].obs;
@@ -66,13 +69,58 @@ class WorkReportController extends GetxController {
       .obs;
 
   Rx<LoginData> loginData = LoginData().obs;
-
+  Rx<TextEditingController> fromDateEditingController =
+      TextEditingController().obs;
+  Rx<TextEditingController> toDateEditingController =
+      TextEditingController().obs;
 
   Future getLoginData()async{
     loginData.value =  await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel)??LoginData();
 
     printData("token", loginData.value.token??"");
 
+    var now = DateTime.now();
+    var formatter = DateFormat('dd-MM-yyyy');
+    String todayDate = formatter.format(now);
+
+// Get the first day of the previous month
+    DateTime oneMonthBefore = DateTime(
+      now.month == 1 ? now.year - 1 : now.year,
+      now.month == 1 ? 12 : now.month - 1,
+      1,
+    );
+
+    String oneMonthBeforeDate = formatter.format(oneMonthBefore);
+
+    fromDateEditingController.value.text = oneMonthBeforeDate;
+    toDateEditingController.value.text = todayDate;
+
+  }
+
+
+  /// Admin Work Report list api call
+  void callAdminWorkReportList(String empId) async {
+    try {
+      isLoading.value = true;
+
+      AdminWorkReportListResponse response = await postRepository.adminWorkReportList(loginData.value.token??"", "0", empId, fromDateEditingController.value.text, toDateEditingController.value.text);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        adminWorkReportList.value = response.data??[];
+      } else if(response.code == 401){
+        Helper().logout();
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
   }
 
   /// Work report list api call

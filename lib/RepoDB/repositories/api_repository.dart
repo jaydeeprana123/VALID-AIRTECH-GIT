@@ -4,11 +4,13 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:valid_airtech/Screens/AdminLeaveRequest/Model/admin_leave_request_list_response.dart';
+import 'package:valid_airtech/Screens/Allowance/Model/admin_expense_list_response.dart';
 import 'package:valid_airtech/Screens/Allowance/Model/allowance_list_response.dart';
 import 'package:valid_airtech/Screens/Appointment/Model/appointment_contact_list_response.dart';
 import 'package:valid_airtech/Screens/Appointment/Model/appointment_list_response.dart';
 import 'package:valid_airtech/Screens/Appointment/Model/create_appointment_request.dart';
 import 'package:valid_airtech/Screens/Authentication/Model/change_password_request.dart';
+import 'package:valid_airtech/Screens/Conveyance/Model/admin_conveyance_list_response.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/conveyance_list_response.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/create_conveyance_request.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/update_conveyance_request.dart';
@@ -31,6 +33,7 @@ import 'package:valid_airtech/Screens/Sites/Model/employee_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/test_type_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/transportation_list_response.dart';
+import 'package:valid_airtech/Screens/WorkReport/Model/admin_work_report_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/work_report_list_response.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/create_workman_request.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/workman_list_response.dart';
@@ -953,6 +956,88 @@ class APIRepository {
       rethrow;
     }
   }
+
+
+  /// Admin Expense List
+  Future<AdminExpenseListResponse> adminExpenseList(String token, String type, String empId, String startDate, String endDate) async {
+    try {
+
+      var data = json.encode({
+        "type":type,
+        "emp_id": empId,
+        "start_date": startDate,
+        "end_date": endDate
+      });
+
+      Response response = await api.dio.post("/admin-report/expence-list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return AdminExpenseListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Admin Conveyance List
+  Future<AdminConveyanceListResponse> adminConveyanceList(String token, String type, String empId, String startDate, String endDate) async {
+    try {
+
+      var data = json.encode({
+        "type":type,
+        "emp_id": empId,
+        "start_date": startDate,
+        "end_date": endDate
+      });
+
+      Response response = await api.dio.post("/admin-report/conveyance-list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return AdminConveyanceListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Admin Work Report List
+  Future<AdminWorkReportListResponse> adminWorkReportList(String token, String type, String empId, String startDate, String endDate) async {
+    try {
+
+      var data = json.encode({
+        "type":type,
+        "emp_id": empId,
+        "start_date": startDate,
+        "end_date": endDate
+      });
+
+      Response response = await api.dio.post("/admin-report/work-report-list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return AdminWorkReportListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
 
 
   /// Allowance List

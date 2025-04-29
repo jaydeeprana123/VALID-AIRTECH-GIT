@@ -6,17 +6,21 @@ import 'package:valid_airtech/Screens/Appointment/View/appointment_screen.dart';
 import 'package:valid_airtech/Screens/Authentication/View/profile_screen_view.dart';
 import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_list_screen.dart';
 import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_screen.dart';
+import 'package:valid_airtech/Screens/Master/View/admin_report_screen.dart';
 import 'package:valid_airtech/Screens/Planning/View/planning_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_screen.dart';
+import 'package:valid_airtech/Widget/common_widget.dart';
 import 'package:valid_airtech/utils/helper.dart';
 import '../Styles/app_text_style.dart';
 import '../Styles/my_colors.dart';
 import '../Styles/my_icons.dart';
 import 'AdminLeaveRequest/View/admin_leave_request_list_screen.dart';
 import 'AdminLeaveRequest/View/select_workman_calender_leave_request_screen.dart';
+import 'Allowance/View/admin_expnese_list_screen.dart';
 import 'Circular/View/circular_list_screen.dart';
 import 'Master/View/master_index_screen.dart';
 import 'Notes/View/notes_screen.dart';
+import 'WorkReport/View/admin_work_report_list_screen.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -118,9 +122,12 @@ class HomePage extends StatelessWidget {
                   Get.to(MasterIndexScreen());
                 },child: _buildFooterButton('Master /\nIndex'))),
                 Expanded(child: InkWell(onTap: (){
-                  
+                  Get.to(AdminReportScreen());
+                  printData("AdminExpenseListScreen", "AdminExpenseListScreen");
                 },child: _buildFooterButton('Admin\nReport'))),
-                Expanded(child: InkWell(child: _buildFooterButton('Workman\nRecord'))),
+                Expanded(child: InkWell(onTap: (){
+
+                },child: _buildFooterButton('Workman\nRecord'))),
               ],
             ),
           ),

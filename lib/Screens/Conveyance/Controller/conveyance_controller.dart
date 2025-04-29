@@ -5,9 +5,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:valid_airtech/Screens/Conveyance/Model/admin_conveyance_list_response.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/conveyance_list_response.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/update_conveyance_request.dart';
-
+import 'package:intl/intl.dart';
 
 import '../../../RepoDB/repositories/api_repository.dart';
 import '../../../Widget/common_widget.dart';
@@ -45,15 +46,61 @@ class ConveyanceController extends GetxController {
   Rx<ConveyanceData> selectedConveyance = ConveyanceData().obs;
 
   Rx<LoginData> loginData = LoginData().obs;
+  RxList<AdminConveyanceData> adminConveyanceList = <AdminConveyanceData>[].obs;
+
   RxList<HeadConveyanceData> headConveysList = <HeadConveyanceData>[].obs;
   Rx<HeadConveyanceData> selectedHeadConveyance = HeadConveyanceData().obs;
   RxList<AddContactModel> contactList = <AddContactModel>[].obs;
   RxList<RemovedUpdateContact> removedContact = <RemovedUpdateContact>[].obs;
-
+  Rx<TextEditingController> fromDateEditingController =
+      TextEditingController().obs;
+  Rx<TextEditingController> toDateEditingController =
+      TextEditingController().obs;
   Future getLoginData()async{
     loginData.value =  await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel)??LoginData();
+    var now = DateTime.now();
+    var formatter = DateFormat('dd-MM-yyyy');
+    String todayDate = formatter.format(now);
+
+// Get the first day of the previous month
+    DateTime oneMonthBefore = DateTime(
+      now.month == 1 ? now.year - 1 : now.year,
+      now.month == 1 ? 12 : now.month - 1,
+      1,
+    );
+
+    String oneMonthBeforeDate = formatter.format(oneMonthBefore);
+
+    fromDateEditingController.value.text = oneMonthBeforeDate;
+    toDateEditingController.value.text = todayDate;
+
   }
 
+
+  /// Admin Expense list api call
+  void callAdminConveyanceList(String empId) async {
+    try {
+      isLoading.value = true;
+
+      AdminConveyanceListResponse response = await postRepository.adminConveyanceList(loginData.value.token??"", "0", empId, fromDateEditingController.value.text, toDateEditingController.value.text);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        adminConveyanceList.value = response.data??[];
+      } else if(response.code == 401){
+        Helper().logout();
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
 
   /// Head Conveyance list api call
   void callHeadConveyanceList() async {
