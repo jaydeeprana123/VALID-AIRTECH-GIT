@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:valid_airtech/Screens/Appointment/View/appointment_screen.dart';
+import 'package:valid_airtech/Screens/Attendance/View/admin_attendance_screen.dart';
 import 'package:valid_airtech/Screens/Authentication/View/profile_screen_view.dart';
 import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_list_screen.dart';
 import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_screen.dart';
@@ -21,6 +22,7 @@ import 'Circular/View/circular_list_screen.dart';
 import 'Master/View/master_index_screen.dart';
 import 'Notes/View/notes_screen.dart';
 import 'WorkReport/View/admin_work_report_list_screen.dart';
+import 'WorkReport/View/work_report_attendance_convey_screen.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -91,8 +93,9 @@ class HomePage extends StatelessWidget {
                 InkWell(onTap: (){
                   Get.to(PlanningScreen());
                 },child: _buildGridItem('Planning', Icons.schedule)),
+
                 InkWell(onTap: (){
-                  Get.to(WorkReportScreen());
+                  Get.to(WorkReportAttendanceConveyScreen());
                 },child: _buildGridItem('Work Report', Icons.work_history_outlined)),
                 InkWell(onTap: (){
                   Get.to(HomeAllowanceScreen());

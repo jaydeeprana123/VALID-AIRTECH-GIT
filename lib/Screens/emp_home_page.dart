@@ -121,22 +121,22 @@ class EmpHomePage extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 12),
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Expanded(child: InkWell(onTap: (){
-                  Get.to(MasterIndexScreen());
-                },child: _buildFooterButton('Master /\nIndex'))),
-                Expanded(child: InkWell(onTap: (){
-                  
-                },child: _buildFooterButton('Admin\nReport'))),
-                Expanded(child: InkWell(child: _buildFooterButton('Workman\nRecord'))),
-              ],
-            ),
-          ),
+          // Container(
+          //   margin: EdgeInsets.only(top: 12),
+          //   padding: const EdgeInsets.symmetric(horizontal: 10),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //     children: [
+          //       Expanded(child: InkWell(onTap: (){
+          //         Get.to(MasterIndexScreen());
+          //       },child: _buildFooterButton('Master /\nIndex'))),
+          //       Expanded(child: InkWell(onTap: (){
+          //
+          //       },child: _buildFooterButton('Admin\nReport'))),
+          //       Expanded(child: InkWell(child: _buildFooterButton('Workman\nRecord'))),
+          //     ],
+          //   ),
+          // ),
           SizedBox(height: 20),
         ],
       ),

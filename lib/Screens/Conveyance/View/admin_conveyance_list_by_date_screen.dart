@@ -9,7 +9,6 @@ import 'package:valid_airtech/Screens/Allowance/View/add_allowance_screen.dart';
 import 'package:valid_airtech/Screens/Allowance/View/edit_allowance_screen.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/View/add_conveyance_screen.dart';
-import 'package:valid_airtech/Screens/Conveyance/View/admin_update_conveyance_screen.dart';
 import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controller.dart';
 import 'package:valid_airtech/Screens/Instruments/View/add_instrument_screen.dart';
 import 'package:valid_airtech/Screens/Service/Controller/service_controller.dart';
@@ -24,20 +23,22 @@ import '../../../utils/helper.dart';
 import 'admin_conveyance_payment_list_screen.dart';
 
 
-class AdminConveyanceListScreen extends StatefulWidget {
+class AdminConveyanceListByDateScreen extends StatefulWidget {
 
   final String empId;
+  final String date;
 
-  AdminConveyanceListScreen({
+  AdminConveyanceListByDateScreen({
     Key? key,
     required this.empId,
+    required this.date,
   }) : super(key: key);
 
   @override
-  _AdminConveyanceListScreenState createState() => _AdminConveyanceListScreenState();
+  _AdminConveyanceListByDateScreenState createState() => _AdminConveyanceListByDateScreenState();
 }
 
-class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
+class _AdminConveyanceListByDateScreenState extends State<AdminConveyanceListByDateScreen> {
 
   ConveyanceController conveyanceController = Get.put(ConveyanceController());
 
@@ -52,6 +53,9 @@ class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
     await conveyanceController.getLoginData();
 
     printData("_initializeData", "_initializeData");
+
+    conveyanceController.fromDateEditingController.value.text = widget.date;
+    conveyanceController.toDateEditingController.value.text = widget.date;
 
     conveyanceController.callAdminConveyanceReportList(widget.empId);
   }
@@ -241,11 +245,7 @@ class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
-                        conveyanceController.selectedAdminConveyance.value = conveyanceController.adminConveyanceList[index];
-                        Get.to(AdminUpdateConveyanceScreen())?.then((value) {
-                          conveyanceController.isLoading.value = false;
-                          conveyanceController.callAdminConveyanceList(widget.empId);
-                        });
+
                       },
                       child: Card(
                         elevation: 2,
@@ -315,7 +315,7 @@ class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
                                     , color: Colors.black),
                               ),
 
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16,),
 
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -325,7 +325,7 @@ class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  Get.to(AdminConveyancePaymentListScreen(adminConveyanceId: conveyanceController.adminConveyanceList[index].id.toString(),adminConveyorName: conveyanceController.adminConveyanceList[index].conveyanceName??""))?.then((value) {
+                                  Get.to(AdminConveyancePaymentListScreen(adminConveyanceId: conveyanceController.adminConveyanceList[index].id.toString(),adminConveyorName: conveyanceController.adminConveyanceList[index].conveyanceName??"",))?.then((value) {
                                     conveyanceController.isLoading.value = false;
                                     conveyanceController.callAdminConveyanceList(widget.empId);
                                   });

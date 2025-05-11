@@ -107,7 +107,7 @@ class WorkReportController extends GetxController {
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
-
+      adminWorkReportList.clear();
       if (response.status??false) {
         adminWorkReportList.value = response.data??[];
       } else if(response.code == 401){

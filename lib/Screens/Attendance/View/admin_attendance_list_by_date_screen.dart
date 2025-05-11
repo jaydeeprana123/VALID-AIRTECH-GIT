@@ -7,9 +7,9 @@ import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Allowance/Controller/allowance_controller.dart';
 import 'package:valid_airtech/Screens/Allowance/View/add_allowance_screen.dart';
 import 'package:valid_airtech/Screens/Allowance/View/edit_allowance_screen.dart';
+import 'package:valid_airtech/Screens/Attendance/Controller/attendance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/View/add_conveyance_screen.dart';
-import 'package:valid_airtech/Screens/Conveyance/View/admin_update_conveyance_screen.dart';
 import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controller.dart';
 import 'package:valid_airtech/Screens/Instruments/View/add_instrument_screen.dart';
 import 'package:valid_airtech/Screens/Service/Controller/service_controller.dart';
@@ -21,25 +21,26 @@ import '../../../Enums/select_date_enum.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../utils/helper.dart';
-import 'admin_conveyance_payment_list_screen.dart';
 
 
-class AdminConveyanceListScreen extends StatefulWidget {
+class AdminAttendanceListByDateScreen extends StatefulWidget {
 
   final String empId;
+  final String date;
 
-  AdminConveyanceListScreen({
+  AdminAttendanceListByDateScreen({
     Key? key,
     required this.empId,
+    required this.date,
   }) : super(key: key);
 
   @override
-  _AdminConveyanceListScreenState createState() => _AdminConveyanceListScreenState();
+  _AdminAttendanceListByDateScreenState createState() => _AdminAttendanceListByDateScreenState();
 }
 
-class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
+class _AdminAttendanceListByDateScreenState extends State<AdminAttendanceListByDateScreen> {
 
-  ConveyanceController conveyanceController = Get.put(ConveyanceController());
+  AttendanceController attendanceController = Get.put(AttendanceController());
 
 
   @override
@@ -49,11 +50,14 @@ class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
   }
 
   void _initializeData() async {
-    await conveyanceController.getLoginData();
+    await attendanceController.getLoginData();
+
+    attendanceController.fromDateEditingController.value.text = widget.date;
+    attendanceController.toDateEditingController.value.text = widget.date;
 
     printData("_initializeData", "_initializeData");
 
-    conveyanceController.callAdminConveyanceReportList(widget.empId);
+    attendanceController.callAdminAttendanceList(widget.empId);
   }
 
   @override
@@ -94,7 +98,7 @@ class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
                 padding: const EdgeInsets.all(12),
                 child:  Center(
                   child: Text(
-                    'All Conveyance',
+                    'Attendance',
                     style: AppTextStyle.largeBold.copyWith(fontSize: 14
                         , color: Colors.white),
                     textAlign: TextAlign.center,
@@ -146,7 +150,7 @@ class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
                               context, SelectDateEnum.all.outputVal);
 
                           setState(() {
-                            conveyanceController.fromDateEditingController.value.text =
+                            attendanceController.fromDateEditingController.value.text =
                                 getDateFormatDDMMYYYYOnly((dateTime ?? DateTime(2023))
                                  );
                           });
@@ -161,9 +165,9 @@ class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
                                 width: 0.5,
                                 color: Colors.grey,
                               )),
-                          child: Text(conveyanceController
+                          child: Text(attendanceController
                               .fromDateEditingController.value.text.isNotEmpty
-                              ? conveyanceController
+                              ? attendanceController
                               .fromDateEditingController.value.text
                               : "From",
                             style: AppTextStyle.largeMedium.copyWith(fontSize: 12
@@ -179,7 +183,7 @@ class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
                               context, SelectDateEnum.all.outputVal);
 
                           setState(() {
-                            conveyanceController
+                            attendanceController
                                 .toDateEditingController.value.text =
                                 getDateFormatDDMMYYYYOnly((dateTime ?? DateTime(2023))
                                    );
@@ -196,9 +200,9 @@ class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
                                 width: 0.5,
                                 color: Colors.grey,
                               )),
-                          child: Text(conveyanceController
+                          child: Text(attendanceController
                               .toDateEditingController.value.text.isNotEmpty
-                              ? conveyanceController
+                              ? attendanceController
                               .toDateEditingController.value.text
                               : "To",
                             style: AppTextStyle.largeMedium.copyWith(fontSize: 12
@@ -208,8 +212,8 @@ class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
                     ),
                     InkWell(
                       onTap: () {
-                        conveyanceController
-                            .callAdminConveyanceReportList(widget.empId);
+                        attendanceController
+                            .callAdminAttendanceList(widget.empId);
                       },
                       child: Container(
                         alignment: Alignment.center,
@@ -235,17 +239,13 @@ class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
 
 
               Expanded(
-                child: conveyanceController.adminConveyanceList.isNotEmpty?ListView.builder(
+                child: attendanceController.adminAttendanceList.isNotEmpty?ListView.builder(
                   padding: const EdgeInsets.all(10),
-                  itemCount: conveyanceController.adminConveyanceList.length,
+                  itemCount: attendanceController.adminAttendanceList.length,
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
-                        conveyanceController.selectedAdminConveyance.value = conveyanceController.adminConveyanceList[index];
-                        Get.to(AdminUpdateConveyanceScreen())?.then((value) {
-                          conveyanceController.isLoading.value = false;
-                          conveyanceController.callAdminConveyanceList(widget.empId);
-                        });
+
                       },
                       child: Card(
                         elevation: 2,
@@ -256,12 +256,12 @@ class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Conveyance Through',
+                                'Employee Name',
                                 style: AppTextStyle.largeMedium.copyWith(fontSize: 12
                                     , color: color_brown_title),
                               ),
                               Text(
-                                conveyanceController.adminConveyanceList[index].headConveyanceName??"",
+                                attendanceController.adminAttendanceList[index].empName??"",
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
                               ),
@@ -273,80 +273,50 @@ class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
                                     , color: color_brown_title),
                               ),
                               Text(
-                                conveyanceController.adminConveyanceList[index].date??"",
+                                attendanceController.adminAttendanceList[index].date??"",
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
                               ),
                               const SizedBox(height: 12),
 
                                Text(
-                                'Conveyance Name',
+                                'Attendance Status',
                                 style: AppTextStyle.largeMedium.copyWith(fontSize: 12
                                     , color: color_brown_title),
                               ),
                               Text(
-                                (conveyanceController.adminConveyanceList[index].conveyanceName??"").toString(),
+                                (attendanceController.adminAttendanceList[index].attendenceStatusName??"").toString(),
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
                               ),
 
-                              const SizedBox(height: 12),
-                              Text(
-                                'Address',
-                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                    , color: color_brown_title),
-                              ),
-                              Text(
-                                (conveyanceController.adminConveyanceList[index].headAddress??"").toString(),
-                                style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                    , color: Colors.black),
-                              ),
-
-
-                              const SizedBox(height: 12),
-                              Text(
-                                'Amount',
-                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                    , color: color_brown_title),
-                              ),
-                              Text(
-                                (conveyanceController.adminConveyanceList[index].amount??"0").toString(),
-                                style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                    , color: Colors.black),
-                              ),
-
-                              const SizedBox(height: 16),
-
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                              if((attendanceController.adminAttendanceList[index].overTime??[]).isNotEmpty)Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    'Overtime',
+                                    style: AppTextStyle.largeMedium.copyWith(fontSize: 12
+                                        , color: color_brown_title),
                                   ),
-                                ),
-                                onPressed: () {
-                                  Get.to(AdminConveyancePaymentListScreen(adminConveyanceId: conveyanceController.adminConveyanceList[index].id.toString(),adminConveyorName: conveyanceController.adminConveyanceList[index].conveyanceName??""))?.then((value) {
-                                    conveyanceController.isLoading.value = false;
-                                    conveyanceController.callAdminConveyanceList(widget.empId);
-                                  });
+                                  Row(children: [
+                                    for(int i=0; i<(attendanceController.adminAttendanceList[index].overTime??[]).length;i++)
+                                      Row(
+                                        children: [
 
-                                },
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
+                                          if(i > 0)Text(", "),
 
-                                    Icon(Icons.money, color: Colors.white,),
+                                          Text(
+                                            (attendanceController.adminAttendanceList[index].overTime?[i].overTimeName??"").toString(),
+                                            style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
+                                                , color: Colors.black),
+                                          ),
 
-                                    SizedBox(width: 3,),
 
-                                    Text(
-                                      'Payment',
-                                      style:AppTextStyle.largeBold.copyWith(fontSize: 13
-                                          , color: Colors.white),
-                                    ),
-                                  ],
-                                ),
+                                        ],
+                                      )
+                                  ],),
+                                ],
                               ),
                             ],
                           ),
@@ -354,12 +324,12 @@ class _AdminConveyanceListScreenState extends State<AdminConveyanceListScreen> {
                       ),
                     );
                   },
-                ):Center(child: Text("No Data Found"),),
+                ):Center(child: Text("No data found"),),
               ),
             ],
           ),
 
-          if(conveyanceController.isLoading.value)Center(child: CircularProgressIndicator(),)
+          if(attendanceController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
 

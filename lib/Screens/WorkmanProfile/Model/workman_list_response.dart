@@ -64,7 +64,12 @@ class WorkmanData {
   String? status;
   String? email;
   List<WorkmanChild>? children;
-
+  List<String> overTimes = [];
+  String? attendanceStatus;
+  String? attendanceStatusId;
+  bool isCheckedES = false;
+  bool isCheckedPO = false;
+  bool isCheckedPH = false;
   WorkmanData({
     this.id,
     this.name,

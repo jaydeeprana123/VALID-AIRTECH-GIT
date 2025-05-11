@@ -9,6 +9,8 @@ import 'package:valid_airtech/Screens/Allowance/Model/allowance_list_response.da
 import 'package:valid_airtech/Screens/Appointment/Model/appointment_contact_list_response.dart';
 import 'package:valid_airtech/Screens/Appointment/Model/appointment_list_response.dart';
 import 'package:valid_airtech/Screens/Appointment/Model/create_appointment_request.dart';
+import 'package:valid_airtech/Screens/Attendance/Model/admin_attendance_list_response.dart';
+import 'package:valid_airtech/Screens/Attendance/Model/admin_create_attendance_request.dart';
 import 'package:valid_airtech/Screens/Authentication/Model/change_password_request.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/admin_conveyance_list_response.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/conveyance_list_response.dart';
@@ -39,12 +41,16 @@ import 'package:valid_airtech/Screens/WorkmanProfile/Model/create_workman_reques
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/workman_list_response.dart';
 import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../Screens/Allowance/Model/create_allowance_request.dart';
+import '../../Screens/Attendance/Model/admin_update_attendance_request.dart';
 import '../../Screens/Attendance/Model/attendance_list_response.dart';
 import '../../Screens/Attendance/Model/create_attendance_in_request.dart';
 import '../../Screens/Authentication/Model/login_request.dart';
 import '../../Screens/Authentication/Model/login_response.dart';
 import '../../Screens/Authentication/Model/reset_password_response.dart';
 import '../../Screens/Circular/Model/circular_list_response.dart';
+import '../../Screens/Conveyance/Model/admin_conveyance_payment_list_response.dart';
+import '../../Screens/Conveyance/Model/admin_create_conveyance_payment_request.dart';
+import '../../Screens/Conveyance/Model/admin_create_conveyance_request.dart';
 import '../../Screens/Head/Model/head_list_response.dart';
 import '../../Screens/Notes/Model/note_list_response.dart';
 import '../../Screens/Offices/Model/create_office_request.dart';
@@ -183,6 +189,48 @@ class APIRepository {
       rethrow;
     }
   }
+
+
+  /// Create Attendance
+  Future<BaseModel> createAdminAttendance(String token, AdminCreateAttendanceRequest adminCreateAttendanceRequest) async {
+    try {
+      Response response = await api.dio.post("/admin-attendence/create",
+          data: adminCreateAttendanceRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Update Attendance
+  Future<BaseModel> updateAdminAttendance(String token, AdminUpdateAttendanceRequest adminUpdateAttendanceRequest) async {
+    try {
+      Response response = await api.dio.post("/admin-attendence/update",
+          data: adminUpdateAttendanceRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
 
 
   /// Create Attendance
@@ -985,8 +1033,246 @@ class APIRepository {
   }
 
 
-  /// Admin Conveyance List
-  Future<AdminConveyanceListResponse> adminConveyanceList(String token, String type, String empId, String startDate, String endDate) async {
+  /// Admin Conveyance  List
+  Future<AdminConveyanceListResponse> adminConveyanceList(String token) async {
+    try {
+
+
+      Response response = await api.dio.get("/admin-conveyance/list",
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return AdminConveyanceListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  ///Admin Conveyance List by date
+  Future<AdminConveyanceListResponse> adminConveyanceListDate(String token, String date) async {
+    try {
+
+      var user = {"date": date};
+      var formData = FormData.fromMap(user);
+
+      Response response = await api.dio.post("/admin-conveyance/calender-list",
+          data: formData,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return AdminConveyanceListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+
+  /// Create Admin Conveyance
+  Future<BaseModel> adminCreateConveyance(String token, AdminCreateConveyanceRequest createConveyanceRequest) async {
+    try {
+
+
+      Response response = await api.dio.post("/admin-conveyance/create",
+          data: createConveyanceRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Update Admin Conveyance
+  Future<BaseModel> adminUpdateConveyance(String token, AdminCreateConveyanceRequest updateConveyanceRequest) async {
+    try {
+
+
+      Response response = await api.dio.post("/admin-conveyance/update",
+          data: updateConveyanceRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Delete Admin Conveyance
+  Future<BaseModel> adminDeleteConveyance(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/admin-conveyance/delete",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+///  admin-conveyance-payment
+
+  /// Admin admin-conveyance-payment  List
+  Future<AdminConveyancePaymentListResponse> adminConveyancePaymentList(String token, String adminConveyanceId) async {
+    try {
+      var data = json.encode({
+        "admin_conveyance_id": adminConveyanceId,
+      });
+
+      Response response = await api.dio.post("/admin-conveyance-payment/list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return AdminConveyancePaymentListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// admin-conveyance-payment List by date
+  Future<AdminConveyancePaymentListResponse> adminConveyancePaymentListDate(String token, String date) async {
+    try {
+
+      var user = {"date": date};
+      var formData = FormData.fromMap(user);
+
+      Response response = await api.dio.post("/admin-conveyance-payment/calender-list",
+          data: formData,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return AdminConveyancePaymentListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+
+  /// Create admin-conveyance-payment
+  Future<BaseModel> adminCreateConveyancePayment(String token, AdminCreateConveyancePaymentRequest createConveyanceRequest) async {
+    try {
+
+
+      Response response = await api.dio.post("/admin-conveyance-payment/create",
+          data: createConveyanceRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Update admin-conveyance-payment
+  Future<BaseModel> adminUpdateConveyancePayment(String token, AdminCreateConveyancePaymentRequest updateConveyanceRequest) async {
+    try {
+
+
+      Response response = await api.dio.post("/admin-conveyance-payment/update",
+          data: updateConveyanceRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Delete Admin Conveyance
+  Future<BaseModel> adminDeleteConveyancePayment(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/admin-conveyance-payment/delete",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+
+
+
+  /// Admin Conveyance Report List
+  Future<AdminConveyanceListResponse> adminConveyanceReportList(String token, String type, String empId, String startDate, String endDate) async {
     try {
 
       var data = json.encode({
@@ -1006,6 +1292,33 @@ class APIRepository {
           ));
       dynamic postMaps = response.data;
       return AdminConveyanceListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Admin Attendance List
+  Future<AdminAttendanceListResponse> adminAttendanceList(String token, String type, String empId, String startDate, String endDate) async {
+    try {
+
+      var data = json.encode({
+        "type":type,
+        "emp_id": empId,
+        "start_date": startDate,
+        "end_date": endDate
+      });
+
+      Response response = await api.dio.post("/admin-report/admin-attendence-list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return AdminAttendanceListResponse.fromJson(postMaps);
     } catch (ex) {
       rethrow;
     }

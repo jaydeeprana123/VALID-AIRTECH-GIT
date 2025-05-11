@@ -233,7 +233,7 @@ class _AdminExpenseListScreenState extends State<AdminExpenseListScreen> {
 
 
               Expanded(
-                child: ListView.builder(
+                child: allowanceController.adminExpenseList.isNotEmpty?ListView.builder(
                   padding: const EdgeInsets.all(10),
                   itemCount: allowanceController.adminExpenseList.length,
                   itemBuilder: (context, index) {
@@ -351,7 +351,7 @@ class _AdminExpenseListScreenState extends State<AdminExpenseListScreen> {
                       ),
                     );
                   },
-                ),
+                ):Center(child: Text("No Data Found"),),
               ),
             ],
           ),

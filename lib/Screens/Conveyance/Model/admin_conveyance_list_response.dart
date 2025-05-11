@@ -46,7 +46,7 @@ class AdminConveyanceData {
   int? headId;
   String? headAddress;
   String? amount;
-  List<dynamic>? adminConveyancePayment;
+  List<AdminConveyancePayment>? adminConveyancePayment;
 
   AdminConveyanceData({
     this.id,
@@ -71,7 +71,7 @@ class AdminConveyanceData {
     headId: json["head_id"],
     headAddress: json["head_address"],
     amount: json["amount"],
-    adminConveyancePayment: json["admin_conveyance_payment"] == null ? [] : List<dynamic>.from(json["admin_conveyance_payment"]!.map((x) => x)),
+    adminConveyancePayment: json["admin_conveyance_payment"] == null ? [] : List<AdminConveyancePayment>.from(json["admin_conveyance_payment"]!.map((x) => AdminConveyancePayment.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -84,6 +84,38 @@ class AdminConveyanceData {
     "head_id": headId,
     "head_address": headAddress,
     "amount": amount,
-    "admin_conveyance_payment": adminConveyancePayment == null ? [] : List<dynamic>.from(adminConveyancePayment!.map((x) => x)),
+    "admin_conveyance_payment": adminConveyancePayment == null ? [] : List<dynamic>.from(adminConveyancePayment!.map((x) => x.toJson())),
+  };
+}
+
+class AdminConveyancePayment {
+  int? id;
+  int? adminConveyanceId;
+  String? date;
+  String? amount;
+  String? remark;
+
+  AdminConveyancePayment({
+    this.id,
+    this.adminConveyanceId,
+    this.date,
+    this.amount,
+    this.remark,
+  });
+
+  factory AdminConveyancePayment.fromJson(Map<String, dynamic> json) => AdminConveyancePayment(
+    id: json["id"],
+    adminConveyanceId: json["admin_conveyance_id"],
+    date: json["date"],
+    amount: json["amount"],
+    remark: json["remark"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "admin_conveyance_id": adminConveyanceId,
+    "date": date,
+    "amount": amount,
+    "remark": remark,
   };
 }

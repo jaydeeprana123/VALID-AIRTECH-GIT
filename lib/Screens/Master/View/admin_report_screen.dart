@@ -4,6 +4,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:valid_airtech/Screens/Attendance/View/admin_attendance_list_screen.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/create_conveyance_request.dart';
 import 'package:valid_airtech/Screens/Conveyance/View/admin_conveyance_list_screen.dart';
@@ -33,28 +34,25 @@ class AdminReportScreen extends StatefulWidget {
 }
 
 class _AdminReportScreenState extends State<AdminReportScreen> {
-  WorkmanProfileController workmanProfileController = Get.put(WorkmanProfileController());
+  WorkmanProfileController workmanProfileController = Get.put(
+      WorkmanProfileController());
   String? selectedWorkmanId;
   String? selectedWorkmanIdForConveyance;
   String? selectedWorkmanIdForExpense;
   String? selectedWorkmanIdForWorkReport;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       // Perform navigation or state updates after build completes
 
       await workmanProfileController.getLoginData();
 
       workmanProfileController.callWorkmanListForAdmin();
-
     });
-
-
-
-
   }
 
   @override
@@ -82,163 +80,180 @@ class _AdminReportScreenState extends State<AdminReportScreen> {
           ),
         ],
       ),
-      body: Obx(() =>Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 16,
+      body: Obx(() =>
+          Stack(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 16,
+                    ),
+
+
+                    _buildSectionTitle("Attendance By Admin"),
+
+                    SizedBox(
+                      height: 4,
+                    ),
+
+                    _buildDropdown(
+                        workmanProfileController.workmanList, selectedWorkmanId,
+                            (val) => setState(() => selectedWorkmanId = val),
+                        "Select Workman Name"),
+
+                    SizedBox(
+                      height: 16,
+                    ),
+
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
+                      child: CommonButton(
+                        titleText: "Find",
+                        textColor: Colors.white,
+                        onCustomButtonPressed: () async {
+                          Get.to(AdminAttendanceListScreen(empId: (selectedWorkmanId == null ||
+                              selectedWorkmanId == "0")
+                              ? ""
+                              : selectedWorkmanId ?? "",));
+                        },
+                        borderColor: color_primary,
+                        borderWidth: 0,
+                      ),
+                    ),
+
+
+                    SizedBox(
+                      height: 24,
+                    ),
+
+
+                    _buildSectionTitle("Conveyance"),
+
+                    SizedBox(
+                      height: 4,
+                    ),
+
+                    _buildDropdown(workmanProfileController.workmanList,
+                        selectedWorkmanIdForConveyance,
+                            (val) => setState(() =>
+                        selectedWorkmanIdForConveyance = val),
+                        "Select Workman Name"),
+
+                    SizedBox(
+                      height: 16,
+                    ),
+
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
+                      child: CommonButton(
+                        titleText: "Find",
+                        textColor: Colors.white,
+                        onCustomButtonPressed: () async {
+                          Get.to(AdminConveyanceListScreen(
+                            empId: (selectedWorkmanIdForConveyance == null ||
+                                selectedWorkmanIdForConveyance == "0")
+                                ? ""
+                                : selectedWorkmanIdForConveyance ?? "",));
+                        },
+                        borderColor: color_primary,
+                        borderWidth: 0,
+                      ),
+                    ),
+
+
+                    SizedBox(
+                      height: 24,
+                    ),
+
+
+                    _buildSectionTitle("Expense"),
+
+                    SizedBox(
+                      height: 4,
+                    ),
+
+                    _buildDropdown(workmanProfileController.workmanList,
+                        selectedWorkmanIdForExpense,
+                            (val) =>
+                            setState(() => selectedWorkmanIdForExpense = val),
+                        "Select Workman Name"),
+
+                    SizedBox(
+                      height: 16,
+                    ),
+
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
+                      child: CommonButton(
+                        titleText: "Find",
+                        textColor: Colors.white,
+                        onCustomButtonPressed: () async {
+                          Get.to(AdminExpenseListScreen(
+                            empId: (selectedWorkmanIdForExpense == null ||
+                                selectedWorkmanIdForExpense == "0")
+                                ? ""
+                                : selectedWorkmanIdForExpense ?? "",));
+                        },
+                        borderColor: color_primary,
+                        borderWidth: 0,
+                      ),
+                    ),
+
+
+                    SizedBox(
+                      height: 24,
+                    ),
+
+
+                    _buildSectionTitle("Work Report"),
+
+                    SizedBox(
+                      height: 4,
+                    ),
+
+                    _buildDropdown(workmanProfileController.workmanList,
+                        selectedWorkmanIdForWorkReport,
+                            (val) => setState(() =>
+                        selectedWorkmanIdForWorkReport = val),
+                        "Select Workman Name"),
+
+                    SizedBox(
+                      height: 16,
+                    ),
+
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
+                      child: CommonButton(
+                        titleText: "Find",
+                        textColor: Colors.white,
+                        onCustomButtonPressed: () async {
+                          Get.to(AdminWorkReportListScreen(
+                            empId: (selectedWorkmanIdForWorkReport == null ||
+                                selectedWorkmanIdForWorkReport == "0")
+                                ? ""
+                                : selectedWorkmanIdForWorkReport ?? "",));
+                        },
+                        borderColor: color_primary,
+                        borderWidth: 0,
+                      ),
+                    ),
+
+
+                  ],
                 ),
+              ),
 
-
-
-              _buildSectionTitle("Attendance By Admin"),
-
-                SizedBox(
-                  height: 4,
-                ),
-
-                _buildDropdown(workmanProfileController.workmanList, selectedWorkmanId,
-                        (val) => setState(() => selectedWorkmanId = val), "Select Workman Name"),
-
-                SizedBox(
-                  height: 16,
-                ),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: CommonButton(
-                    titleText: "Find",
-                    textColor: Colors.white,
-                    onCustomButtonPressed: () async {
-
-                      Get.to(AttendanceScreen());
-
-                    },
-                    borderColor: color_primary,
-                    borderWidth: 0,
-                  ),
-                ),
-
-
-
-
-                SizedBox(
-                  height: 24,
-                ),
-
-
-
-                _buildSectionTitle("Conveyance"),
-
-                SizedBox(
-                  height: 4,
-                ),
-
-                _buildDropdown(workmanProfileController.workmanList, selectedWorkmanIdForConveyance,
-                        (val) => setState(() => selectedWorkmanIdForConveyance = val), "Select Workman Name"),
-
-                SizedBox(
-                  height: 16,
-                ),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: CommonButton(
-                    titleText: "Find",
-                    textColor: Colors.white,
-                    onCustomButtonPressed: () async {
-                      Get.to(AdminConveyanceListScreen(empId: (selectedWorkmanIdForConveyance == null || selectedWorkmanIdForConveyance == "0")?"":selectedWorkmanIdForConveyance??"",));
-
-                    },
-                    borderColor: color_primary,
-                    borderWidth: 0,
-                  ),
-                ),
-
-
-                SizedBox(
-                  height: 24,
-                ),
-
-
-
-                _buildSectionTitle("Expense"),
-
-                SizedBox(
-                  height: 4,
-                ),
-
-                _buildDropdown(workmanProfileController.workmanList, selectedWorkmanIdForExpense,
-                        (val) => setState(() => selectedWorkmanIdForExpense = val), "Select Workman Name"),
-
-                SizedBox(
-                  height: 16,
-                ),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: CommonButton(
-                    titleText: "Find",
-                    textColor: Colors.white,
-                    onCustomButtonPressed: () async {
-                      Get.to(AdminExpenseListScreen(empId: (selectedWorkmanIdForExpense == null || selectedWorkmanIdForExpense == "0")?"":selectedWorkmanIdForExpense??"",));
-
-                    },
-                    borderColor: color_primary,
-                    borderWidth: 0,
-                  ),
-                ),
-
-
-
-                SizedBox(
-                  height: 24,
-                ),
-
-
-
-                _buildSectionTitle("Work Report"),
-
-                SizedBox(
-                  height: 4,
-                ),
-
-                _buildDropdown(workmanProfileController.workmanList, selectedWorkmanIdForWorkReport,
-                        (val) => setState(() => selectedWorkmanIdForWorkReport = val), "Select Workman Name"),
-
-                SizedBox(
-                  height: 16,
-                ),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: CommonButton(
-                    titleText: "Find",
-                    textColor: Colors.white,
-                    onCustomButtonPressed: () async {
-                      Get.to(AdminWorkReportListScreen(empId: (selectedWorkmanIdForWorkReport == null || selectedWorkmanIdForWorkReport == "0")?"":selectedWorkmanIdForWorkReport??"",));
-
-                    },
-                    borderColor: color_primary,
-                    borderWidth: 0,
-                  ),
-                ),
-
-
-
-
-
-              ],
-            ),
-          ),
-
-          if(workmanProfileController.isLoading.value)Center(child: CircularProgressIndicator(),)
-        ],
-      )),
+              if(workmanProfileController.isLoading.value)Center(
+                child: CircularProgressIndicator(),)
+            ],
+          )),
     );
   }
 
@@ -246,7 +261,7 @@ class _AdminReportScreenState extends State<AdminReportScreen> {
     return Text(
       title,
       style:
-          AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
+      AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
     );
   }
 
@@ -318,7 +333,9 @@ class _AdminReportScreenState extends State<AdminReportScreen> {
       isExpanded: true,
       // Ensures dropdown takes full width
       items:
-          items.map((e) => DropdownMenuItem(value: e.id.toString(), child: Text(e.name??""))).toList(),
+      items.map((e) =>
+          DropdownMenuItem(value: e.id.toString(), child: Text(e.name ?? "")))
+          .toList(),
       onChanged: onChanged,
     );
     ;
@@ -385,7 +402,6 @@ class _AdminReportScreenState extends State<AdminReportScreen> {
       ),
     );
   }
-
 
 
 }

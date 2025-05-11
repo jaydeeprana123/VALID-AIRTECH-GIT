@@ -4,20 +4,10 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:valid_airtech/Screens/Allowance/Model/allowance_list_response.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/create_conveyance_request.dart';
 import 'package:valid_airtech/Screens/Head/Model/head_list_response.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/head_conveyance_list_response.dart';
-import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_screen.dart';
-import 'package:valid_airtech/Screens/HomeAllowance/controller/home_allowance_controller.dart';
-import 'package:valid_airtech/Screens/HomeAllowance/model/create_home_allowance_request.dart';
-import 'package:valid_airtech/Screens/Instruments/Controller/instrument_controller.dart';
-import 'package:valid_airtech/Screens/Instruments/Model/create_instrument_request.dart';
-import 'package:valid_airtech/Screens/Instruments/Model/head_instrument_list_response.dart';
-import 'package:valid_airtech/Screens/Notes/Controller/notes_controller.dart';
-import 'package:valid_airtech/Screens/Notes/Model/create_notes_request.dart';
-import 'package:valid_airtech/Screens/Notes/Model/note_list_response.dart';
 import 'package:valid_airtech/Screens/Planning/Controller/planning_controller.dart';
 import 'package:valid_airtech/Screens/Planning/Model/convey_model.dart';
 import 'package:valid_airtech/Screens/Planning/Model/instrument_model.dart';
@@ -26,21 +16,69 @@ import 'package:valid_airtech/Screens/Sites/Model/create_site_request.dart';
 import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
 
-import 'package:valid_airtech/Screens/WorkmanProfile/Model/workman_list_response.dart';
-import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
+import '../../../Widget/common_widget.dart';
 import '../../Sites/Model/add_contact_model.dart';
+import '../Model/admin_create_conveyance_request.dart';
+import '../Model/conveyance_list_response.dart';
 
-class AddNotesScreen extends StatefulWidget {
+class AdminAddConveyanceScreen extends StatefulWidget {
   @override
-  _AddNotesScreenState createState() => _AddNotesScreenState();
+  _AdminAddConveyanceScreenState createState() => _AdminAddConveyanceScreenState();
 }
 
-class _AddNotesScreenState extends State<AddNotesScreen> {
-  NotesController notesController = Get.find<NotesController>();
+class _AdminAddConveyanceScreenState extends State<AdminAddConveyanceScreen> {
+  ConveyanceController conveyanceController = Get.find<ConveyanceController>();
+  String? selectedConveyanceThrough;
+  String? selectedConveyanceName;
+  String? selectedSite;
+
   DateTime? selectedDate;
+
+  void _pickDate() async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
+  Widget _buildDatePicker() {
+    return GestureDetector(
+      onTap: _pickDate,
+      child: Container(
+        padding: EdgeInsets.only(bottom: 4),
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Colors.grey), // Bottom-only border
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+                selectedDate == null
+                    ? 'Select Conveyance Date'
+                    : DateFormat('dd/MM/yyyy').format(selectedDate!),
+                style: AppTextStyle.largeMedium.copyWith(
+                    fontSize: 15,
+                    color:
+                    selectedDate == null ? color_hint_text : Colors.black)),
+            Icon(Icons.calendar_month_sharp, color: Colors.red),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -48,9 +86,11 @@ class _AddNotesScreenState extends State<AddNotesScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Perform navigation or state updates after build completes
+      conveyanceController.callHeadConveyanceList();
+      conveyanceController.callConveyanceList();
+      conveyanceController.callSiteList();
+      conveyanceController.conveyanceAmountController.value.text = "";
 
-      notesController.notesNameList.clear();
-      notesController.notesNameList.add(NoteNameData());
 
     });
 
@@ -72,7 +112,7 @@ class _AddNotesScreenState extends State<AddNotesScreen> {
           },
         ),
         title: Text(
-          'Notes',
+          'Conveyance Details',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
@@ -99,76 +139,56 @@ class _AddNotesScreenState extends State<AddNotesScreen> {
                 _buildDatePicker(),
 
                 SizedBox(
+                  height: 20,
+                ),
+
+                _buildConveyorNameDropdown(conveyanceController.conveysList, selectedSite,
+                        (val) {
+
+                      setState(() {
+
+                        selectedConveyanceName = val;
+
+                      });
+
+                    } , "Conveyor Name"),
+
+                SizedBox(
+                  height: 20,
+                ),
+
+
+
+                _buildDropdown(conveyanceController.headConveysList, selectedConveyanceThrough,
+                    (val) => setState(() => selectedConveyanceThrough = val), "Conveyance Through"),
+
+                SizedBox(
                   height: 16,
                 ),
 
+                _buildSiteDropdown(conveyanceController.siteList, selectedSite,
+                        (val) {
+
+                      setState(() {
+                        selectedSite = val;
+                      });
+
+                    } , "Select Site"),
 
 
-                _buildSectionTitle("Note's"),
+
+                SizedBox(height: 16),
+
+
+                _buildTextField(
+                    conveyanceController.conveyanceAmountController.value,
+                    "Conveyance Amount"
+                ),
 
 
                 SizedBox(
-                  height: 4,
+                  height: 20,
                 ),
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: color_hint_text, width: 0.5),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Column(
-                    children: [
-                      for (int i = 0;
-                      i < notesController.notesNameList.length;
-                      i++)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child:  _buildTextField(
-                                      notesController.notesNameList[i].textEditingController,
-                                      'Note ${i + 1}'),),
-
-
-                                SizedBox(width: 16,),
-
-
-                                (i ==
-                                    (notesController.notesNameList.length - 1))?
-                                InkWell(
-                                    onTap: () {
-                                      notesController.notesNameList
-                                          .add(NoteNameData());
-                                      setState(() {});
-                                    },
-                                    child: Icon(
-                                      Icons.add_circle,
-                                      size: 30,
-                                      color: color_brown_title,
-                                    )):InkWell(
-                                    onTap: () {
-                                      notesController.notesNameList.removeAt(i);
-                                      setState(() {});
-                                    },
-                                    child: Icon(
-                                      Icons.remove_circle,
-                                      size: 30,
-                                      color: color_primary,
-                                    ))
-                              ],
-                            ),
-                            SizedBox(
-                              height: 12,
-                            ),
-                          ],
-                        )
-                    ],
-                  ),
-                ),
-
-
 
                 // Login Button
                 Padding(
@@ -183,27 +203,37 @@ class _AddNotesScreenState extends State<AddNotesScreen> {
                         return;
                       }
 
-                    if(notesController.notesNameList.isEmpty){
-                      snackBar(context, "Add Note");
-                      return;
-                    }
-
-
-                      notesController.createNotesRequest.value = CreateNotesRequest();
-                      notesController.createNotesRequest.value.empId = notesController.loginData.value.id.toString();
-                      notesController.createNotesRequest.value.date = DateFormat('dd-MM-yyyy').format(selectedDate!);
-
-                      notesController.createNotesRequest.value.note = [];
-                      for(int i=0; i<notesController.notesNameList.length; i++){
-                        NoteNameData child = NoteNameData();
-                        child.name = notesController.notesNameList[i].textEditingController.text;
-
-                        notesController.createNotesRequest.value.note?.add(child);
-
+                      if(selectedSite == null){
+                        snackBar(context, "Select Site");
+                        return;
                       }
 
-                      notesController.callCreateNote();
 
+                      if(selectedConveyanceName == null){
+                        snackBar(context, "Select Conveyance Name");
+                        return;
+                      }
+
+                      if(selectedConveyanceThrough == null){
+                        snackBar(context, "Select Conveyor Through");
+                        return;
+                      }
+
+
+                      if(conveyanceController.conveyanceAmountController.value.text.isEmpty){
+                        snackBar(context, "Enter Conveyance Amount");
+                        return;
+                      }
+
+
+                      conveyanceController.adminCreateConveyanceRequest.value = AdminCreateConveyanceRequest();
+                      conveyanceController.adminCreateConveyanceRequest.value.headConveyanceId = selectedConveyanceThrough??"";
+                      conveyanceController.adminCreateConveyanceRequest.value.conveyanceId = selectedConveyanceName??"";
+                      conveyanceController.adminCreateConveyanceRequest.value.headId = selectedSite??"";
+                      conveyanceController.adminCreateConveyanceRequest.value.amount = conveyanceController.conveyanceAmountController.value.text;
+                      conveyanceController.adminCreateConveyanceRequest.value.date = DateFormat('dd-MM-yyyy').format(selectedDate!);
+
+                      conveyanceController.callAdminCreateConveyance();
 
                     },
                     borderColor: color_primary,
@@ -214,7 +244,7 @@ class _AddNotesScreenState extends State<AddNotesScreen> {
             ),
           ),
 
-          if(notesController.isLoading.value)Center(child: CircularProgressIndicator(),)
+          if(conveyanceController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
     );
@@ -266,7 +296,7 @@ class _AddNotesScreenState extends State<AddNotesScreen> {
   }
 
 
-  Widget _buildDropdown(List<AllowanceData> items, String? selectedValue,
+  Widget _buildDropdown(List<HeadConveyanceData> items, String? selectedValue,
       Function(String?) onChanged, String hint) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
@@ -302,7 +332,46 @@ class _AddNotesScreenState extends State<AddNotesScreen> {
     ;
   }
 
-  Widget _buildDropdownWorkman(List<WorkmanData> items, String? selectedValue,
+
+  Widget _buildSiteDropdown(List<SiteData> items, String? selectedValue,
+      Function(String?) onChanged, String hint) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 10),
+        alignLabelWithHint: true,
+
+        labelText: hint,
+        // Moves up as a floating label when a value is selected
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when selecting
+        hintText: hint,
+        // Hint text
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey), // Bottom-only border
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue), // Bottom border on focus
+        ),
+      ),
+      value: selectedValue,
+      isExpanded: true,
+      // Ensures dropdown takes full width
+      items: items
+          .map((e) => DropdownMenuItem(
+          value: e.id.toString(), child: Text(e.headName ?? "")))
+          .toList(),
+      onChanged: onChanged,
+    );
+    ;
+  }
+
+  Widget _buildConveyorNameDropdown(List<ConveyanceData> items, String? selectedValue,
       Function(String?) onChanged, String hint) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
@@ -338,45 +407,6 @@ class _AddNotesScreenState extends State<AddNotesScreen> {
     ;
   }
 
-  Widget _buildTimePicker(String title, TimeOfDay? time, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (time != null) // Show label only when time is selected
-            Text(
-              title, // Floating label text
-              style: TextStyle(
-                fontSize: 12,
-                color: color_hint_text, // Floating label color
-              ),
-            ),
-          Container(
-            padding: EdgeInsets.only(bottom: 4, right: 10),
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: Colors.grey), // Bottom-only border
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  time == null ? title : time.format(context),
-                  style: AppTextStyle.largeRegular.copyWith(
-                    fontSize: 15,
-                    color: time == null ? color_hint_text : Colors.black,
-                  ),
-                ),
-                Icon(Icons.timer_outlined, color: Colors.black54),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildTextField(TextEditingController controller, String hint) {
     return TextField(
@@ -400,42 +430,6 @@ class _AddNotesScreenState extends State<AddNotesScreen> {
     );
   }
 
-  Widget _buildDatePicker() {
-    return GestureDetector(
-      onTap: _pickDate,
-      child: Container(
-        padding: EdgeInsets.only(bottom: 4),
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: Colors.grey), // Bottom-only border
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(selectedDate == null ? 'Select Date' : DateFormat('dd-MM-yyyy').format(selectedDate!),
-                style: AppTextStyle.largeMedium.copyWith(fontSize: 15
-                    , color: selectedDate == null ?color_hint_text:Colors.black)),
-            Icon(Icons.calendar_month_sharp, color: Colors.red),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _pickDate() async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-      });
-    }
-  }
 
 
 }

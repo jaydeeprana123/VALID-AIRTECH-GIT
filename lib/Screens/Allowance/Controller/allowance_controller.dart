@@ -73,7 +73,7 @@ class AllowanceController extends GetxController {
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
-
+      adminExpenseList.clear();
       if (response.status??false) {
         adminExpenseList.value = response.data??[];
       } else if(response.code == 401){

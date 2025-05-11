@@ -234,7 +234,7 @@ class _AdminWorkReportListScreenState extends State<AdminWorkReportListScreen> {
 
 
               Expanded(
-                child: ListView.builder(
+                child: workReportController.adminWorkReportList.isNotEmpty?ListView.builder(
                   padding: const EdgeInsets.all(10),
                   itemCount: workReportController.adminWorkReportList.length,
                   itemBuilder: (context, index) {
@@ -328,7 +328,7 @@ class _AdminWorkReportListScreenState extends State<AdminWorkReportListScreen> {
                       ),
                     );
                   },
-                ),
+                ):Center(child: Text("No Data Found"),),
               ),
             ],
           ),
