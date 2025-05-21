@@ -92,11 +92,30 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
             InfoRow(label: 'Remark For Others', value: 'NA'),
             SizedBox(height: 16.0),
 
-            for(int i=0; i<(workReportController.selectedWorkReportData.value.workReportExpensesBill??[]).length;i++)
-              SingleChildScrollView(scrollDirection: Axis.horizontal,child: Row(children: [
-                Image.network(workReportController.selectedWorkReportData.value.workReportExpensesBill?[i].photo??"", width: 160, height: 160,),
-                SizedBox(width: 22,)
-              ],),),
+
+            GridView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(), // Prevent GridView from scrolling
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemCount: (workReportController.selectedWorkReportData.value.workReportExpensesBill??[]).length,
+              itemBuilder: (context, index) {
+                return Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
+
+                  Container(child: Image.network(workReportController.selectedWorkReportData.value.workReportExpensesBill?[index].photo??"", width: 160, height: 160,)),
+                  SizedBox(height: 2,),
+                  Text(workReportController.selectedWorkReportData.value.workReportExpensesBill?[index].billName??"", style: AppTextStyle.largeRegular.copyWith(fontSize: 14
+                      , color: Colors.black54)),
+
+                  SizedBox(height: 8,),
+                ],);
+              },
+            ),
+
+
 
             SizedBox(height: 22,),
 

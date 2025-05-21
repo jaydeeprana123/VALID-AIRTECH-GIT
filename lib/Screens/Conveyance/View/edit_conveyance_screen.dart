@@ -127,7 +127,7 @@ class _EditConveyanceScreenState extends State<EditConveyanceScreen> {
                   },
                   onConfirm: () async {
                     Navigator.pop(context);
-                    conveyanceController.callDeleteConveyance(conveyanceController.selectedHeadConveyance.value.id.toString());
+                    conveyanceController.callDeleteConveyance(conveyanceController.selectedConveyance.value.id.toString());
 
                   });
             },
@@ -281,6 +281,7 @@ class _EditConveyanceScreenState extends State<EditConveyanceScreen> {
                       conveyanceController.updateConveyanceRequest.value.contact = [];
                       for(int i=0; i<conveyanceController.contactList.length; i++){
                         UpdateContact contact = UpdateContact();
+                        contact.id = conveyanceController.contactList[i].id.toString();
                         contact.contactType = (conveyanceController.contactList[i].type??"") == "Mobile"?"1":"2";
 
                         if(contact.contactType == "1"){
@@ -291,13 +292,10 @@ class _EditConveyanceScreenState extends State<EditConveyanceScreen> {
                         }
 
 
-
-
-
                         conveyanceController.updateConveyanceRequest.value.contact?.add(contact);
 
                       }
-
+                      conveyanceController.updateConveyanceRequest.value.removedContact = [];
                       conveyanceController.updateConveyanceRequest.value.removedContact?.addAll(conveyanceController.removedContact);
 
                       conveyanceController.callEditConveyance();

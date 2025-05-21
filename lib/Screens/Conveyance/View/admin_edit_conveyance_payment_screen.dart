@@ -168,6 +168,9 @@ class _AdminEditConveyancePaymentScreenState extends State<AdminEditConveyancePa
                   },
                   onConfirm: () async {
                     Navigator.pop(context);
+
+                    printData("idd", conveyanceController.selectedAdminConveyancePayment.value.id.toString());
+
                     conveyanceController.callAdminDeleteConveyancePayment(conveyanceController.selectedAdminConveyancePayment.value.id.toString());
 
                   });

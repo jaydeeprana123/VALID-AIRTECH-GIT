@@ -92,7 +92,7 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
     workReportController.billsList.clear();
     if((workReportController.selectedWorkReportData.value.workReportExpensesBill??[]).isNotEmpty){
       for(int i=0; i<(workReportController.selectedWorkReportData.value.workReportExpensesBill??[]).length; i++){
-        workReportController.selectedWorkReportData.value.workReportExpensesBill?[i].billNameTextEditingController.text = workReportController.selectedWorkReportData.value.remark?[i].remark??"";
+        workReportController.selectedWorkReportData.value.workReportExpensesBill?[i].billNameTextEditingController.text = workReportController.selectedWorkReportData.value.workReportExpensesBill?[i].billName??"";
         workReportController.billsList.add(workReportController.selectedWorkReportData.value.workReportExpensesBill?[i]??WorkReportExpensesBill());
       }
     }else{
@@ -349,11 +349,25 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                                 SizedBox(width: 12,),
 
                                 InkWell(onTap: (){
-                                  workReportController.removedBillIds.add(workReportController.billsList[i].id.toString());
-                                  workReportController.billsList.removeAt(i);
-                                  setState(() {
 
-                                  });
+                                  if(workReportController.billsList.length == 1){
+                                    workReportController.removedBillIds.add(workReportController.billsList[i].id.toString());
+                                    workReportController.billsList.clear();
+                                    workReportController.billsList.add(WorkReportExpensesBill());
+
+                                    setState(() {
+
+                                    });
+
+                                  }else{
+                                    workReportController.removedBillIds.add(workReportController.billsList[i].id.toString());
+                                    workReportController.billsList.removeAt(i);
+                                    setState(() {
+
+                                    });
+                                  }
+
+
                                 },child: Icon(Icons.remove_circle,size: 30,color: color_primary,))
                               ],
                             ),

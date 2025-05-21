@@ -115,6 +115,15 @@ class _AddWorkmanScreenState extends State<AddWorkmanScreen> {
                   height: 16,
                 ),
 
+                _buildTextField(
+                    workmanController.emailController.value,
+                    "Workman Email"
+                ),
+
+                SizedBox(
+                  height: 16,
+                ),
+
 
                 _buildTextField(
                     workmanController.contactNoController.value,
@@ -433,7 +442,9 @@ class _AddWorkmanScreenState extends State<AddWorkmanScreen> {
                     textColor: Colors.white,
                     onCustomButtonPressed: () async {
 
-                      validateWorkmanDetails(context);
+                      if(validateWorkmanDetails(context) == false){
+                        return;
+                      }
 
                       workmanController.createWorkmanRequest.value = CreateWorkmanRequest();
                       workmanController.createWorkmanRequest.value.name = workmanController.nameController.value.text;
@@ -757,10 +768,14 @@ class _AddWorkmanScreenState extends State<AddWorkmanScreen> {
     );
   }
 
-  void validateWorkmanDetails(BuildContext context) {
+  bool validateWorkmanDetails(BuildContext context) {
+
+    bool isValid = true;
+
     // Define all controllers and their respective field names
     Map<TextEditingController, String> fields = {
       workmanController.nameController.value: "Please enter name",
+      workmanController.emailController.value: "Please enter email",
       workmanController.workmanPasswordController.value: "Please enter password",
       workmanController.userNameController.value: "Please enter username",
       workmanController.contactNoController.value: "Please enter contact number",
@@ -780,26 +795,22 @@ class _AddWorkmanScreenState extends State<AddWorkmanScreen> {
       workmanController.motherAadharCardNoController.value: "Please enter mother’s Aadhar number",
       workmanController.wifeNameController.value: "Please enter wife’s name",
       workmanController.wifeAadharCardNoController.value: "Please enter wife’s Aadhar number",
-      workmanController.birthDateController.value: "Please enter birth date",
       workmanController.startTimeController.value: "Please enter start time",
       workmanController.endTimeController.value: "Please enter end time",
     };
 
 
-    bool isValid = true;
+
 
     // Loop through all controllers and validate
     for (var entry in fields.entries) {
       if (entry.key.text.trim().isEmpty) {
         isValid = false;
         snackBar(context, entry.value); // Show respective error message
-        return;
       }
     }
 
-    if(!isValid){
-      return;
-    }
+   return isValid;
 
     // If all fields are filled, proceed
     print("All fields are valid!");

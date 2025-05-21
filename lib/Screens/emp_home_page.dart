@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:valid_airtech/Screens/Allowance/View/emp_expense_screen.dart';
 import 'package:valid_airtech/Screens/Appointment/View/appointment_screen.dart';
 import 'package:valid_airtech/Screens/Attendance/View/emp_attendance_screen.dart';
 import 'package:valid_airtech/Screens/Authentication/View/profile_screen_view.dart';
@@ -102,7 +103,7 @@ class EmpHomePage extends StatelessWidget {
 
 
                 InkWell(onTap: (){
-                  Get.to(AppointmentScreen());
+                  Get.to(EmpExpenseScreen());
                 },child: _buildGridItem('Expense', Icons.event_note)),
 
 

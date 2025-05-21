@@ -270,8 +270,9 @@ class _EditNotesScreenState extends State<EditNotesScreen> {
                       }
 
 
-                      notesController.removedNoteList
-                          .addAll(notesController.removedNoteList);
+                      notesController.createNotesRequest.value.removedNote = [];
+
+                      notesController.createNotesRequest.value.removedNote?.addAll(notesController.removedNoteList);
 
                       notesController.callUpdateNote();
 

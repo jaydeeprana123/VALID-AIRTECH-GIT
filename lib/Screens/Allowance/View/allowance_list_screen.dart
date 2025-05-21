@@ -159,7 +159,7 @@ class _AllowanceListScreenState extends State<AllowanceListScreen> {
                                     , color: color_brown_title),
                               ),
                               Text(
-                                (allowanceController.allowanceList[index].status??0).toString(),
+                                (allowanceController.allowanceList[index].statusType??""),
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
                               ),

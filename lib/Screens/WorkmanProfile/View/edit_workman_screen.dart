@@ -200,6 +200,17 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
                       height: 16,
                     ),
 
+                    _buildTextField(
+                        workmanController.emailController.value,
+                        "Workman Email"
+                    ),
+
+                    SizedBox(
+                      height: 16,
+                    ),
+
+
+
                     _buildTextField(workmanController.userNameController.value,
                         "Workman Username"),
 
@@ -482,8 +493,9 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
                         textColor: Colors.white,
                         onCustomButtonPressed: () async {
 
-                         await validateWorkmanDetails(context);
-
+                         if(!validateWorkmanDetails(context)){
+                           return;
+                         }
                           if(selectedBloodGroup == null){
                             snackBar(context, "Select blood group");
 
@@ -605,8 +617,8 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
                                 ?.add(child);
                           }
 
-                          workmanController.removedChildrenList
-                              .addAll(workmanController.removedChildrenList);
+                         workmanController.createWorkmanRequest.value.removedChildren = [];
+                          workmanController.createWorkmanRequest.value.removedChildren?.addAll(workmanController.removedChildrenList);
 
                           workmanController.callUpdateWorkman();
                         },
@@ -951,10 +963,14 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
   }
 
 
-  Future validateWorkmanDetails(BuildContext context) async{
+  bool validateWorkmanDetails(BuildContext context) {
+
+    bool isValid = true;
+
     // Define all controllers and their respective field names
     Map<TextEditingController, String> fields = {
       workmanController.nameController.value: "Please enter name",
+      workmanController.emailController.value: "Please enter email",
       workmanController.workmanPasswordController.value: "Please enter password",
       workmanController.userNameController.value: "Please enter username",
       workmanController.contactNoController.value: "Please enter contact number",
@@ -974,7 +990,6 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
       workmanController.motherAadharCardNoController.value: "Please enter mother’s Aadhar number",
       workmanController.wifeNameController.value: "Please enter wife’s name",
       workmanController.wifeAadharCardNoController.value: "Please enter wife’s Aadhar number",
-      workmanController.birthDateController.value: "Please enter birth date",
       workmanController.startTimeController.value: "Please enter start time",
       workmanController.endTimeController.value: "Please enter end time",
     };
@@ -986,11 +1001,13 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
     for (var entry in fields.entries) {
       if (entry.key.text.trim().isEmpty) {
         printData("fields", "isEmpty");
+        isValid = false;
         snackBar(context, entry.value); // Show respective error message
-        return;
+
       }
     }
 
+    return isValid;
     // If all fields are filled, proceed
     print("All fields are valid!");
   }

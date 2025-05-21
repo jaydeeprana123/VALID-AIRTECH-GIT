@@ -34,6 +34,8 @@ class WorkmanProfileController extends GetxController {
       ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].obs;
   Rx<TextEditingController> nameController = TextEditingController().obs;
   Rx<TextEditingController> userNameController = TextEditingController().obs;
+  Rx<TextEditingController> emailController = TextEditingController().obs;
+
   Rx<TextEditingController> contactNoController = TextEditingController().obs;
   Rx<TextEditingController> workmanNoController = TextEditingController().obs;
   Rx<TextEditingController> workmanPasswordController =

@@ -66,7 +66,7 @@ class _EditSiteScreenState extends State<EditSiteScreen> {
                 siteController.siteDetails.value.contact?[i].mobileNo ?? "";
           } else {
             addContactModel.textEditingControllerNum.text =
-                siteController.siteDetails.value.contact?[i].mobileNo ?? "";
+                siteController.siteDetails.value.contact?[i].telephone ?? "";
           }
           siteController.contactList.add(addContactModel);
         }
@@ -317,7 +317,7 @@ class _EditSiteScreenState extends State<EditSiteScreen> {
                             siteController.createSiteRequest.value.contact
                                 ?.add(contact);
                           }
-
+                          siteController.createSiteRequest.value.removedContact = [];
                           siteController.createSiteRequest.value.removedContact?.addAll(siteController.removedContactList);
 
                           siteController.callEditSite();

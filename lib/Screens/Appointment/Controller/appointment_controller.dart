@@ -104,7 +104,7 @@ class AppointmentController extends GetxController {
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
-
+      appointmentList.clear();
       if (response.status??false) {
         appointmentList.value = response.data??[];
       }else if(response.code == 401){
@@ -129,7 +129,7 @@ class AppointmentController extends GetxController {
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
-
+      appointmentList.clear();
       if (response.status??false) {
         appointmentList.value = response.data??[];
       }else if(response.code == 401){

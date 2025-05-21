@@ -2042,7 +2042,7 @@ class APIRepository {
   Future<PlanningListResponse> planningList(String token) async {
     try {
 
-      Response response = await api.dio.post("/planning/list",
+      Response response = await api.dio.get("/planning/list",
           options: Options(
             headers: {
               'Content-Type': 'application/json',
