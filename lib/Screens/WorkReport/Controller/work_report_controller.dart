@@ -98,6 +98,7 @@ class WorkReportController extends GetxController {
   }
 
 
+
   /// Admin Work Report list api call
   void callAdminWorkReportList(String empId) async {
     try {
@@ -150,6 +151,43 @@ class WorkReportController extends GetxController {
     }
   }
 
+
+  /// Site attend by list api call
+  Future<void> callSiteAttendByList(String attendanceId, String siteId) async {
+
+    printData("callWorkReportList", "callWorkReportList");
+
+    try {
+
+      isLoading.value = true;
+
+      BaseModel response = await postRepository.createWorkReport(loginData.value.token??"",
+          attendanceId,siteId , controllerTrain.value.text,
+          controllerBus.value.text,controllerAuto.value.text,
+          controllerFuel.value.text,controllerFoodAmount.value.text,
+          controllerOther.value.text,controllerRemarksForOther.value.text,remarksList,billsList);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        Get.back();
+        Get.snackbar("Success", response.message??"");
+        printData("response", response.message??"");
+      }else if(response.code == 401){
+        Helper().logout();
+      }else{
+        Get.snackbar("Error", response.message??"");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
 
   /// Work report create api call
   Future<void> callCreateWorkReportList(String attendanceId, String siteId) async {
