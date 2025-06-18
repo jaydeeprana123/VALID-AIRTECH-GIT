@@ -75,6 +75,12 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    workReportController.callSiteList();
+    workReportController.callSiteAttendByList();
+    workReportController.callTestPerformerList();
+    workReportController.callServiceByNatureByList();
+
     workReportController.remarksList.clear();
     workReportController.billsList.clear();
     workReportController.remarksList.add(RemarkWorkReport());
