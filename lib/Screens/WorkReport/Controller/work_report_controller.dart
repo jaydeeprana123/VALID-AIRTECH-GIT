@@ -46,37 +46,36 @@ class WorkReportController extends GetxController {
 
   Rx<WorkReportData> selectedWorkReportData = WorkReportData().obs;
 
-  final Rx<TextEditingController> controllerTrain = TextEditingController(text: "0")
-      .obs;
+  final Rx<TextEditingController> controllerTrain =
+      TextEditingController(text: "0").obs;
 
-  final Rx<TextEditingController> controllerBus = TextEditingController(text:"0")
-      .obs;
+  final Rx<TextEditingController> controllerBus =
+      TextEditingController(text: "0").obs;
 
-  final Rx<TextEditingController> controllerAuto = TextEditingController(text:"0")
-      .obs;
+  final Rx<TextEditingController> controllerAuto =
+      TextEditingController(text: "0").obs;
 
-  final Rx<TextEditingController> controllerFuel = TextEditingController(text:"0")
-      .obs;
+  final Rx<TextEditingController> controllerFuel =
+      TextEditingController(text: "0").obs;
 
-  final Rx<TextEditingController> controllerFoodAmount = TextEditingController(text:"0")
-      .obs;
+  final Rx<TextEditingController> controllerFoodAmount =
+      TextEditingController(text: "0").obs;
 
-  final Rx<TextEditingController> controllerOther = TextEditingController(text: "0")
-      .obs;
+  final Rx<TextEditingController> controllerOther =
+      TextEditingController(text: "0").obs;
 
-  final Rx<TextEditingController> controllerRemarksForOther = TextEditingController()
-      .obs;
+  final Rx<TextEditingController> controllerRemarksForOther =
+      TextEditingController().obs;
 
-  final Rx<TextEditingController> controllerUsername = TextEditingController()
-      .obs;
+  final Rx<TextEditingController> controllerUsername =
+      TextEditingController().obs;
   final Rx<TextEditingController> controllerCity = TextEditingController().obs;
-  final Rx<
-      TextEditingController> controllerPhoneNumber = TextEditingController()
-      .obs;
-  final Rx<TextEditingController> controllerEmailId = TextEditingController()
-      .obs;
-  final Rx<TextEditingController> controllerPassword = TextEditingController()
-      .obs;
+  final Rx<TextEditingController> controllerPhoneNumber =
+      TextEditingController().obs;
+  final Rx<TextEditingController> controllerEmailId =
+      TextEditingController().obs;
+  final Rx<TextEditingController> controllerPassword =
+      TextEditingController().obs;
 
   Rx<LoginData> loginData = LoginData().obs;
   Rx<TextEditingController> fromDateEditingController =
@@ -84,10 +83,12 @@ class WorkReportController extends GetxController {
   Rx<TextEditingController> toDateEditingController =
       TextEditingController().obs;
 
-  Future getLoginData()async{
-    loginData.value =  await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel)??LoginData();
+  Future getLoginData() async {
+    loginData.value =
+        await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel) ??
+            LoginData();
 
-    printData("token", loginData.value.token??"");
+    printData("token", loginData.value.token ?? "");
 
     var now = DateTime.now();
     var formatter = DateFormat('dd-MM-yyyy');
@@ -104,8 +105,8 @@ class WorkReportController extends GetxController {
 
     fromDateEditingController.value.text = oneMonthBeforeDate;
     toDateEditingController.value.text = todayDate;
-
   }
+
 
 
   /// site list api call
@@ -141,14 +142,20 @@ class WorkReportController extends GetxController {
     try {
       isLoading.value = true;
 
-      AdminWorkReportListResponse response = await postRepository.adminWorkReportList(loginData.value.token??"", "0", empId, fromDateEditingController.value.text, toDateEditingController.value.text);
+      AdminWorkReportListResponse response =
+          await postRepository.adminWorkReportList(
+              loginData.value.token ?? "",
+              "0",
+              empId,
+              fromDateEditingController.value.text,
+              toDateEditingController.value.text);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
       adminWorkReportList.clear();
-      if (response.status??false) {
-        adminWorkReportList.value = response.data??[];
-      } else if(response.code == 401){
+      if (response.status ?? false) {
+        adminWorkReportList.value = response.data ?? [];
+      } else if (response.code == 401) {
         Helper().logout();
       }
     } catch (ex) {
@@ -163,19 +170,19 @@ class WorkReportController extends GetxController {
 
   /// Work report list api call
   Future<void> callWorkReportList(String attendanceId) async {
-
     printData("callWorkReportList", "callWorkReportList");
     try {
       isLoading.value = true;
 
-      WorkReportListResponse response = await postRepository.workReportList(loginData.value.token??"",attendanceId);
+      WorkReportListResponse response = await postRepository.workReportList(
+          loginData.value.token ?? "", attendanceId);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
-        workReportList.value = response.data??[];
-      }else if(response.code == 401){
+      if (response.status ?? false) {
+        workReportList.value = response.data ?? [];
+      } else if (response.code == 401) {
         Helper().logout();
       }
     } catch (ex) {
@@ -188,15 +195,18 @@ class WorkReportController extends GetxController {
     }
   }
 
-
   /// Site attend by list api call
+
   Future<void> callSiteAttendByList() async {
+
 
     printData("callSiteAttendByList", "callSiteAttendByList");
     try {
       isLoading.value = true;
 
+
       SiteByServiceLIstResponse response = await postRepository.siteAttendByList(loginData.value.token??"");
+
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
@@ -271,31 +281,38 @@ class WorkReportController extends GetxController {
   }
 
   /// Work report create api call
-  Future<void> callCreateWorkReportList(String attendanceId, String siteId) async {
-
+  Future<void> callCreateWorkReportList(
+      String attendanceId, String siteId) async {
     printData("callWorkReportList", "callWorkReportList");
 
     try {
-
       isLoading.value = true;
 
-      BaseModel response = await postRepository.createWorkReport(loginData.value.token??"",
-        attendanceId,siteId , controllerTrain.value.text,
-        controllerBus.value.text,controllerAuto.value.text,
-        controllerFuel.value.text,controllerFoodAmount.value.text,
-        controllerOther.value.text,controllerRemarksForOther.value.text,remarksList,billsList);
+      BaseModel response = await postRepository.createWorkReport(
+          loginData.value.token ?? "",
+          attendanceId,
+          siteId,
+          controllerTrain.value.text,
+          controllerBus.value.text,
+          controllerAuto.value.text,
+          controllerFuel.value.text,
+          controllerFoodAmount.value.text,
+          controllerOther.value.text,
+          controllerRemarksForOther.value.text,
+          remarksList,
+          billsList);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
+      if (response.status ?? false) {
         Get.back();
-        Get.snackbar("Success", response.message??"");
-        printData("response", response.message??"");
-      }else if(response.code == 401){
+        Get.snackbar("Success", response.message ?? "");
+        printData("response", response.message ?? "");
+      } else if (response.code == 401) {
         Helper().logout();
-      }else{
-        Get.snackbar("Error", response.message??"");
+      } else {
+        Get.snackbar("Error", response.message ?? "");
       }
     } catch (ex) {
       if (ex is DioException) {
@@ -308,32 +325,42 @@ class WorkReportController extends GetxController {
   }
 
   /// Work report update api call
-  Future<void> callUpdateWorkReportList(String attendanceId, String siteId) async {
-
+  Future<void> callUpdateWorkReportList(
+      String attendanceId, String siteId) async {
     printData("callUpdateWorkReportList", "callUpdateWorkReportList");
 
     try {
-
       isLoading.value = true;
 
-      BaseModel response = await postRepository.updateWorkReport(selectedWorkReportData.value.id.toString(),loginData.value.token??"",
-          attendanceId,siteId , controllerTrain.value.text,
-          controllerBus.value.text,controllerAuto.value.text,
-          controllerFuel.value.text,controllerFoodAmount.value.text,
-          controllerOther.value.text,controllerRemarksForOther.value.text,remarksList,billsList, removedRemarkIds, removedBillIds);
+      BaseModel response = await postRepository.updateWorkReport(
+          selectedWorkReportData.value.id.toString(),
+          loginData.value.token ?? "",
+          attendanceId,
+          siteId,
+          controllerTrain.value.text,
+          controllerBus.value.text,
+          controllerAuto.value.text,
+          controllerFuel.value.text,
+          controllerFoodAmount.value.text,
+          controllerOther.value.text,
+          controllerRemarksForOther.value.text,
+          remarksList,
+          billsList,
+          removedRemarkIds,
+          removedBillIds);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
+      if (response.status ?? false) {
         Get.back();
-         Get.back();
-        Get.snackbar("Success", response.message??"");
-        printData("response", response.message??"");
-      }else if(response.code == 401){
+        Get.back();
+        Get.snackbar("Success", response.message ?? "");
+        printData("response", response.message ?? "");
+      } else if (response.code == 401) {
         Helper().logout();
-      }else{
-        Get.snackbar("Error", response.message??"");
+      } else {
+        Get.snackbar("Error", response.message ?? "");
       }
     } catch (ex) {
       if (ex is DioException) {
@@ -345,7 +372,6 @@ class WorkReportController extends GetxController {
     }
   }
 
-
   /// Work report delete api call
   Future<void> callDeleteWorkReport(String id) async {
     try {
@@ -354,18 +380,18 @@ class WorkReportController extends GetxController {
       printData("site ", "api called");
 
       BaseModel response =
-      await postRepository.deleteOffice(loginData.value.token ?? "",id);
+          await postRepository.deleteOffice(loginData.value.token ?? "", id);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
         Get.back();
-        printData("response", response.message??"");
+        printData("response", response.message ?? "");
         Get.snackbar("Success", "Office deleted successfully");
       } else if (response.code == 401) {
         Helper().logout();
-      }else {
+      } else {
         Get.snackbar("Error", response.message ?? "Something went wrong");
       }
     } catch (ex) {
@@ -396,6 +422,4 @@ class WorkReportController extends GetxController {
     controllerEmailId.value.clear();
     controllerPassword.value.clear();
   }
-
-
 }
