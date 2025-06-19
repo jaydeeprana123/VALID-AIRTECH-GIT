@@ -37,6 +37,8 @@ import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/test_type_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/transportation_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/admin_work_report_list_response.dart';
+import 'package:valid_airtech/Screens/WorkReport/Model/service_by_nature_list_response.dart';
+import 'package:valid_airtech/Screens/WorkReport/Model/test_by_perform_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/work_report_list_response.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/create_workman_request.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/workman_list_response.dart';
@@ -57,6 +59,7 @@ import '../../Screens/Notes/Model/note_list_response.dart';
 import '../../Screens/Offices/Model/create_office_request.dart';
 import '../../Screens/Planning/Model/planning_list_response.dart';
 import '../../Screens/Service/Model/create_service_request.dart';
+import '../../Screens/WorkReport/Model/site_by_service_list_response.dart';
 import '../../base_model.dart';
 import 'api/api.dart';
 
@@ -594,6 +597,72 @@ class APIRepository {
           ));
       dynamic postMaps = response.data;
       return OfficeListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  ///Site attend by list
+  Future<SiteByServiceLIstResponse> siteAttendByList(String token) async {
+    try {
+      var data = json.encode({
+        "attendence_id": "3",
+      });
+
+      Response response = await api.dio.get("/work-report/site-attend-by-list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return SiteByServiceLIstResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  ///Service by Nature list
+  Future<ServiceByNatureResponse> serviceByNatureList(String token) async {
+    try {
+      var data = json.encode({
+        "attendence_id": "3",
+      });
+
+      Response response = await api.dio.get("/work-report/service-nature-list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return ServiceByNatureResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  ///Test performer list
+  Future<TestByPerformanceListResponse> testPerformerList(String token) async {
+    try {
+      var data = json.encode({
+        "attendence_id": "3",
+      });
+
+      Response response = await api.dio.get("/work-report/test-perform-list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return TestByPerformanceListResponse.fromJson(postMaps);
     } catch (ex) {
       rethrow;
     }

@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:valid_airtech/Screens/WorkReport/Model/admin_work_report_list_response.dart';
+import 'package:valid_airtech/Screens/WorkReport/Model/service_by_nature_list_response.dart';
+import 'package:valid_airtech/Screens/WorkReport/Model/test_by_perform_list_response.dart';
 
 import 'package:valid_airtech/Screens/WorkReport/Model/work_report_list_response.dart';
 import 'package:intl/intl.dart';
@@ -19,6 +21,8 @@ import '../../../utils/preference_utils.dart';
 import '../../../utils/share_predata.dart';
 import '../../Authentication/Model/login_response.dart';
 import '../../Sites/Model/site_list_response.dart';
+import '../Model/site_by_service_list_response.dart';
+
 
 /// Controller
 class WorkReportController extends GetxController {
@@ -27,12 +31,18 @@ class WorkReportController extends GetxController {
   APIRepository postRepository = APIRepository();
   RxBool isEdit = false.obs;
   RxList<AdminWorkReportData> adminWorkReportList = <AdminWorkReportData>[].obs;
+  RxList<SiteByServiceData> siteAttendByListList = <SiteByServiceData>[].obs;
+  RxList<ServiceByNatureData> serviceByNatureList = <ServiceByNatureData>[].obs;
+  RxList<TestByPerformData> testPerformerList = <TestByPerformData>[].obs;
 
   RxList<RemarkWorkReport> remarksList = <RemarkWorkReport>[].obs;
+  RxList<SiteData> siteList = <SiteData>[].obs;
+
   RxList<String> removedRemarkIds = <String>[].obs;
   RxList<String> removedBillIds = <String>[].obs;
   RxList<WorkReportExpensesBill> billsList = <WorkReportExpensesBill>[].obs;
   RxList<WorkReportData> workReportList = <WorkReportData>[].obs;
+  RxList<String> conveyThroughList = ["Bike", "Auto Rikshaw", "Car", "Bus", "Train", "Other"].obs;
 
   Rx<WorkReportData> selectedWorkReportData = WorkReportData().obs;
 
@@ -67,8 +77,6 @@ class WorkReportController extends GetxController {
   final Rx<TextEditingController> controllerPassword =
       TextEditingController().obs;
 
-  RxList<SiteData> siteList = <SiteData>[].obs;
-
   Rx<LoginData> loginData = LoginData().obs;
   Rx<TextEditingController> fromDateEditingController =
       TextEditingController().obs;
@@ -98,6 +106,36 @@ class WorkReportController extends GetxController {
     fromDateEditingController.value.text = oneMonthBeforeDate;
     toDateEditingController.value.text = todayDate;
   }
+
+
+
+  /// site list api call
+  Future callSiteList() async {
+
+    printData("callSiteList", "callSiteList");
+    try {
+      isLoading.value = true;
+
+      SiteListResponse response = await postRepository.siteList(loginData.value.token??"");
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        siteList.value = response.data??[];
+      }else if(response.code == 401){
+        Helper().logout();
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
 
   /// Admin Work Report list api call
   void callAdminWorkReportList(String empId) async {
@@ -158,37 +196,79 @@ class WorkReportController extends GetxController {
   }
 
   /// Site attend by list api call
-  Future<void> callSiteAttendByList(String attendanceId, String siteId) async {
-    printData("callWorkReportList", "callWorkReportList");
 
+  Future<void> callSiteAttendByList() async {
+
+
+    printData("callSiteAttendByList", "callSiteAttendByList");
     try {
       isLoading.value = true;
 
-      BaseModel response = await postRepository.createWorkReport(
-          loginData.value.token ?? "",
-          attendanceId,
-          siteId,
-          controllerTrain.value.text,
-          controllerBus.value.text,
-          controllerAuto.value.text,
-          controllerFuel.value.text,
-          controllerFoodAmount.value.text,
-          controllerOther.value.text,
-          controllerRemarksForOther.value.text,
-          remarksList,
-          billsList);
+
+      SiteByServiceLIstResponse response = await postRepository.siteAttendByList(loginData.value.token??"");
+
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status ?? false) {
-        Get.back();
-        Get.snackbar("Success", response.message ?? "");
-        printData("response", response.message ?? "");
-      } else if (response.code == 401) {
+      if (response.status??false) {
+        siteAttendByListList.value = response.data??[];
+      }else if(response.code == 401){
         Helper().logout();
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
       } else {
-        Get.snackbar("Error", response.message ?? "");
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Service by nature  list api call
+  Future<void> callServiceByNatureByList() async {
+
+    printData("callSiteAttendByList", "callSiteAttendByList");
+    try {
+      isLoading.value = true;
+
+      ServiceByNatureResponse response = await postRepository.serviceByNatureList(loginData.value.token??"");
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        serviceByNatureList.value = response.data??[];
+      }else if(response.code == 401){
+        Helper().logout();
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Test Performer  list api call
+  Future<void> callTestPerformerList() async {
+
+    printData("callSiteAttendByList", "callSiteAttendByList");
+    try {
+      isLoading.value = true;
+
+      TestByPerformanceListResponse response = await postRepository.testPerformerList(loginData.value.token??"");
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        testPerformerList.value = response.data??[];
+      }else if(response.code == 401){
+        Helper().logout();
       }
     } catch (ex) {
       if (ex is DioException) {
@@ -324,33 +404,6 @@ class WorkReportController extends GetxController {
     }
   }
 
-  /// site list api call
-  void callSiteList() async {
-    try {
-      isLoading.value = true;
-
-      printData("site ", "api called");
-
-      SiteListResponse response =
-          await postRepository.siteList(loginData.value.token ?? "");
-      isLoading.value = false;
-
-      // Get.snackbar("response ",loginResponseToJson(response));
-
-      if (response.status ?? false) {
-        siteList.value = response.data ?? [];
-      } else if (response.code == 401) {
-        Helper().logout();
-      }
-    } catch (ex) {
-      if (ex is DioException) {
-        errorMessage.value = ex.type.toString();
-      } else {
-        errorMessage.value = ex.toString();
-      }
-      Get.snackbar('Error', errorMessage.value);
-    }
-  }
 
   @override
   void onClose() {
