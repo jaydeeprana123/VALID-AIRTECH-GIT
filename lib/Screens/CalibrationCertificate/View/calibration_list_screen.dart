@@ -7,7 +7,9 @@ import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Allowance/Controller/allowance_controller.dart';
 import 'package:valid_airtech/Screens/Allowance/View/add_allowance_screen.dart';
 import 'package:valid_airtech/Screens/Allowance/View/edit_allowance_screen.dart';
-import 'package:valid_airtech/Screens/Circular/Controller/circular_controller.dart';
+import 'package:valid_airtech/Screens/CalibrationCertificate/Controller/calibration_controller.dart';
+import 'package:valid_airtech/Screens/Circular/Controller/circular_controller.dart'
+    hide CircularController;
 import 'package:valid_airtech/Screens/Circular/View/edit_circular_screen.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/View/add_conveyance_screen.dart';
@@ -28,29 +30,29 @@ import '../../../Styles/my_colors.dart';
 import '../../AdminLeaveRequest/View/leave_filter_dialog.dart';
 import 'add_calibration_screen.dart';
 
-class EmployeeCircularListScreen extends StatefulWidget {
+class CalibrationListScreen extends StatefulWidget {
   @override
-  _EmployeeCircularListScreenState createState() =>
-      _EmployeeCircularListScreenState();
+  _CalibrationListScreenState createState() => _CalibrationListScreenState();
 }
 
-class _EmployeeCircularListScreenState
-    extends State<EmployeeCircularListScreen> {
-  CircularController circularController = Get.find<CircularController>();
+class _CalibrationListScreenState extends State<CalibrationListScreen> {
+  CalibrationController calibrationController =
+      Get.put(CalibrationController());
+
   @override
   void initState() {
     super.initState();
-    circularController.circularList.clear();
-    circularController.filePath.value = "";
+    calibrationController.calibrationList.clear();
+    calibrationController.filePath.value = "";
     _initializeData();
   }
 
   void _initializeData() async {
-    await circularController.getLoginData();
+    await calibrationController.getLoginData();
 
     printData("_initializeData", "_initializeData");
 
-    circularController.callEmployeeCircularList();
+    calibrationController.callCalibrationList();
   }
 
   @override
@@ -90,7 +92,7 @@ class _EmployeeCircularListScreenState
                     padding: const EdgeInsets.all(12),
                     child: Center(
                       child: Text(
-                        'Circular',
+                        'Calibration Certificates',
                         style: AppTextStyle.largeBold
                             .copyWith(fontSize: 14, color: Colors.white),
                         textAlign: TextAlign.center,
@@ -114,8 +116,8 @@ class _EmployeeCircularListScreenState
                               ),
                               onPressed: () {
                                 Get.to(AddCalibrationScreen())?.then((value) {
-                                  circularController.isLoading.value = false;
-                                  circularController.callCircularList();
+                                  calibrationController.isLoading.value = false;
+                                  calibrationController.callCalibrationList();
                                 });
                               },
                               child: Text(
@@ -165,19 +167,23 @@ class _EmployeeCircularListScreenState
                       ),
                     ],
                   ),
-                  circularController.circularList.isNotEmpty
+                  calibrationController.calibrationList.isNotEmpty
                       ? Expanded(
                           child: ListView.builder(
                             padding: const EdgeInsets.all(10),
-                            itemCount: circularController.circularList.length,
+                            itemCount:
+                                calibrationController.calibrationList.length,
                             itemBuilder: (context, index) {
                               return InkWell(
                                 onTap: () {
-                                  circularController.selectedCircular.value =
-                                      circularController.circularList[index];
+                                  calibrationController
+                                          .selectedCalibration.value =
+                                      calibrationController
+                                          .calibrationList[index];
                                   Get.to(EditCircuarScreen())?.then((value) {
-                                    circularController.isLoading.value = false;
-                                    circularController.callCircularList();
+                                    calibrationController.isLoading.value =
+                                        false;
+                                    calibrationController.callCalibrationList();
                                   });
                                 },
                                 child: Card(
@@ -191,32 +197,15 @@ class _EmployeeCircularListScreenState
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'Circular Date',
+                                          'Title',
                                           style: AppTextStyle.largeMedium
                                               .copyWith(
                                                   fontSize: 12,
                                                   color: color_brown_title),
                                         ),
                                         Text(
-                                          circularController
-                                                  .circularList[index].date ??
-                                              "",
-                                          style: AppTextStyle.largeRegular
-                                              .copyWith(
-                                                  fontSize: 15,
-                                                  color: Colors.black),
-                                        ),
-                                        const SizedBox(height: 12),
-                                        Text(
-                                          'Circular Title',
-                                          style: AppTextStyle.largeMedium
-                                              .copyWith(
-                                                  fontSize: 12,
-                                                  color: color_brown_title),
-                                        ),
-                                        Text(
-                                          (circularController
-                                                      .circularList[index]
+                                          (calibrationController
+                                                      .calibrationList[index]
                                                       .title ??
                                                   "")
                                               .toString(),
@@ -236,15 +225,15 @@ class _EmployeeCircularListScreenState
                                         InkWell(
                                           onTap: () async {
                                             final Uri launchUri = Uri.parse(
-                                                circularController
-                                                        .circularList[index]
+                                                calibrationController
+                                                        .calibrationList[index]
                                                         .pdf ??
                                                     "");
 
                                             printData(
                                                 "url",
-                                                circularController
-                                                        .circularList[index]
+                                                calibrationController
+                                                        .calibrationList[index]
                                                         .pdf ??
                                                     "");
 
@@ -253,8 +242,8 @@ class _EmployeeCircularListScreenState
                                                     .externalApplication);
                                           },
                                           child: Text(
-                                            Uri.parse((circularController
-                                                        .circularList[index]
+                                            Uri.parse((calibrationController
+                                                        .calibrationList[index]
                                                         .pdf ??
                                                     ""))
                                                 .pathSegments
@@ -279,7 +268,7 @@ class _EmployeeCircularListScreenState
                         )),
                 ],
               ),
-              if (circularController.isLoading.value)
+              if (calibrationController.isLoading.value)
                 Center(
                   child: CircularProgressIndicator(),
                 )

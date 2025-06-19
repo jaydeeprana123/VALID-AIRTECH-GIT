@@ -45,8 +45,8 @@ class CalibrationController extends GetxController {
             LoginData();
   }
 
-  /// Circular list api call
-  void callCircularList() async {
+  /// Calibration list api call
+  void callCalibrationList() async {
     try {
       isLoading.value = true;
 
@@ -74,7 +74,7 @@ class CalibrationController extends GetxController {
   }
 
   /// Calibration create api call
-  Future<void> callCreateCalibration(String date) async {
+  Future<void> callCreateCalibration() async {
     try {
       isLoading.value = true;
 
@@ -119,7 +119,8 @@ class CalibrationController extends GetxController {
           loginData.value.token ?? "",
           id,
           titleController.value.text,
-          filePath.value,fileNameController.value.text);
+          filePath.value,
+          fileNameController.value.text);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
@@ -150,8 +151,8 @@ class CalibrationController extends GetxController {
 
       printData("site ", "api called");
 
-      BaseModel response =
-          await postRepository.deleteCalibration(loginData.value.token ?? "", id);
+      BaseModel response = await postRepository.deleteCalibration(
+          loginData.value.token ?? "", id);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));

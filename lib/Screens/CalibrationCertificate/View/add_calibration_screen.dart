@@ -10,7 +10,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:valid_airtech/Screens/Allowance/Model/allowance_list_response.dart';
 import 'package:valid_airtech/Screens/CalibrationCertificate/Controller/calibration_controller.dart';
-import 'package:valid_airtech/Screens/Circular/Controller/circular_controller.dart';
+import 'package:valid_airtech/Screens/Circular/Controller/circular_controller.dart' hide CircularController;
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/create_conveyance_request.dart';
 import 'package:valid_airtech/Screens/Head/Model/head_list_response.dart';
@@ -45,8 +45,8 @@ class AddCalibrationScreen extends StatefulWidget {
 }
 
 class _AddCalibrationScreenState extends State<AddCalibrationScreen> {
-  CalibrationController calibrationController = Get.find<CalibrationController>();
-  DateTime? selectedDate;
+  CalibrationController calibrationController =
+      Get.find<CalibrationController>();
   String? _directoryPath;
 
   @override
@@ -56,8 +56,6 @@ class _AddCalibrationScreenState extends State<AddCalibrationScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Perform navigation or state updates after build completes
-
-
     });
   }
 
@@ -86,8 +84,7 @@ class _AddCalibrationScreenState extends State<AddCalibrationScreen> {
           ),
         ],
       ),
-      body: Obx(() =>
-          Stack(
+      body: Obx(() => Stack(
             children: [
               SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
@@ -98,16 +95,9 @@ class _AddCalibrationScreenState extends State<AddCalibrationScreen> {
                       height: 16,
                     ),
 
-                    _buildDatePicker(),
-
-                    SizedBox(
-                      height: 16,
-                    ),
 
                     _buildTextField(
-                        calibrationController.titleController.value,
-                        "Title"
-                    ),
+                        calibrationController.titleController.value, "Title"),
 
                     SizedBox(
                       height: 16,
@@ -115,41 +105,34 @@ class _AddCalibrationScreenState extends State<AddCalibrationScreen> {
 
                     _buildTextFieldOnlyReadableOnly(
                         calibrationController.fileNameController.value,
-                        "Select Upload PDF File"
-                    ),
+                        "Select Upload PDF File"),
 
                     SizedBox(
                       height: 16,
                     ),
 
-
                     // Login Button
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 20),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                       child: CommonButton(
                         titleText: "Save",
                         textColor: Colors.white,
                         onCustomButtonPressed: () async {
-                          if (selectedDate == null) {
-                            snackBar(context, "Select Date");
-                            return;
-                          }
+
 
                           if (calibrationController.filePath.value.isEmpty) {
                             snackBar(context, "Upload PDF");
                             return;
                           }
 
-                          if (calibrationController.titleController.value.text
-                              .isEmpty) {
+                          if (calibrationController
+                              .titleController.value.text.isEmpty) {
                             snackBar(context, "Enter Title");
                             return;
                           }
 
-
-                          calibrationController.callCreateCircular(DateFormat(
-                              'dd-MM-yyyy').format(selectedDate!));
+                          calibrationController.callCreateCalibration();
                         },
                         borderColor: color_primary,
                         borderWidth: 0,
@@ -158,9 +141,10 @@ class _AddCalibrationScreenState extends State<AddCalibrationScreen> {
                   ],
                 ),
               ),
-
-              if(calibrationController.isLoading.value)Center(
-                child: CircularProgressIndicator(),)
+              if (calibrationController.isLoading.value)
+                Center(
+                  child: CircularProgressIndicator(),
+                )
             ],
           )),
     );
@@ -170,10 +154,9 @@ class _AddCalibrationScreenState extends State<AddCalibrationScreen> {
     return Text(
       title,
       style:
-      AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
+          AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
     );
   }
-
 
   Widget _buildDropdownString(List<String> items, String? selectedValue,
       Function(String?) onChanged, String hint) {
@@ -205,12 +188,11 @@ class _AddCalibrationScreenState extends State<AddCalibrationScreen> {
       isExpanded: true,
       // Ensures dropdown takes full width
       items:
-      items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+          items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
       onChanged: onChanged,
     );
     ;
   }
-
 
   Widget _buildDropdown(List<AllowanceData> items, String? selectedValue,
       Function(String?) onChanged, String hint) {
@@ -241,9 +223,9 @@ class _AddCalibrationScreenState extends State<AddCalibrationScreen> {
       value: selectedValue,
       isExpanded: true,
       // Ensures dropdown takes full width
-      items:
-      items.map((e) =>
-          DropdownMenuItem(value: e.id.toString(), child: Text(e.name ?? "")))
+      items: items
+          .map((e) => DropdownMenuItem(
+              value: e.id.toString(), child: Text(e.name ?? "")))
           .toList(),
       onChanged: onChanged,
     );
@@ -279,9 +261,9 @@ class _AddCalibrationScreenState extends State<AddCalibrationScreen> {
       value: selectedValue,
       isExpanded: true,
       // Ensures dropdown takes full width
-      items:
-      items.map((e) =>
-          DropdownMenuItem(value: e.id.toString(), child: Text(e.name ?? "")))
+      items: items
+          .map((e) => DropdownMenuItem(
+              value: e.id.toString(), child: Text(e.name ?? "")))
           .toList(),
       onChanged: onChanged,
     );
@@ -345,54 +327,14 @@ class _AddCalibrationScreenState extends State<AddCalibrationScreen> {
 
         labelStyle: AppTextStyle.largeRegular
             .copyWith(fontSize: 16, color: color_hint_text),
-
       ),
     );
   }
 
-  Widget _buildDatePicker() {
-    return GestureDetector(
-      onTap: _pickDate,
-      child: Container(
-        padding: EdgeInsets.only(bottom: 4),
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: Colors.grey), // Bottom-only border
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(selectedDate == null ? 'Select Date' : DateFormat('dd-MM-yyyy')
-                .format(selectedDate!),
-                style: AppTextStyle.largeMedium.copyWith(fontSize: 15
-                    ,
-                    color: selectedDate == null ? color_hint_text : Colors
-                        .black)),
-            Icon(Icons.calendar_month_sharp, color: Colors.red),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _pickDate() async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-      });
-    }
-  }
 
 
-  Widget _buildTextFieldOnlyReadableOnly(TextEditingController controller,
-      String hint) {
+  Widget _buildTextFieldOnlyReadableOnly(
+      TextEditingController controller, String hint) {
     return TextField(
       controller: controller,
       readOnly: true, // Makes the field non-editable
@@ -402,7 +344,7 @@ class _AddCalibrationScreenState extends State<AddCalibrationScreen> {
         if (result != null) {
           calibrationController.filePath.value = result.files.single.path!;
 
-          printData("filePath",  calibrationController.filePath.value);
+          printData("filePath", calibrationController.filePath.value);
           calibrationController.fileNameController.value.text =
               path.basename(calibrationController.filePath.value);
         } else {
@@ -424,10 +366,7 @@ class _AddCalibrationScreenState extends State<AddCalibrationScreen> {
 
         labelStyle: AppTextStyle.largeRegular
             .copyWith(fontSize: 16, color: color_hint_text),
-
       ),
     );
   }
-
-
 }

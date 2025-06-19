@@ -7,7 +7,9 @@ import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/Allowance/Controller/allowance_controller.dart';
 import 'package:valid_airtech/Screens/Allowance/View/add_allowance_screen.dart';
 import 'package:valid_airtech/Screens/Allowance/View/edit_allowance_screen.dart';
-import 'package:valid_airtech/Screens/Circular/Controller/circular_controller.dart';
+import 'package:valid_airtech/Screens/CalibrationCertificate/Controller/calibration_controller.dart';
+import 'package:valid_airtech/Screens/Circular/Controller/circular_controller.dart'
+    hide CircularController;
 import 'package:valid_airtech/Screens/Circular/View/edit_circular_screen.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/View/add_conveyance_screen.dart';
@@ -28,28 +30,30 @@ import '../../../Styles/my_colors.dart';
 import '../../AdminLeaveRequest/View/leave_filter_dialog.dart';
 import 'add_calibration_screen.dart';
 
-class CircularListScreen extends StatefulWidget {
+class EmpCalibrationListScreen extends StatefulWidget {
   @override
-  _CircularListScreenState createState() => _CircularListScreenState();
+  _EmpCalibrationListScreenState createState() =>
+      _EmpCalibrationListScreenState();
 }
 
-class _CircularListScreenState extends State<CircularListScreen> {
-  CircularController circularController = Get.put(CircularController());
+class _EmpCalibrationListScreenState extends State<EmpCalibrationListScreen> {
+  CalibrationController calibrationController =
+      Get.put(CalibrationController());
 
   @override
   void initState() {
     super.initState();
-    circularController.circularList.clear();
-    circularController.filePath.value = "";
+    calibrationController.calibrationList.clear();
+    calibrationController.filePath.value = "";
     _initializeData();
   }
 
   void _initializeData() async {
-    await circularController.getLoginData();
+    await calibrationController.getLoginData();
 
     printData("_initializeData", "_initializeData");
 
-    circularController.callCircularList();
+    calibrationController.callCalibrationList();
   }
 
   @override
@@ -89,94 +93,30 @@ class _CircularListScreenState extends State<CircularListScreen> {
                     padding: const EdgeInsets.all(12),
                     child: Center(
                       child: Text(
-                        'Circular',
+                        'Calibration Certificates',
                         style: AppTextStyle.largeBold
                             .copyWith(fontSize: 14, color: Colors.white),
                         textAlign: TextAlign.center,
                       ),
                     ),
                   ),
-                  Row(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(top: 16),
-                        padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: color_primary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              onPressed: () {
-                                Get.to(AddCalibrationScreen())?.then((value) {
-                                  circularController.isLoading.value = false;
-                                  circularController.callCircularList();
-                                });
-                              },
-                              child: Text(
-                                '+ Add',
-                                style: AppTextStyle.largeBold.copyWith(
-                                    fontSize: 13, color: Colors.white),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 16),
-                        padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: color_primary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              onPressed: () {
-                                showLeaveFilterDialog();
-                              },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    'Filter',
-                                    style: AppTextStyle.largeBold.copyWith(
-                                        fontSize: 13, color: Colors.white),
-                                  ),
-                                  SizedBox(
-                                    width: 4,
-                                  ),
-                                  Icon(
-                                    Icons.filter_alt_sharp,
-                                    color: Colors.white,
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  circularController.circularList.isNotEmpty
+                  calibrationController.calibrationList.isNotEmpty
                       ? Expanded(
                           child: ListView.builder(
                             padding: const EdgeInsets.all(10),
-                            itemCount: circularController.circularList.length,
+                            itemCount:
+                                calibrationController.calibrationList.length,
                             itemBuilder: (context, index) {
                               return InkWell(
                                 onTap: () {
-                                  circularController.selectedCircular.value =
-                                      circularController.circularList[index];
+                                  calibrationController
+                                          .selectedCalibration.value =
+                                      calibrationController
+                                          .calibrationList[index];
                                   Get.to(EditCircuarScreen())?.then((value) {
-                                    circularController.isLoading.value = false;
-                                    circularController.callCircularList();
+                                    calibrationController.isLoading.value =
+                                        false;
+                                    calibrationController.callCalibrationList();
                                   });
                                 },
                                 child: Card(
@@ -190,32 +130,15 @@ class _CircularListScreenState extends State<CircularListScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'Circular Date',
+                                          'Title',
                                           style: AppTextStyle.largeMedium
                                               .copyWith(
                                                   fontSize: 12,
                                                   color: color_brown_title),
                                         ),
                                         Text(
-                                          circularController
-                                                  .circularList[index].date ??
-                                              "",
-                                          style: AppTextStyle.largeRegular
-                                              .copyWith(
-                                                  fontSize: 15,
-                                                  color: Colors.black),
-                                        ),
-                                        const SizedBox(height: 12),
-                                        Text(
-                                          'Circular Title',
-                                          style: AppTextStyle.largeMedium
-                                              .copyWith(
-                                                  fontSize: 12,
-                                                  color: color_brown_title),
-                                        ),
-                                        Text(
-                                          (circularController
-                                                      .circularList[index]
+                                          (calibrationController
+                                                      .calibrationList[index]
                                                       .title ??
                                                   "")
                                               .toString(),
@@ -235,15 +158,15 @@ class _CircularListScreenState extends State<CircularListScreen> {
                                         InkWell(
                                           onTap: () async {
                                             final Uri launchUri = Uri.parse(
-                                                circularController
-                                                        .circularList[index]
+                                                calibrationController
+                                                        .calibrationList[index]
                                                         .pdf ??
                                                     "");
 
                                             printData(
                                                 "url",
-                                                circularController
-                                                        .circularList[index]
+                                                calibrationController
+                                                        .calibrationList[index]
                                                         .pdf ??
                                                     "");
 
@@ -252,8 +175,8 @@ class _CircularListScreenState extends State<CircularListScreen> {
                                                     .externalApplication);
                                           },
                                           child: Text(
-                                            Uri.parse((circularController
-                                                        .circularList[index]
+                                            Uri.parse((calibrationController
+                                                        .calibrationList[index]
                                                         .pdf ??
                                                     ""))
                                                 .pathSegments
@@ -278,7 +201,7 @@ class _CircularListScreenState extends State<CircularListScreen> {
                         )),
                 ],
               ),
-              if (circularController.isLoading.value)
+              if (calibrationController.isLoading.value)
                 Center(
                   child: CircularProgressIndicator(),
                 )

@@ -9,6 +9,7 @@ import 'package:file_picker/file_picker.dart';
 
 import 'package:path/path.dart' as path;
 import 'package:valid_airtech/Screens/Allowance/Model/allowance_list_response.dart';
+import 'package:valid_airtech/Screens/CalibrationCertificate/Controller/calibration_controller.dart';
 import 'package:valid_airtech/Screens/Circular/Controller/circular_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/Controller/conveyance_controller.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/create_conveyance_request.dart';
@@ -38,13 +39,14 @@ import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
 import '../../Sites/Model/add_contact_model.dart';
 
-class EditCircuarScreen extends StatefulWidget {
+class EditCalibrationScreen extends StatefulWidget {
   @override
-  _EditCircuarScreenState createState() => _EditCircuarScreenState();
+  _EditCalibrationScreenState createState() => _EditCalibrationScreenState();
 }
 
-class _EditCircuarScreenState extends State<EditCircuarScreen> {
-  CircularController circularController = Get.find<CircularController>();
+class _EditCalibrationScreenState extends State<EditCalibrationScreen> {
+  CalibrationController calibrationController =
+      Get.find<CalibrationController>();
   DateTime? selectedDate;
   String? _directoryPath;
 
@@ -54,21 +56,14 @@ class _EditCircuarScreenState extends State<EditCircuarScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      circularController.isEdit.value = false;
+      calibrationController.isEdit.value = false;
       // Perform navigation or state updates after build completes
-      circularController.titleController.value.text = circularController.selectedCircular.value.title??"";
-      if((circularController.selectedCircular.value.date??"").isNotEmpty){
-        DateFormat format = DateFormat("dd-MM-yyyy");
-        selectedDate = format.parse(circularController.selectedCircular.value.date??"");
-
-        setState(() {
-
-        });
-      }
-
-
-      circularController.fileNameController.value.text = Uri.parse((circularController.selectedCircular.value.pdf??"")).pathSegments.last;
-
+      calibrationController.titleController.value.text =
+          calibrationController.selectedCalibration.value.title ?? "";
+      calibrationController.fileNameController.value.text =
+          Uri.parse((calibrationController.selectedCalibration.value.pdf ?? ""))
+              .pathSegments
+              .last;
     });
   }
 
@@ -94,41 +89,37 @@ class _EditCircuarScreenState extends State<EditCircuarScreen> {
           IconButton(
             icon: Icon(Icons.edit_calendar, color: color_secondary),
             onPressed: () {
-              circularController.isEdit.value = true;
+              calibrationController.isEdit.value = true;
             },
           ),
-
           IconButton(
             icon: Icon(Icons.delete_forever, color: color_secondary),
             onPressed: () {
               Get.defaultDialog(
                   title: "DELETE",
-                  middleText:
-                  "Are you sure want to delete this circular?",
+                  middleText: "Are you sure want to delete this circular?",
                   barrierDismissible: false,
-                  titlePadding: const EdgeInsets.only(
-                      left: 20, right: 20, top: 10),
+                  titlePadding:
+                      const EdgeInsets.only(left: 20, right: 20, top: 10),
                   textConfirm: "Yes",
                   textCancel: "No",
-                  titleStyle: TextStyle(
-                      fontSize: 15),
+                  titleStyle: TextStyle(fontSize: 15),
                   buttonColor: Colors.white,
                   confirmTextColor: color_primary,
                   onCancel: () {
                     Navigator.pop(context);
-
                   },
                   onConfirm: () async {
                     Navigator.pop(context);
-                    circularController.callDeleteCircular(circularController.selectedCircular.value.id.toString());
-
+                    calibrationController.callDeleteCalibration(
+                        calibrationController.selectedCalibration.value.id
+                            .toString());
                   });
             },
           ),
         ],
       ),
-      body: Obx(() =>
-          Stack(
+      body: Obx(() => Stack(
             children: [
               SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
@@ -146,58 +137,57 @@ class _EditCircuarScreenState extends State<EditCircuarScreen> {
                     ),
 
                     _buildTextField(
-                        circularController.titleController.value,
-                        "Title"
-                    ),
+                        calibrationController.titleController.value, "Title"),
 
                     SizedBox(
                       height: 16,
                     ),
 
                     _buildTextFieldOnlyReadableOnly(
-                        circularController.fileNameController.value,
-                        "Select Upload PDF File"
-                    ),
+                        calibrationController.fileNameController.value,
+                        "Select Upload PDF File"),
 
                     SizedBox(
                       height: 16,
                     ),
 
-
                     // Login Button
-                    circularController.isEdit.value? Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 20),
-                      child: CommonButton(
-                        titleText: "Save",
-                        textColor: Colors.white,
-                        onCustomButtonPressed: () async {
-                          if (selectedDate == null) {
-                            snackBar(context, "Select Date");
-                            return;
-                          }
+                    calibrationController.isEdit.value
+                        ? Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 20),
+                            child: CommonButton(
+                              titleText: "Save",
+                              textColor: Colors.white,
+                              onCustomButtonPressed: () async {
+                                if (selectedDate == null) {
+                                  snackBar(context, "Select Date");
+                                  return;
+                                }
 
+                                if (calibrationController
+                                    .titleController.value.text.isEmpty) {
+                                  snackBar(context, "Enter Title");
+                                  return;
+                                }
 
-                          if (circularController.titleController.value.text
-                              .isEmpty) {
-                            snackBar(context, "Enter Title");
-                            return;
-                          }
-
-
-                          circularController.callUpdateCircular(circularController.selectedCircular.value.id.toString(),DateFormat(
-                              'dd-MM-yyyy').format(selectedDate!));
-                        },
-                        borderColor: color_primary,
-                        borderWidth: 0,
-                      ),
-                    ):SizedBox(),
+                                calibrationController.callUpdateCalibration(
+                                    calibrationController
+                                        .selectedCalibration.value.id
+                                        .toString());
+                              },
+                              borderColor: color_primary,
+                              borderWidth: 0,
+                            ),
+                          )
+                        : SizedBox(),
                   ],
                 ),
               ),
-
-              if(circularController.isLoading.value)Center(
-                child: CircularProgressIndicator(),)
+              if (calibrationController.isLoading.value)
+                Center(
+                  child: CircularProgressIndicator(),
+                )
             ],
           )),
     );
@@ -207,10 +197,9 @@ class _EditCircuarScreenState extends State<EditCircuarScreen> {
     return Text(
       title,
       style:
-      AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
+          AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
     );
   }
-
 
   Widget _buildDropdownString(List<String> items, String? selectedValue,
       Function(String?) onChanged, String hint) {
@@ -242,12 +231,11 @@ class _EditCircuarScreenState extends State<EditCircuarScreen> {
       isExpanded: true,
       // Ensures dropdown takes full width
       items:
-      items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+          items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
       onChanged: onChanged,
     );
     ;
   }
-
 
   Widget _buildDropdown(List<AllowanceData> items, String? selectedValue,
       Function(String?) onChanged, String hint) {
@@ -278,9 +266,9 @@ class _EditCircuarScreenState extends State<EditCircuarScreen> {
       value: selectedValue,
       isExpanded: true,
       // Ensures dropdown takes full width
-      items:
-      items.map((e) =>
-          DropdownMenuItem(value: e.id.toString(), child: Text(e.name ?? "")))
+      items: items
+          .map((e) => DropdownMenuItem(
+              value: e.id.toString(), child: Text(e.name ?? "")))
           .toList(),
       onChanged: onChanged,
     );
@@ -316,9 +304,9 @@ class _EditCircuarScreenState extends State<EditCircuarScreen> {
       value: selectedValue,
       isExpanded: true,
       // Ensures dropdown takes full width
-      items:
-      items.map((e) =>
-          DropdownMenuItem(value: e.id.toString(), child: Text(e.name ?? "")))
+      items: items
+          .map((e) => DropdownMenuItem(
+              value: e.id.toString(), child: Text(e.name ?? "")))
           .toList(),
       onChanged: onChanged,
     );
@@ -382,7 +370,6 @@ class _EditCircuarScreenState extends State<EditCircuarScreen> {
 
         labelStyle: AppTextStyle.largeRegular
             .copyWith(fontSize: 16, color: color_hint_text),
-
       ),
     );
   }
@@ -400,12 +387,14 @@ class _EditCircuarScreenState extends State<EditCircuarScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(selectedDate == null ? 'Select Date' : DateFormat('dd-MM-yyyy')
-                .format(selectedDate!),
-                style: AppTextStyle.largeMedium.copyWith(fontSize: 15
-                    ,
-                    color: selectedDate == null ? color_hint_text : Colors
-                        .black)),
+            Text(
+                selectedDate == null
+                    ? 'Select Date'
+                    : DateFormat('dd-MM-yyyy').format(selectedDate!),
+                style: AppTextStyle.largeMedium.copyWith(
+                    fontSize: 15,
+                    color:
+                        selectedDate == null ? color_hint_text : Colors.black)),
             Icon(Icons.calendar_month_sharp, color: Colors.red),
           ],
         ),
@@ -427,9 +416,8 @@ class _EditCircuarScreenState extends State<EditCircuarScreen> {
     }
   }
 
-
-  Widget _buildTextFieldOnlyReadableOnly(TextEditingController controller,
-      String hint) {
+  Widget _buildTextFieldOnlyReadableOnly(
+      TextEditingController controller, String hint) {
     return TextField(
       controller: controller,
       readOnly: true, // Makes the field non-editable
@@ -437,11 +425,11 @@ class _EditCircuarScreenState extends State<EditCircuarScreen> {
         FilePickerResult? result = await FilePicker.platform.pickFiles();
 
         if (result != null) {
-          circularController.filePath.value = result.files.single.path!;
+          calibrationController.filePath.value = result.files.single.path!;
 
-          printData("filePath",  circularController.filePath.value);
-          circularController.fileNameController.value.text =
-              path.basename(circularController.filePath.value);
+          printData("filePath", calibrationController.filePath.value);
+          calibrationController.fileNameController.value.text =
+              path.basename(calibrationController.filePath.value);
         } else {
           // User canceled the picker
         }
@@ -461,10 +449,7 @@ class _EditCircuarScreenState extends State<EditCircuarScreen> {
 
         labelStyle: AppTextStyle.largeRegular
             .copyWith(fontSize: 16, color: color_hint_text),
-
       ),
     );
   }
-
-
 }
