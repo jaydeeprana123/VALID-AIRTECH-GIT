@@ -11,26 +11,25 @@ import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
+import '../../Sites/Model/site_list_response.dart';
 
 class AddWorkReportScreen extends StatefulWidget {
-
   final String attendanceId;
   final String date;
   final String siteId;
 
-  AddWorkReportScreen({
-    Key? key,
-    required this.attendanceId,
-    required this.date,
-    required this.siteId
-  }) : super(key: key);
+  AddWorkReportScreen(
+      {Key? key,
+      required this.attendanceId,
+      required this.date,
+      required this.siteId})
+      : super(key: key);
 
   @override
   _AddWorkReportScreenState createState() => _AddWorkReportScreenState();
 }
 
 class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
-
   WorkReportController workReportController = Get.find<WorkReportController>();
 
   DateTime? selectedDate;
@@ -39,7 +38,6 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
   String? attendanceStatus;
   String? selectedSite;
   String? contactPerson;
-
 
   void _pickDate() async {
     DateTime? picked = await showDatePicker(
@@ -87,7 +85,6 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
     workReportController.billsList.add(WorkReportExpensesBill());
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,15 +94,13 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: color_secondary),
           onPressed: () {
-
             Navigator.pop(context);
-
           },
         ),
         title: Text(
           'Add Work Report',
-          style: AppTextStyle.largeBold.copyWith(fontSize: 18
-              , color: color_secondary),
+          style: AppTextStyle.largeBold
+              .copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
         actions: [
@@ -115,256 +110,337 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
           ),
         ],
       ),
-      body: Obx(() =>Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-
-                SizedBox(height: 12,),
-
-
-                _buildTextFieldOnlyReadableDate(TextEditingController(text: widget.date), "Work Reporting Date"),
-
-                SizedBox(height: 28,),
-                // _buildSectionTitle('Site Details'),
-                // SizedBox(height: 4,),
-                // Container(
-                //   padding: EdgeInsets.all(12),
-                //   decoration: BoxDecoration(
-                //     border: Border.all(
-                //         color: color_hint_text,
-                //         width: 0.5
-                //     ),
-                //
-                //     borderRadius: BorderRadius.circular(6),
-                //   ),
-                //   child: Column(
-                //     children: [
-                //       _buildDropdown(siteOptions, selectedSite, (val) => setState(() => selectedSite = val), "Select Site"),
-                //       SizedBox(height: 12,),
-                //       _buildDropdown(contactPersons, contactPerson, (val) => setState(() => contactPerson = val), "Select Contact Person"),
-                //       SizedBox(height: 28,),
-                //       _buildTimePicker('Select Site In Time', siteInTime, () => _pickTime(true)),
-                //       SizedBox(height: 28,),
-                //       _buildTimePicker('Select Site Out Time', siteOutTime, () => _pickTime(false)),
-                //     ],
-                //   ),
-                // ),
-
-
-                _buildSectionTitle('Remarks'),
-
-                SizedBox(height: 4,),
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: color_hint_text,
-                        width: 0.5
+      body: Obx(() => Stack(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 12,
                     ),
 
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Column(
-                    children: [
+                    _buildTextFieldOnlyReadableDate(
+                        TextEditingController(text: widget.date),
+                        "Work Reporting Date"),
 
-                      for(int i=0;i<workReportController.remarksList.length; i++)
-                       Column(
-                         crossAxisAlignment: CrossAxisAlignment.start,
-                         children: [
-                           Row(
-                             children: [
-                               Expanded(child: _buildTextField(workReportController.remarksList[i].remarkTextEditingController, 'Remarks ${i+1}')),
-
-                               SizedBox(width: 12,),
-
-                               (i == (workReportController.remarksList.length-1))?InkWell(onTap: (){
-                                 workReportController.remarksList.add(RemarkWorkReport());
-                                 setState(() {
-
-                                 });
-                               },child: Icon(Icons.add_circle,size: 30,color: color_brown_title,)):InkWell(
-                                   onTap: () {
-                                     workReportController.remarksList.removeAt(i);
-                                     setState(() {});
-                                   },
-                                   child: Icon(
-                                     Icons.remove_circle,
-                                     size: 30,
-                                     color: color_primary,
-                                   ))
-                             ],
-                           ),
-                           SizedBox(height: 12,),
-                         ],
-                       )
-
-
-                      ],
-                  ),
-                ),
-
-                SizedBox(height: 28,),
-
-                _buildSectionTitle('Expenses'),
-
-                SizedBox(height: 4,),
-
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: color_hint_text,
-                        width: 0.5
+                    SizedBox(
+                      height: 28,
                     ),
 
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Column(
-                    children: [
+                    _buildDropdownSite(
+                        workReportController.siteList, selectedSite, (val) {
+                      setState(() {
+                        selectedSite = val;
+                      });
+                    }, "Select Site"),
 
-                      _buildTextField(workReportController.controllerTrain.value, "Train"),
-                      SizedBox(height: 12,),
-                      _buildTextField(workReportController.controllerBus.value, "Bus"),
-                      SizedBox(height: 12,),
-                      _buildTextField(workReportController.controllerAuto.value, "Auto"),
-                      SizedBox(height: 12,),
-                      _buildTextField(workReportController.controllerFuel.value, "Fuel"),
-                      SizedBox(height: 12,),
-                      _buildTextField(workReportController.controllerFoodAmount.value, "Food Amount"),
-                      SizedBox(height: 12,),
-                      _buildTextField(workReportController.controllerOther.value, "Other"),
-                      SizedBox(height: 12,),
-                      _buildTextField(workReportController.controllerRemarksForOther.value, "Remarks For Others"),
-                      SizedBox(height: 12,),
-
-                    ],
-                  ),
-                ),
-
-
-                SizedBox(height: 28,),
-
-                _buildSectionTitle('Expenses Bills'),
-
-                SizedBox(height: 4,),
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: color_hint_text,
-                        width: 0.5
+                    SizedBox(
+                      height: 28,
                     ),
 
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Column(
-                    children: [
+                    _buildDropdownConveyanceThrough(
+                        workReportController.conveyThroughList,
+                        selectedSite,
+                        (val) => setState(() => selectedSite = val),
+                        "Select Conveyance"),
 
-                      for(int i=0;i<workReportController.billsList.length; i++)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                    SizedBox(
+                      height: 28,
+                    ),
+
+                    _buildSectionTitle('Remarks'),
+
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: color_hint_text, width: 0.5),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Column(
+                        children: [
+                          for (int i = 0;
+                              i < workReportController.remarksList.length;
+                              i++)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(child: InkWell(
-                                  onTap: ()async{
-                                   workReportController.billsList[i].path = await selectPhoto(context);
-                                   setState(() {
-
-                                   });
-                                  },
-                                  child: Container(height: 160
-                                    ,child: Stack(
-                                      children: [
-                                        (workReportController.billsList[i].path??"").isNotEmpty?Image.file(
-                                          File(workReportController.billsList[i].path??""),
-                                          fit: BoxFit.cover,
-                                          height: 160,
-                                          width: double.infinity,
-                                        ): Container(width: double.infinity,height: 150,color: Colors.grey.shade300,margin: EdgeInsets.only(right: 10),),
-                                        Align(alignment: Alignment.bottomRight,child: Icon(Icons.edit,size: 30,color: color_primary,))
-                                      ],
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: _buildTextField(
+                                            workReportController.remarksList[i]
+                                                .remarkTextEditingController,
+                                            'Remarks ${i + 1}')),
+                                    SizedBox(
+                                      width: 12,
                                     ),
-                                  ),
-                                )),
-
-                                SizedBox(width: 12,),
-
-                                InkWell(onTap: (){
-                                  workReportController.billsList.removeAt(i);
-                                  setState(() {
-
-                                  });
-                                },child: Icon(Icons.remove_circle,size: 30,color: color_primary,))
+                                    (i ==
+                                            (workReportController
+                                                    .remarksList.length -
+                                                1))
+                                        ? InkWell(
+                                            onTap: () {
+                                              workReportController.remarksList
+                                                  .add(RemarkWorkReport());
+                                              setState(() {});
+                                            },
+                                            child: Icon(
+                                              Icons.add_circle,
+                                              size: 30,
+                                              color: color_brown_title,
+                                            ))
+                                        : InkWell(
+                                            onTap: () {
+                                              workReportController.remarksList
+                                                  .removeAt(i);
+                                              setState(() {});
+                                            },
+                                            child: Icon(
+                                              Icons.remove_circle,
+                                              size: 30,
+                                              color: color_primary,
+                                            ))
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 12,
+                                ),
                               ],
-                            ),
+                            )
+                        ],
+                      ),
+                    ),
 
+                    SizedBox(
+                      height: 28,
+                    ),
 
-                            Row(
+                    _buildSectionTitle('Expenses'),
+
+                    SizedBox(
+                      height: 4,
+                    ),
+
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: color_hint_text, width: 0.5),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildTextField(
+                              workReportController.controllerTrain.value,
+                              "Train"),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          _buildTextField(
+                              workReportController.controllerBus.value, "Bus"),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          _buildTextField(
+                              workReportController.controllerAuto.value,
+                              "Auto"),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          _buildTextField(
+                              workReportController.controllerFuel.value,
+                              "Fuel"),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          _buildTextField(
+                              workReportController.controllerFoodAmount.value,
+                              "Food Amount"),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          _buildTextField(
+                              workReportController.controllerOther.value,
+                              "Other"),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          _buildTextField(
+                              workReportController
+                                  .controllerRemarksForOther.value,
+                              "Remarks For Others"),
+                          SizedBox(
+                            height: 12,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(
+                      height: 28,
+                    ),
+
+                    _buildSectionTitle('Expenses Bills'),
+
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: color_hint_text, width: 0.5),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Column(
+                        children: [
+                          for (int i = 0;
+                              i < workReportController.billsList.length;
+                              i++)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(child: _buildTextField(workReportController.billsList[i].billNameTextEditingController, 'Bill Name ${i+1}')),
-
-                                if(i == (workReportController.billsList.length-1))Container(margin: EdgeInsets.only(left: 12),
-                                  child: InkWell(onTap: (){
-                                    workReportController.billsList.add(WorkReportExpensesBill());
-                                    setState(() {
-
-                                    });
-                                  },child: Icon(Icons.add_circle,size: 30,color: color_brown_title,)),
-                                )
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: InkWell(
+                                      onTap: () async {
+                                        workReportController.billsList[i].path =
+                                            await selectPhoto(context);
+                                        setState(() {});
+                                      },
+                                      child: Container(
+                                        height: 160,
+                                        child: Stack(
+                                          children: [
+                                            (workReportController.billsList[i]
+                                                            .path ??
+                                                        "")
+                                                    .isNotEmpty
+                                                ? Image.file(
+                                                    File(workReportController
+                                                            .billsList[i]
+                                                            .path ??
+                                                        ""),
+                                                    fit: BoxFit.cover,
+                                                    height: 160,
+                                                    width: double.infinity,
+                                                  )
+                                                : Container(
+                                                    width: double.infinity,
+                                                    height: 150,
+                                                    color: Colors.grey.shade300,
+                                                    margin: EdgeInsets.only(
+                                                        right: 10),
+                                                  ),
+                                            Align(
+                                                alignment:
+                                                    Alignment.bottomRight,
+                                                child: Icon(
+                                                  Icons.edit,
+                                                  size: 30,
+                                                  color: color_primary,
+                                                ))
+                                          ],
+                                        ),
+                                      ),
+                                    )),
+                                    SizedBox(
+                                      width: 12,
+                                    ),
+                                    InkWell(
+                                        onTap: () {
+                                          workReportController.billsList
+                                              .removeAt(i);
+                                          setState(() {});
+                                        },
+                                        child: Icon(
+                                          Icons.remove_circle,
+                                          size: 30,
+                                          color: color_primary,
+                                        ))
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: _buildTextField(
+                                            workReportController.billsList[i]
+                                                .billNameTextEditingController,
+                                            'Bill Name ${i + 1}')),
+                                    if (i ==
+                                        (workReportController.billsList.length -
+                                            1))
+                                      Container(
+                                        margin: EdgeInsets.only(left: 12),
+                                        child: InkWell(
+                                            onTap: () {
+                                              workReportController.billsList
+                                                  .add(
+                                                      WorkReportExpensesBill());
+                                              setState(() {});
+                                            },
+                                            child: Icon(
+                                              Icons.add_circle,
+                                              size: 30,
+                                              color: color_brown_title,
+                                            )),
+                                      )
+                                  ],
+                                ),
+                                if (i !=
+                                    (workReportController.billsList.length - 1))
+                                  SizedBox(
+                                    height: 28,
+                                  ),
                               ],
-                            ),
+                            )
+                        ],
+                      ),
+                    ),
 
-                            if(i != (workReportController.billsList.length-1))SizedBox(height: 28,),
-                          ],
-                        )
+                    SizedBox(height: 20),
 
+                    // Login Button
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      child: CommonButton(
+                        titleText: "Save",
+                        textColor: Colors.white,
+                        onCustomButtonPressed: () async {
+                          if (workReportController.remarksList.isEmpty) {
+                            snackBar(context, "Please add remark");
+                            return;
+                          }
 
-                    ],
-                  ),
+                          workReportController.callCreateWorkReportList(
+                              widget.attendanceId, widget.siteId);
+                        },
+                        borderColor: color_primary,
+                        borderWidth: 0,
+                      ),
+                    ),
+                  ],
                 ),
-
-                SizedBox(height: 20),
-
-                // Login Button
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 20),
-                  child: CommonButton(
-                    titleText: "Save",
-                    textColor: Colors.white,
-                    onCustomButtonPressed: () async {
-                      if(workReportController.remarksList.isEmpty){
-                        snackBar(context, "Please add remark");
-                        return;
-                      }
-
-                      workReportController.callCreateWorkReportList(widget.attendanceId, widget.siteId);
-
-                    },
-                    borderColor: color_primary,
-                    borderWidth: 0,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          if(workReportController.isLoading.value)Center(child: CircularProgressIndicator(),)
-        ],
-      )),
+              ),
+              if (workReportController.isLoading.value)
+                Center(
+                  child: CircularProgressIndicator(),
+                )
+            ],
+          )),
     );
   }
 
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: AppTextStyle.largeBold.copyWith(fontSize: 20
-          , color: color_hint_text),
+      style:
+          AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
     );
   }
 
@@ -381,9 +457,14 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(selectedDate == null ? 'Select Work Reporting Date' : DateFormat('dd/MM/yyyy').format(selectedDate!),
-                style: AppTextStyle.largeMedium.copyWith(fontSize: 15
-                    , color: selectedDate == null ?color_hint_text:Colors.black)),
+            Text(
+                selectedDate == null
+                    ? 'Select Work Reporting Date'
+                    : DateFormat('dd/MM/yyyy').format(selectedDate!),
+                style: AppTextStyle.largeMedium.copyWith(
+                    fontSize: 15,
+                    color:
+                        selectedDate == null ? color_hint_text : Colors.black)),
             Icon(Icons.calendar_month_sharp, color: Colors.red),
           ],
         ),
@@ -391,19 +472,25 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
     );
   }
 
-  Widget _buildDropdown(List<String> items, String? selectedValue, Function(String?) onChanged, String hint) {
+  Widget _buildDropdownConveyanceThrough(List<String> items,
+      String? selectedValue, Function(String?) onChanged, String hint) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         contentPadding: EdgeInsets.only(bottom: 10),
         alignLabelWithHint: true,
 
-        labelText: hint, // Moves up as a floating label when a value is selected
-        floatingLabelBehavior: FloatingLabelBehavior.auto, // Auto float when selecting
-        hintText:hint, // Hint text
-        hintStyle:AppTextStyle.largeMedium.copyWith(fontSize: 15
-            , color: color_hint_text), // Hint text style
-        labelStyle:AppTextStyle.largeMedium.copyWith(fontSize: 15
-            , color: color_hint_text), // Hint text style
+        labelText: hint,
+        // Moves up as a floating label when a value is selected
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when selecting
+        hintText: hint,
+        // Hint text
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: Colors.grey), // Bottom-only border
         ),
@@ -412,12 +499,51 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
         ),
       ),
       value: selectedValue,
-      isExpanded: true, // Ensures dropdown takes full width
-      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+      isExpanded: true,
+      // Ensures dropdown takes full width
+      items:
+          items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
       onChanged: onChanged,
     );
     ;
+  }
 
+  Widget _buildDropdownSite(List<SiteData> items, String? selectedValue,
+      Function(String?) onChanged, String hint) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 10),
+        alignLabelWithHint: true,
+
+        labelText: hint,
+        // Moves up as a floating label when a value is selected
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when selecting
+        hintText: hint,
+        // Hint text
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text),
+        // Hint text style
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey), // Bottom-only border
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue), // Bottom border on focus
+        ),
+      ),
+      value: selectedValue,
+      isExpanded: true,
+      // Ensures dropdown takes full width
+      items: items
+          .map((e) => DropdownMenuItem(
+              value: e.id.toString(), child: Text(e.headName ?? "")))
+          .toList(),
+      onChanged: onChanged,
+    );
+    ;
   }
 
   Widget _buildTimePicker(String title, TimeOfDay? time, VoidCallback onTap) {
@@ -435,7 +561,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
               ),
             ),
           Container(
-            padding: EdgeInsets.only(bottom: 4,  right: 10),
+            padding: EdgeInsets.only(bottom: 4, right: 10),
             decoration: const BoxDecoration(
               border: Border(
                 bottom: BorderSide(color: Colors.grey), // Bottom-only border
@@ -457,8 +583,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
           ),
         ],
       ),
-    )
-    ;
+    );
   }
 
   Widget _buildTextField(TextEditingController controller, String hint) {
@@ -467,30 +592,30 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
       decoration: InputDecoration(
         contentPadding: EdgeInsets.only(bottom: 0),
         alignLabelWithHint: true,
-        labelText: hint, // Display hint as title when typing
+        labelText: hint,
+        // Display hint as title when typing
         hintText: hint,
-        floatingLabelBehavior: FloatingLabelBehavior.auto, // Auto float when typing
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when typing
         border: UnderlineInputBorder(),
-        hintStyle: AppTextStyle.largeMedium.copyWith(fontSize: 16
-            , color: color_hint_text) ,
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 16, color: color_hint_text),
 
-        labelStyle: AppTextStyle.largeMedium.copyWith(fontSize: 16
-            , color: color_hint_text) ,
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 16, color: color_hint_text),
       ),
     );
   }
 
-
-  Widget _buildTextFieldOnlyReadableDate(TextEditingController controller, String hint) {
+  Widget _buildTextFieldOnlyReadableDate(
+      TextEditingController controller, String hint) {
     return Row(
       children: [
         Expanded(
           child: TextField(
             controller: controller,
             readOnly: true, // Makes the field non-editable
-            onTap: (){
-
-            },
+            onTap: () {},
             decoration: InputDecoration(
               contentPadding: EdgeInsets.only(bottom: 0),
               alignLabelWithHint: true,
@@ -506,7 +631,6 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
 
               labelStyle: AppTextStyle.largeRegular
                   .copyWith(fontSize: 16, color: color_hint_text),
-
             ),
           ),
         ),
@@ -515,5 +639,3 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
     );
   }
 }
-
-
