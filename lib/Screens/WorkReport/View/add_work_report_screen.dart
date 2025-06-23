@@ -5,12 +5,22 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+// Imports all Widgets included in [multiselect] package
+import 'package:multiselect/multiselect.dart';
+import 'package:valid_airtech/Screens/Conveyance/Model/conveyance_list_response.dart';
+import 'package:valid_airtech/Screens/Instruments/Model/isntrument_list_response.dart';
+import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
+import 'package:valid_airtech/Screens/WorkReport/Model/service_by_nature_list_response.dart';
+import 'package:valid_airtech/Screens/WorkReport/Model/service_status_model.dart';
+import 'package:valid_airtech/Screens/WorkReport/Model/site_by_service_list_response.dart';
+import 'package:valid_airtech/Screens/WorkReport/Model/test_by_perform_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/work_report_list_response.dart';
 import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
+import '../../Sites/Model/employee_list_response.dart';
 
 class AddWorkReportScreen extends StatefulWidget {
 
@@ -76,15 +86,23 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
     // TODO: implement initState
     super.initState();
 
-    workReportController.callSiteList();
-    workReportController.callSiteAttendByList();
-    workReportController.callTestPerformerList();
-    workReportController.callServiceByNatureByList();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      workReportController.callInstrumentList();
+      workReportController.callSiteList();
+      workReportController.callConveyanceList();
+      workReportController.callSiteAttendByList();
+      workReportController.callTestPerformerList();
+      workReportController.callServiceByNatureByList();
+      workReportController.callEmployeeList();
+    });
 
+
+
+
+    workReportController.serviceStatusList.clear();
     workReportController.remarksList.clear();
-    workReportController.billsList.clear();
+    workReportController.serviceStatusList.add(ServiceStatusModel());
     workReportController.remarksList.add(RemarkWorkReport());
-    workReportController.billsList.add(WorkReportExpensesBill());
   }
 
 
@@ -126,36 +144,166 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                 SizedBox(height: 12,),
 
 
-                _buildTextFieldOnlyReadableDate(TextEditingController(text: widget.date), "Work Reporting Date"),
+                _buildDatePicker(),
 
-                SizedBox(height: 28,),
-                // _buildSectionTitle('Site Details'),
-                // SizedBox(height: 4,),
-                // Container(
-                //   padding: EdgeInsets.all(12),
-                //   decoration: BoxDecoration(
-                //     border: Border.all(
-                //         color: color_hint_text,
-                //         width: 0.5
-                //     ),
+                // _buildTextFieldOnlyReadableDate(TextEditingController(text: widget.date), "Work Reporting Date"),
+
+                SizedBox(height: 16,),
+
+                DropdownButton<SiteData>(
+                  value: workReportController.siteList
+                      .contains(workReportController.siteId)
+                      ? workReportController.siteId
+                      : null,
+                  // Ensure valid value
+                  hint: Text("Select Site",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                      , color: color_hint_text)) ,
+
+                  isExpanded: true,
+                  onChanged: (SiteData? newValue) {
+                    setState(() {
+                      workReportController.siteId = newValue;
+                    });
+                  },
+                  items: workReportController.siteList.map((SiteData group) {
+                    return DropdownMenuItem<SiteData>(
+                      value: group,
+                      child: Text(group.headName??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                          , color: blackText),),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 12,),
+
+                // DropdownButton<SiteAttendByData>(
+                //   value: workReportController.siteAttendByList
+                //       .contains(workReportController.siteAttendByData)
+                //       ? workReportController.siteAttendByData
+                //       : null,
+                //   // Ensure valid value
+                //   hint: Text("Site Attend By",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                //       , color: color_hint_text)) ,
                 //
-                //     borderRadius: BorderRadius.circular(6),
-                //   ),
-                //   child: Column(
-                //     children: [
-                //       _buildDropdown(siteOptions, selectedSite, (val) => setState(() => selectedSite = val), "Select Site"),
-                //       SizedBox(height: 12,),
-                //       _buildDropdown(contactPersons, contactPerson, (val) => setState(() => contactPerson = val), "Select Contact Person"),
-                //       SizedBox(height: 28,),
-                //       _buildTimePicker('Select Site In Time', siteInTime, () => _pickTime(true)),
-                //       SizedBox(height: 28,),
-                //       _buildTimePicker('Select Site Out Time', siteOutTime, () => _pickTime(false)),
-                //     ],
-                //   ),
+                //
+                //   isExpanded: true,
+                //   onChanged: (SiteAttendByData? newValue) {
+                //     setState(() {
+                //       workReportController.siteAttendByData = newValue;
+                //     });
+                //   },
+                //   items: workReportController.siteAttendByList.map((SiteAttendByData group) {
+                //     return DropdownMenuItem<SiteAttendByData>(
+                //       value: group,
+                //       child: Text(group.name??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                //           , color: blackText),),
+                //     );
+                //   }).toList(),
                 // ),
 
 
-                _buildSectionTitle('Remarks'),
+                _buildSectionTitle('Site Attend By'),
+
+                DropDownMultiSelect<SiteAttendByData>(
+                  options: workReportController.siteAttendByList,
+                  selectedValues: workReportController.selectedSiteAttendByList,
+                  onChanged: (List<SiteAttendByData> values) {
+
+                    workReportController.selectedSiteAttendListInString = values.toString();
+                    printData("selected", values.toString());
+                  //  workReportController.updateSelectedSiteAttendByList(values.toString().split(','));
+
+                  },
+
+                ),
+
+
+                SizedBox(height: 8,),
+
+                DropdownButton<String>(
+                  value: workReportController.conveyThroughList
+                      .contains(workReportController.conveyThrough)
+                      ? workReportController.conveyThrough
+                      : null,
+                  // Ensure valid value
+                  hint: Text("Convey Through",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                      , color: color_hint_text)) ,
+
+                  isExpanded: true,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      workReportController.conveyThrough = newValue;
+                    });
+                  },
+                  items: workReportController.conveyThroughList.map((String group) {
+                    return DropdownMenuItem<String>(
+                      value: group,
+                      child: Text(group, style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                          , color: blackText),),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 12,),
+
+                _buildTextField(workReportController.controllerOther.value, "Other"),
+                SizedBox(height: 16,),
+
+
+                DropdownButton<ConveyanceData>(
+                  value: workReportController.conveysList
+                      .contains(workReportController.conveyanceData)
+                      ? workReportController.conveyanceData
+                      : null,
+                  // Ensure valid value
+                  hint: Text("Driver Name",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                      , color: color_hint_text)) ,
+
+                  isExpanded: true,
+                  onChanged: (ConveyanceData? newValue) {
+                    setState(() {
+                      workReportController.conveyanceData = newValue;
+                    });
+                  },
+                  items: workReportController.conveysList.map((ConveyanceData group) {
+                    return DropdownMenuItem<ConveyanceData>(
+                      value: group,
+                      child: Text(group.name??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                          , color: blackText),),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 12,),
+
+                DropdownButton<ServiceByNatureData>(
+                  value: workReportController.serviceByNatureList
+                      .contains(workReportController.serviceByNatureData)
+                      ? workReportController.serviceByNatureData
+                      : null,
+                  // Ensure valid value
+                  hint: Text("Service Nature",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                      , color: color_hint_text)) ,
+
+                  isExpanded: true,
+                  onChanged: (ServiceByNatureData? newValue) {
+                    setState(() {
+                      workReportController.serviceByNatureData = newValue;
+                    });
+                  },
+                  items: workReportController.serviceByNatureList.map((ServiceByNatureData group) {
+                    return DropdownMenuItem<ServiceByNatureData>(
+                      value: group,
+                      child: Text(group.name??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                          , color: blackText),),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 12,),
+
+                _buildTextField(workReportController.controllerNameOfContactPerson.value, "Name Of Contact Person"),
+                SizedBox(height: 16,),
+
+                _buildTextField(workReportController.controllerNameOfWitnessPerson.value, "Name Of Witness Person"),
+
+                _buildSectionTitle('Comments'),
 
                 SizedBox(height: 4,),
                 Container(
@@ -172,23 +320,202 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                     children: [
 
                       for(int i=0;i<workReportController.remarksList.length; i++)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(child: _buildTextField(workReportController.remarksList[i].remarkTextEditingController, 'Comment ${i+1}')),
+
+                                SizedBox(width: 12,),
+
+                                (i == (workReportController.remarksList.length-1))?InkWell(onTap: (){
+                                  workReportController.remarksList.add(RemarkWorkReport());
+                                  setState(() {
+
+                                  });
+                                },child: Icon(Icons.add_circle,size: 30,color: color_brown_title,)):InkWell(
+                                    onTap: () {
+
+                                      workReportController.removedRemarkIds.add(workReportController.remarksList[i].id.toString());
+                                      workReportController.remarksList.removeAt(i);
+                                      setState(() {});
+                                    },
+                                    child: Icon(
+                                      Icons.remove_circle,
+                                      size: 30,
+                                      color: color_primary,
+                                    ))
+                              ],
+                            ),
+                            SizedBox(height: 12,),
+                          ],
+                        )
+
+
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 16,),
+
+                _buildSectionTitle('Given Service & Status'),
+
+                SizedBox(height: 4,),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        color: color_hint_text,
+                        width: 0.5
+                    ),
+
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Column(
+                    children: [
+
+                      for(int i=0;i<workReportController.serviceStatusList.length; i++)
                        Column(
                          crossAxisAlignment: CrossAxisAlignment.start,
                          children: [
                            Row(
                              children: [
-                               Expanded(child: _buildTextField(workReportController.remarksList[i].remarkTextEditingController, 'Remarks ${i+1}')),
+                               Expanded(
+                                 child: Column(
+                                   children: [
+
+                                     _buildTextField(workReportController.serviceStatusList[i].testLocationEditingController, 'Test Location ${i+1}'),
+
+                                     SizedBox(height: 8,),
+
+                                     _buildTextField(workReportController.serviceStatusList[i].roomEquipmentEditingController, 'Room/Equipment/System Identification ${i+1}'),
+                                     SizedBox(height: 16,),
+
+                                     DropdownButton<TestByPerformData>(
+                                       value: workReportController.testPerformerList
+                                           .contains(workReportController.serviceStatusList[i].testPerformData)
+                                           ? workReportController.serviceStatusList[i].testPerformData
+                                           : null,
+                                       // Ensure valid value
+                                       hint: Text("Test Performed",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                                           , color: color_hint_text)) ,
+
+
+                                       isExpanded: true,
+                                       onChanged: (TestByPerformData? newValue) {
+                                         setState(() {
+                                           workReportController.serviceStatusList[i].testPerformData = newValue;
+                                         });
+                                       },
+                                       items: workReportController.testPerformerList.map((TestByPerformData group) {
+                                         return DropdownMenuItem<TestByPerformData>(
+                                           value: group,
+                                           child: Text(group.testName??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                                               , color: blackText),),
+                                         );
+                                       }).toList(),
+                                     ),
+
+                                     SizedBox(height: 16,),
+
+                                     DropdownButton<String>(
+                                       value: workReportController.sheetStatusList
+                                           .contains(workReportController.serviceStatusList[i].dataSheetStatus)
+                                           ? workReportController.serviceStatusList[i].dataSheetStatus
+                                           : null,
+                                       // Ensure valid value
+                                       hint: Text("Sheet Status",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                                           , color: color_hint_text)) ,
+
+
+                                       isExpanded: true,
+                                       onChanged: (String? newValue) {
+                                         setState(() {
+                                           workReportController.serviceStatusList[i].dataSheetStatus = newValue;
+                                         });
+                                       },
+                                       items: workReportController.sheetStatusList.map((String group) {
+                                         return DropdownMenuItem<String>(
+                                           value: group,
+                                           child: Text(group, style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                                               , color: blackText),),
+                                         );
+                                       }).toList(),
+                                     ),
+
+                                     SizedBox(height: 16,),
+
+
+                                     DropdownButton<InstrumentData>(
+                                       value: workReportController.instrumentList
+                                           .contains(workReportController.serviceStatusList[i].usedInstrument)
+                                           ? workReportController.serviceStatusList[i].usedInstrument
+                                           : null,
+                                       // Ensure valid value
+                                       hint: Text("Select Used Instrument",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                                           , color: color_hint_text)) ,
+
+
+                                       isExpanded: true,
+                                       onChanged: (InstrumentData? newValue) {
+                                         setState(() {
+                                           workReportController.serviceStatusList[i].usedInstrument = newValue;
+                                         });
+                                       },
+                                       items: workReportController.instrumentList.map((InstrumentData group) {
+                                         return DropdownMenuItem<InstrumentData>(
+                                           value: group,
+                                           child: Text(group.headInstrumentName??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                                               , color: blackText),),
+                                         );
+                                       }).toList(),
+                                     ),
+
+                                     SizedBox(height: 8,),
+
+                                     DropdownButton<EmployeeData>(
+                                       value: workReportController.employeeList
+                                           .contains(workReportController.serviceStatusList[i].employeeData)
+                                           ? workReportController.serviceStatusList[i].employeeData
+                                           : null,
+                                       // Ensure valid value
+                                       hint: Text("Performed By",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                                           , color: color_hint_text)) ,
+
+
+                                       isExpanded: true,
+                                       onChanged: (EmployeeData? newValue) {
+                                         setState(() {
+                                           workReportController.serviceStatusList[i].employeeData = newValue;
+                                         });
+                                       },
+                                       items: workReportController.employeeList.map((EmployeeData group) {
+                                         return DropdownMenuItem<EmployeeData>(
+                                           value: group,
+                                           child: Text(group.eEmployeeName??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                                               , color: blackText),),
+                                         );
+                                       }).toList(),
+                                     ),
+
+                                     SizedBox(height: 8,),
+
+                                     _buildTextField(workReportController.serviceStatusList[i].remarkTextEditingController, 'Remarks ${i+1}'),
+                                   ],
+                                 ),
+                               ),
 
                                SizedBox(width: 12,),
 
-                               (i == (workReportController.remarksList.length-1))?InkWell(onTap: (){
-                                 workReportController.remarksList.add(RemarkWorkReport());
+                               (i == (workReportController.serviceStatusList.length-1))?InkWell(onTap: (){
+                                 workReportController.serviceStatusList.add(ServiceStatusModel());
                                  setState(() {
 
                                  });
                                },child: Icon(Icons.add_circle,size: 30,color: color_brown_title,)):InkWell(
                                    onTap: () {
-                                     workReportController.remarksList.removeAt(i);
+                                     workReportController.serviceStatusList.removeAt(i);
                                      setState(() {});
                                    },
                                    child: Icon(
@@ -207,126 +534,126 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                   ),
                 ),
 
-                SizedBox(height: 28,),
-
-                _buildSectionTitle('Expenses'),
-
-                SizedBox(height: 4,),
-
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: color_hint_text,
-                        width: 0.5
-                    ),
-
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Column(
-                    children: [
-
-                      _buildTextField(workReportController.controllerTrain.value, "Train"),
-                      SizedBox(height: 12,),
-                      _buildTextField(workReportController.controllerBus.value, "Bus"),
-                      SizedBox(height: 12,),
-                      _buildTextField(workReportController.controllerAuto.value, "Auto"),
-                      SizedBox(height: 12,),
-                      _buildTextField(workReportController.controllerFuel.value, "Fuel"),
-                      SizedBox(height: 12,),
-                      _buildTextField(workReportController.controllerFoodAmount.value, "Food Amount"),
-                      SizedBox(height: 12,),
-                      _buildTextField(workReportController.controllerOther.value, "Other"),
-                      SizedBox(height: 12,),
-                      _buildTextField(workReportController.controllerRemarksForOther.value, "Remarks For Others"),
-                      SizedBox(height: 12,),
-
-                    ],
-                  ),
-                ),
-
-
-                SizedBox(height: 28,),
-
-                _buildSectionTitle('Expenses Bills'),
-
-                SizedBox(height: 4,),
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: color_hint_text,
-                        width: 0.5
-                    ),
-
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Column(
-                    children: [
-
-                      for(int i=0;i<workReportController.billsList.length; i++)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(child: InkWell(
-                                  onTap: ()async{
-                                   workReportController.billsList[i].path = await selectPhoto(context);
-                                   setState(() {
-
-                                   });
-                                  },
-                                  child: Container(height: 160
-                                    ,child: Stack(
-                                      children: [
-                                        (workReportController.billsList[i].path??"").isNotEmpty?Image.file(
-                                          File(workReportController.billsList[i].path??""),
-                                          fit: BoxFit.cover,
-                                          height: 160,
-                                          width: double.infinity,
-                                        ): Container(width: double.infinity,height: 150,color: Colors.grey.shade300,margin: EdgeInsets.only(right: 10),),
-                                        Align(alignment: Alignment.bottomRight,child: Icon(Icons.edit,size: 30,color: color_primary,))
-                                      ],
-                                    ),
-                                  ),
-                                )),
-
-                                SizedBox(width: 12,),
-
-                                InkWell(onTap: (){
-                                  workReportController.billsList.removeAt(i);
-                                  setState(() {
-
-                                  });
-                                },child: Icon(Icons.remove_circle,size: 30,color: color_primary,))
-                              ],
-                            ),
+                // SizedBox(height: 28,),
+                //
+                // _buildSectionTitle('Expenses'),
+                //
+                // SizedBox(height: 4,),
+                //
+                // Container(
+                //   padding: EdgeInsets.all(12),
+                //   decoration: BoxDecoration(
+                //     border: Border.all(
+                //         color: color_hint_text,
+                //         width: 0.5
+                //     ),
+                //
+                //     borderRadius: BorderRadius.circular(6),
+                //   ),
+                //   child: Column(
+                //     children: [
+                //
+                //       _buildTextField(workReportController.controllerTrain.value, "Train"),
+                //       SizedBox(height: 12,),
+                //       _buildTextField(workReportController.controllerBus.value, "Bus"),
+                //       SizedBox(height: 12,),
+                //       _buildTextField(workReportController.controllerAuto.value, "Auto"),
+                //       SizedBox(height: 12,),
+                //       _buildTextField(workReportController.controllerFuel.value, "Fuel"),
+                //       SizedBox(height: 12,),
+                //       _buildTextField(workReportController.controllerFoodAmount.value, "Food Amount"),
+                //       SizedBox(height: 12,),
+                //       _buildTextField(workReportController.controllerOther.value, "Other"),
+                //       SizedBox(height: 12,),
+                //       _buildTextField(workReportController.controllerRemarksForOther.value, "Remarks For Others"),
+                //       SizedBox(height: 12,),
+                //
+                //     ],
+                //   ),
+                // ),
 
 
-                            Row(
-                              children: [
-                                Expanded(child: _buildTextField(workReportController.billsList[i].billNameTextEditingController, 'Bill Name ${i+1}')),
-
-                                if(i == (workReportController.billsList.length-1))Container(margin: EdgeInsets.only(left: 12),
-                                  child: InkWell(onTap: (){
-                                    workReportController.billsList.add(WorkReportExpensesBill());
-                                    setState(() {
-
-                                    });
-                                  },child: Icon(Icons.add_circle,size: 30,color: color_brown_title,)),
-                                )
-                              ],
-                            ),
-
-                            if(i != (workReportController.billsList.length-1))SizedBox(height: 28,),
-                          ],
-                        )
-
-
-                    ],
-                  ),
-                ),
+                // SizedBox(height: 28,),
+                //
+                // _buildSectionTitle('Expenses Bills'),
+                //
+                // SizedBox(height: 4,),
+                // Container(
+                //   padding: EdgeInsets.all(12),
+                //   decoration: BoxDecoration(
+                //     border: Border.all(
+                //         color: color_hint_text,
+                //         width: 0.5
+                //     ),
+                //
+                //     borderRadius: BorderRadius.circular(6),
+                //   ),
+                //   child: Column(
+                //     children: [
+                //
+                //       for(int i=0;i<workReportController.billsList.length; i++)
+                //         Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             Row(
+                //               children: [
+                //                 Expanded(child: InkWell(
+                //                   onTap: ()async{
+                //                    workReportController.billsList[i].path = await selectPhoto(context);
+                //                    setState(() {
+                //
+                //                    });
+                //                   },
+                //                   child: Container(height: 160
+                //                     ,child: Stack(
+                //                       children: [
+                //                         (workReportController.billsList[i].path??"").isNotEmpty?Image.file(
+                //                           File(workReportController.billsList[i].path??""),
+                //                           fit: BoxFit.cover,
+                //                           height: 160,
+                //                           width: double.infinity,
+                //                         ): Container(width: double.infinity,height: 150,color: Colors.grey.shade300,margin: EdgeInsets.only(right: 10),),
+                //                         Align(alignment: Alignment.bottomRight,child: Icon(Icons.edit,size: 30,color: color_primary,))
+                //                       ],
+                //                     ),
+                //                   ),
+                //                 )),
+                //
+                //                 SizedBox(width: 12,),
+                //
+                //                 InkWell(onTap: (){
+                //                   workReportController.billsList.removeAt(i);
+                //                   setState(() {
+                //
+                //                   });
+                //                 },child: Icon(Icons.remove_circle,size: 30,color: color_primary,))
+                //               ],
+                //             ),
+                //
+                //
+                //             Row(
+                //               children: [
+                //                 Expanded(child: _buildTextField(workReportController.billsList[i].billNameTextEditingController, 'Bill Name ${i+1}')),
+                //
+                //                 if(i == (workReportController.billsList.length-1))Container(margin: EdgeInsets.only(left: 12),
+                //                   child: InkWell(onTap: (){
+                //                     workReportController.billsList.add(WorkReportExpensesBill());
+                //                     setState(() {
+                //
+                //                     });
+                //                   },child: Icon(Icons.add_circle,size: 30,color: color_brown_title,)),
+                //                 )
+                //               ],
+                //             ),
+                //
+                //             if(i != (workReportController.billsList.length-1))SizedBox(height: 28,),
+                //           ],
+                //         )
+                //
+                //
+                //     ],
+                //   ),
+                // ),
 
                 SizedBox(height: 20),
 
@@ -338,12 +665,60 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                     titleText: "Save",
                     textColor: Colors.white,
                     onCustomButtonPressed: () async {
-                      if(workReportController.remarksList.isEmpty){
-                        snackBar(context, "Please add remark");
+
+                      if (selectedDate == null) {
+                        snackBar(context, "Please select date");
                         return;
                       }
 
-                      workReportController.callCreateWorkReportList(widget.attendanceId, widget.siteId);
+                      if(workReportController.controllerNameOfContactPerson.value.text.isEmpty){
+                        snackBar(context, "Please enter Contact person");
+                        return;
+                      }
+
+                      if(workReportController.controllerNameOfContactPerson.value.text.isEmpty){
+                        snackBar(context, "Please enter Witness person");
+                        return;
+                      }
+
+                      if(workReportController.conveyanceData == null){
+                        snackBar(context, "Select Driver Name");
+                        return;
+                      }
+
+                      if(workReportController.serviceByNatureData == null){
+                        snackBar(context, "Select Service Nature");
+                        return;
+                      }
+
+
+                      if(workReportController.conveyanceData == null){
+                        snackBar(context, "Select Driver Name");
+                        return;
+                      }
+
+
+                      if(workReportController.selectedSiteAttendListInString == null){
+                        snackBar(context, "Select Site attend by");
+                        return;
+                      }
+
+                      if(workReportController.siteId == null){
+                        snackBar(context, "Select Site ");
+                        return;
+                      }
+
+
+                      String cleaned = workReportController.selectedSiteAttendListInString.toString().replaceAll('[', '').replaceAll(']', '');
+
+// Step 2: Split by comma and trim spaces
+                      List<String> result = cleaned.split(',').map((e) => e.trim()).toList();
+
+                     await workReportController.updateSelectedSiteAttendByList(result);
+
+                      printData("seletced", workReportController.selectedSiteAttendListInString??"");
+
+                      workReportController.callCreateWorkReportList(DateFormat('dd-MM-yyyy').format(selectedDate!), (workReportController.siteId?.id??0).toString());
 
                     },
                     borderColor: color_primary,

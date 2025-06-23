@@ -37,6 +37,7 @@ import 'package:valid_airtech/Screens/Sites/Model/test_type_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/transportation_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/admin_work_report_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/service_by_nature_list_response.dart';
+import 'package:valid_airtech/Screens/WorkReport/Model/service_status_model.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/test_by_perform_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/work_report_list_response.dart';
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/create_workman_request.dart';
@@ -617,11 +618,11 @@ class APIRepository {
 
 
   /// Get Work report List
-  Future<WorkReportListResponse> workReportList(String token, String attendanceId) async {
+  Future<WorkReportListResponse> workReportList(String token, String empId) async {
     try {
 
       var data = json.encode({
-        "attendence_id": attendanceId,
+        "emp_id": empId,
       });
 
 
@@ -641,47 +642,74 @@ class APIRepository {
   }
 
   /// Create Work report
-  Future<BaseModel> createWorkReport(String token, String attendanceId,
-      String siteId, String train, String bus, String auto,
-      String fuel, String foodAmount, String other, String remarkForOther, List<RemarkWorkReport> remaksList, List<WorkReportExpensesBill> bills) async {
+  Future<BaseModel> createWorkReport(String token, String date, String empId,
+      String siteId,List<SiteAttendByData> siteAttendByList,  List<RemarkWorkReport> comments, String? conveyThrough, String other,  List<ServiceStatusModel> serviceStatusList,  List<String> sheetStatusList,  List<String> conveyThroughList,String conveyanceId,String serviceNatureIdId,String contactPerson, String witnessPerson) async {
     try {
+      Map<String, dynamic> employeeMap = {};
+      Map<String, dynamic> remarkMap = {};
+      Map<String, dynamic> testLocationMap = {};
+      Map<String, dynamic> roomEquipmentMap = {};
+      Map<String, dynamic> testPerformedIdByMap = {};
+      Map<String, dynamic> instrumentIdByMap = {};
+      Map<String, dynamic> statusMap = {};
+      for (int i = 0; i < serviceStatusList.length; i++){
+        remarkMap['remark[$i][remark]'] = serviceStatusList[i].remarkTextEditingController.text;
+        testLocationMap['service_status[$i][test_location]'] = serviceStatusList[i].testLocationEditingController.text;
+        roomEquipmentMap['service_status[$i][room_equipment]'] = serviceStatusList[i].roomEquipmentEditingController.text;
+        testPerformedIdByMap['service_status[$i][test_perfomed_id]'] = serviceStatusList[i].testPerformData != null?serviceStatusList[i].testPerformData?.id.toString():"";
+        instrumentIdByMap['service_status[$i][head_instrument_id]'] = serviceStatusList[i].usedInstrument != null?serviceStatusList[i].usedInstrument?.id.toString():"";
+        statusMap['service_status[$i][status]'] = serviceStatusList[i].dataSheetStatus != null?sheetStatusList.indexOf(serviceStatusList[i].dataSheetStatus??"").toString():"";
+      // employeeMap['service_status[$i][perform_user_id]'] =serviceStatusList[i].employeeData != null?serviceStatusList[i].employeeData?.eId.toString():"";
+        employeeMap['service_status[$i][perform_user_id]'] ="3";
 
-      var remarkMap = {
-        for (int i = 0; i < remaksList.length; i++) 'remark[$i][remark]': remaksList[i].remarkTextEditingController.text,
-      };
-
-
-      var billNamekMap = {
-        for (int i = 0; i < bills.length; i++) 'expence_bill[$i][bill_name]': bills[i].billNameTextEditingController.text,
-      };
-
-
-      Map<String, dynamic> photoFileMap = {};
-
-      for (int i = 0; i < bills.length; i++) {
-        final filePath = bills[i].path;
-        final fileName = filePath?.split('/').last;
-
-        photoFileMap['expence_bill[$i][photo]'] = await MultipartFile.fromFile(
-          filePath??"",
-          filename: fileName,
-        );
       }
+
+
+      Map<String, dynamic> commentsByMap = {};
+      for (int i = 0; i < comments.length; i++) {
+        commentsByMap['remark[$i][remark]'] =
+            comments[i].remarkTextEditingController.text;
+      }
+
+      Map<String, dynamic> siteAttendByMap = {};
+      for (int i = 0; i < siteAttendByList.length; i++) {
+        siteAttendByMap['site_attend_by[$i][user_id]'] =
+            siteAttendByList[i].id.toString();
+      }
+
+
+        // Map<String, dynamic> photoFileMap = {};
+      //
+      // for (int i = 0; i < bills.length; i++) {
+      //   final filePath = bills[i].path;
+      //   final fileName = filePath?.split('/').last;
+      //
+      //   photoFileMap['expence_bill[$i][photo]'] = await MultipartFile.fromFile(
+      //     filePath??"",
+      //     filename: fileName,
+      //   );
+      // }
 
       var data = FormData.fromMap({
 
-        'attendence_id': attendanceId,
+        'emp_id': empId,
         'site_id': siteId,
-        'train': train,
-        'bus': bus,
-        'auto': auto,
-        'fuel': fuel,
-        'food_amount': foodAmount,
+        'convenyence_through_status': conveyThrough != null?(conveyThroughList.indexOf(conveyThrough) + 1).toString():"",
         'other':other,
-        'remark_for_other': remarkForOther,
+        'conveyance_id': conveyanceId,
+        'service_nature_id': serviceNatureIdId,
+        'contact_person': contactPerson,
+        'witness_person': witnessPerson,
+        'date': date,
+        ...commentsByMap,
+        ...siteAttendByMap,
         ...remarkMap, // spread remarks into the main map
-        ...billNamekMap,
-        ...photoFileMap,
+        ...testLocationMap,
+        ...roomEquipmentMap,
+        ...testPerformedIdByMap,
+        ...instrumentIdByMap,
+        ...statusMap,
+        ...employeeMap,
       });
 
       Response response = await api.dio.post("/work-report/create",
@@ -701,70 +729,75 @@ class APIRepository {
 
 
   /// eDIT Work report
-  Future<BaseModel> updateWorkReport(String id, String token, String attendanceId,
-      String siteId, String train, String bus, String auto,
-      String fuel, String foodAmount, String other, String remarkForOther, List<RemarkWorkReport> remaksList, List<WorkReportExpensesBill> bills, List<String> removedRemarksIds, List<String> removedBillIds) async {
+  Future<BaseModel> updateWorkReport(String token,String id, String date, String empId,
+      String siteId,List<SiteAttendByData> siteAttendByList,   List<RemarkWorkReport> comments, String? conveyThrough, String other,  List<ServiceStatusModel> serviceStatusList,  List<String> sheetStatusList,  List<String> conveyThroughList,String conveyanceId,String serviceNatureIdId,String contactPerson, String witnessPerson) async {
     try {
 
-
-      var remarkIdMap = {
-        for (int i = 0; i < remaksList.length; i++) if((remaksList[i].id??0) != 0)'remark[$i][id]': remaksList[i].id,
-      };
-
-
-      var remarkMap = {
-        for (int i = 0; i < remaksList.length; i++) 'remark[$i][remark]': remaksList[i].remarkTextEditingController.text,
-      };
-
-
-      var removedRemarkMap = {
-        for (int i = 0; i < removedRemarksIds.length; i++) 'removed_remark[$i][id]': removedRemarksIds[i],
-      };
-
-      var billNamekMap = {
-        for (int i = 0; i < bills.length; i++) if((bills[i].path??"").isNotEmpty)'expence_bill[$i][bill_name]': bills[i].billNameTextEditingController.text,
-      };
-
-      var removedBillkMap = {
-        for (int i = 0; i < removedBillIds.length; i++) 'removed_expence_bill[$i][id]': removedBillIds[i],
-      };
-
-
-      Map<String, dynamic> photoFileMap = {};
-
-      for (int i = 0; i < bills.length; i++) {
-
-        if((bills[i].path??"").isNotEmpty){
-          final filePath = bills[i].path;
-          final fileName = filePath?.split('/').last;
-
-          photoFileMap['expence_bill[$i][photo]'] = await MultipartFile.fromFile(
-            filePath??"",
-            filename: fileName,
-          );
-        }
+      Map<String, dynamic> remarkMap = {};
+      Map<String, dynamic> testLocationMap = {};
+      Map<String, dynamic> roomEquipmentMap = {};
+      Map<String, dynamic> testPerformedIdByMap = {};
+      Map<String, dynamic> instrumentIdByMap = {};
+      Map<String, dynamic> statusMap = {};
+      Map<String, dynamic> employeeMap = {};
+      for (int i = 0; i < serviceStatusList.length; i++){
+        remarkMap['remark[$i][remark]'] = serviceStatusList[i].remarkTextEditingController.text;
+        testLocationMap['service_status[$i][test_location]'] = serviceStatusList[i].testLocationEditingController.text;
+        roomEquipmentMap['service_status[$i][room_equipment]'] = serviceStatusList[i].roomEquipmentEditingController.text;
+        testPerformedIdByMap['service_status[$i][test_perfomed_id]'] = serviceStatusList[i].testPerformData != null?serviceStatusList[i].testPerformData?.id.toString():"";
+        instrumentIdByMap['service_status[$i][head_instrument_id]'] = serviceStatusList[i].usedInstrument != null?serviceStatusList[i].usedInstrument?.id.toString():"";
+        statusMap['service_status[$i][status]'] = serviceStatusList[i].dataSheetStatus != null?sheetStatusList.indexOf(serviceStatusList[i].dataSheetStatus??"").toString():"";
+        employeeMap['service_status[$i][perform_user_id]'] =serviceStatusList[i].employeeData != null?serviceStatusList[i].employeeData?.eId.toString():"";
 
       }
 
-      printData("photoFileMap", photoFileMap.length.toString());
+
+      Map<String, dynamic> commentsByMap = {};
+      for (int i = 0; i < comments.length; i++) {
+        commentsByMap['remark[$i][remark]'] =
+            comments[i].remarkTextEditingController.text;
+      }
+
+      Map<String, dynamic> siteAttendByMap = {};
+      for (int i = 0; i < siteAttendByList.length; i++) {
+        remarkMap['site_attend_by[$i][user_id]'] =
+            siteAttendByList[i].id.toString();
+      }
+
+
+      // Map<String, dynamic> photoFileMap = {};
+      //
+      // for (int i = 0; i < bills.length; i++) {
+      //   final filePath = bills[i].path;
+      //   final fileName = filePath?.split('/').last;
+      //
+      //   photoFileMap['expence_bill[$i][photo]'] = await MultipartFile.fromFile(
+      //     filePath??"",
+      //     filename: fileName,
+      //   );
+      // }
 
       var data = FormData.fromMap({
-        'id': id,
-        'attendence_id': attendanceId,
+
+        "id": id,
+        'emp_id': empId,
         'site_id': siteId,
-        'train': train,
-        'bus': bus,
-        'auto': auto,
-        'fuel': fuel,
-        'food_amount': foodAmount,
+        'convenyence_through_status': conveyThrough != null?(conveyThroughList.indexOf(conveyThrough) + 1).toString():"",
         'other':other,
-        'remark_for_other': remarkForOther,
-        if(remarkIdMap.isNotEmpty)...remarkIdMap,
-        if(remarkMap.isNotEmpty)...remarkMap, // spread remarks into the main map
-        if(billNamekMap.isNotEmpty)...billNamekMap,
-        if(photoFileMap.isNotEmpty)...photoFileMap,
-        if(removedRemarkMap.isNotEmpty)...removedRemarkMap,
-        if(removedBillkMap.isNotEmpty) ...removedBillkMap,
+        'conveyance_id': conveyanceId,
+        'service_nature_id': serviceNatureIdId,
+        'contact_person': contactPerson,
+        'witness_person': witnessPerson,
+        'date': date,
+        ...commentsByMap,
+        ...siteAttendByMap,
+        ...remarkMap, // spread remarks into the main map
+        ...testLocationMap,
+        ...roomEquipmentMap,
+        ...testPerformedIdByMap,
+        ...instrumentIdByMap,
+        ...statusMap,
+        ...employeeMap,
       });
 
       Response response = await api.dio.post("/work-report/update",
@@ -1913,7 +1946,7 @@ class APIRepository {
     }
   }
 
-  /// Conveyance List
+  /// instrument List
   Future<InstrumentListResponse> instrumentList(String token) async {
     try {
 
@@ -2644,7 +2677,7 @@ class APIRepository {
   Future<EmployeeListResponse> employeeList() async {
     try {
 
-      Response response = await api.dio.post("/get_all_employee",
+      Response response = await api.dio.get("/get_all_employee",
           options: Options(
           ));
       dynamic postMaps = response.data;

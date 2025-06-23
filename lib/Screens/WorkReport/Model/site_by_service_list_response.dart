@@ -12,7 +12,7 @@ class SiteByServiceLIstResponse {
   bool? status;
   String? message;
   int? code;
-  List<SiteByServiceData>? data;
+  List<SiteAttendByData>? data;
 
   SiteByServiceLIstResponse({
     this.status,
@@ -25,7 +25,7 @@ class SiteByServiceLIstResponse {
     status: json["status"],
     message: json["message"],
     code: json["code"],
-    data: json["data"] == null ? [] : List<SiteByServiceData>.from(json["data"]!.map((x) => SiteByServiceData.fromJson(x))),
+    data: json["data"] == null ? [] : List<SiteAttendByData>.from(json["data"]!.map((x) => SiteAttendByData.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -36,16 +36,17 @@ class SiteByServiceLIstResponse {
   };
 }
 
-class SiteByServiceData {
+class SiteAttendByData {
   int? id;
   String? name;
+  bool isSelected = false;
 
-  SiteByServiceData({
+  SiteAttendByData({
     this.id,
     this.name,
   });
 
-  factory SiteByServiceData.fromJson(Map<String, dynamic> json) => SiteByServiceData(
+  factory SiteAttendByData.fromJson(Map<String, dynamic> json) => SiteAttendByData(
     id: json["id"],
     name: json["name"],
   );
@@ -54,4 +55,8 @@ class SiteByServiceData {
     "id": id,
     "name": name,
   };
+
+
+  @override
+  String toString() => name ?? '';
 }

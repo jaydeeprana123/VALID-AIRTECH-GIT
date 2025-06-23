@@ -20,9 +20,12 @@ import '../../../utils/helper.dart';
 import '../../../utils/preference_utils.dart';
 import '../../../utils/share_predata.dart';
 import '../../Authentication/Model/login_response.dart';
+import '../../Conveyance/Model/conveyance_list_response.dart';
+import '../../Instruments/Model/isntrument_list_response.dart';
+import '../../Sites/Model/employee_list_response.dart';
 import '../../Sites/Model/site_list_response.dart';
+import '../Model/service_status_model.dart';
 import '../Model/site_by_service_list_response.dart';
-
 
 /// Controller
 class WorkReportController extends GetxController {
@@ -30,41 +33,52 @@ class WorkReportController extends GetxController {
   var errorMessage = ''.obs;
   APIRepository postRepository = APIRepository();
   RxBool isEdit = false.obs;
+
+  SiteData? siteId;
+  SiteAttendByData? siteAttendByData;
+  String? conveyThrough;
+
+  ConveyanceData? conveyanceData;
+  ServiceByNatureData? serviceByNatureData;
   RxList<AdminWorkReportData> adminWorkReportList = <AdminWorkReportData>[].obs;
-  RxList<SiteByServiceData> siteAttendByListList = <SiteByServiceData>[].obs;
+  RxList<SiteAttendByData> siteAttendByList = <SiteAttendByData>[].obs;
+
+  RxList<SiteAttendByData> selectedSiteAttendByList = <SiteAttendByData>[].obs;
+
+  String? selectedSiteAttendListInString;
+
   RxList<ServiceByNatureData> serviceByNatureList = <ServiceByNatureData>[].obs;
   RxList<TestByPerformData> testPerformerList = <TestByPerformData>[].obs;
 
   RxList<RemarkWorkReport> remarksList = <RemarkWorkReport>[].obs;
   RxList<SiteData> siteList = <SiteData>[].obs;
 
+  RxList<ServiceStatusModel> serviceStatusList = <ServiceStatusModel>[].obs;
+
   RxList<String> removedRemarkIds = <String>[].obs;
   RxList<String> removedBillIds = <String>[].obs;
-  RxList<WorkReportExpensesBill> billsList = <WorkReportExpensesBill>[].obs;
+  // RxList<WorkReportExpensesBill> billsList = <WorkReportExpensesBill>[].obs;
   RxList<WorkReportData> workReportList = <WorkReportData>[].obs;
-  RxList<String> conveyThroughList = ["Bike", "Auto Rikshaw", "Car", "Bus", "Train", "Other"].obs;
+  RxList<String> conveyThroughList =
+      ["Bike", "Auto Rikshaw", "Car", "Bus", "Train", "Other"].obs;
+  RxList<String> sheetStatusList = ["Pending", "Complete"].obs;
 
   Rx<WorkReportData> selectedWorkReportData = WorkReportData().obs;
+  RxList<InstrumentData> instrumentList = <InstrumentData>[].obs;
 
-  final Rx<TextEditingController> controllerTrain =
-      TextEditingController(text: "0").obs;
+  RxList<ConveyanceData> conveysList = <ConveyanceData>[].obs;
 
-  final Rx<TextEditingController> controllerBus =
-      TextEditingController(text: "0").obs;
+  RxList<EmployeeData> employeeList = <EmployeeData>[].obs;
 
-  final Rx<TextEditingController> controllerAuto =
-      TextEditingController(text: "0").obs;
-
-  final Rx<TextEditingController> controllerFuel =
-      TextEditingController(text: "0").obs;
-
-  final Rx<TextEditingController> controllerFoodAmount =
-      TextEditingController(text: "0").obs;
+  EmployeeData? employeeData;
 
   final Rx<TextEditingController> controllerOther =
       TextEditingController(text: "0").obs;
 
-  final Rx<TextEditingController> controllerRemarksForOther =
+  final Rx<TextEditingController> controllerNameOfContactPerson =
+      TextEditingController().obs;
+
+  final Rx<TextEditingController> controllerNameOfWitnessPerson =
       TextEditingController().obs;
 
   final Rx<TextEditingController> controllerUsername =
@@ -108,23 +122,80 @@ class WorkReportController extends GetxController {
   }
 
 
+  Future<void> updateSelectedSiteAttendByList(List<String> selectedNames) async{
+    final selected = siteAttendByList
+        .where((item) => selectedNames.contains(item.name))
+        .toList();
 
-  /// site list api call
-  Future callSiteList() async {
+    selectedSiteAttendByList.value = selected;
+  }
 
-    printData("callSiteList", "callSiteList");
+
+  /// Employee list api call
+  void callEmployeeList() async {
     try {
       isLoading.value = true;
 
-      SiteListResponse response = await postRepository.siteList(loginData.value.token??"");
+      EmployeeListResponse response = await postRepository.employeeList();
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
-        siteList.value = response.data??[];
-      }else if(response.code == 401){
+      if (response.status == 1) {
+        employeeList.value = response.data ?? [];
+      } else {}
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Conveyance list api call
+  Future<void> callConveyanceList() async {
+    try {
+      isLoading.value = true;
+
+      ConveyanceListResponse response =
+          await postRepository.conveyanceList(loginData.value.token ?? "");
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        conveysList.value = response.data ?? [];
+      } else {}
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Instrument list api call
+  void callInstrumentList() async {
+    try {
+      printData("callInstrumentList", "callInstrumentList");
+      isLoading.value = true;
+
+      InstrumentListResponse response =
+          await postRepository.instrumentList(loginData.value.token ?? "");
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        instrumentList.value = response.data ?? [];
+      } else if (response.code == 401) {
         Helper().logout();
+      } else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
       }
     } catch (ex) {
       if (ex is DioException) {
@@ -136,6 +207,32 @@ class WorkReportController extends GetxController {
     }
   }
 
+  /// site list api call
+  Future callSiteList() async {
+    printData("callSiteList", "callSiteList");
+    try {
+      isLoading.value = true;
+
+      SiteListResponse response =
+          await postRepository.siteList(loginData.value.token ?? "");
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        siteList.value = response.data ?? [];
+      } else if (response.code == 401) {
+        Helper().logout();
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
 
   /// Admin Work Report list api call
   void callAdminWorkReportList(String empId) async {
@@ -175,7 +272,7 @@ class WorkReportController extends GetxController {
       isLoading.value = true;
 
       WorkReportListResponse response = await postRepository.workReportList(
-          loginData.value.token ?? "", attendanceId);
+          loginData.value.token ?? "", loginData.value.id.toString());
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
@@ -198,22 +295,20 @@ class WorkReportController extends GetxController {
   /// Site attend by list api call
 
   Future<void> callSiteAttendByList() async {
-
-
     printData("callSiteAttendByList", "callSiteAttendByList");
     try {
       isLoading.value = true;
 
-
-      SiteByServiceLIstResponse response = await postRepository.siteAttendByList(loginData.value.token??"");
+      SiteByServiceLIstResponse response =
+          await postRepository.siteAttendByList(loginData.value.token ?? "");
 
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
-        siteAttendByListList.value = response.data??[];
-      }else if(response.code == 401){
+      if (response.status ?? false) {
+        siteAttendByList.value = response.data ?? [];
+      } else if (response.code == 401) {
         Helper().logout();
       }
     } catch (ex) {
@@ -228,19 +323,19 @@ class WorkReportController extends GetxController {
 
   /// Service by nature  list api call
   Future<void> callServiceByNatureByList() async {
-
     printData("callSiteAttendByList", "callSiteAttendByList");
     try {
       isLoading.value = true;
 
-      ServiceByNatureResponse response = await postRepository.serviceByNatureList(loginData.value.token??"");
+      ServiceByNatureResponse response =
+          await postRepository.serviceByNatureList(loginData.value.token ?? "");
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
-        serviceByNatureList.value = response.data??[];
-      }else if(response.code == 401){
+      if (response.status ?? false) {
+        serviceByNatureList.value = response.data ?? [];
+      } else if (response.code == 401) {
         Helper().logout();
       }
     } catch (ex) {
@@ -255,19 +350,19 @@ class WorkReportController extends GetxController {
 
   /// Test Performer  list api call
   Future<void> callTestPerformerList() async {
-
     printData("callSiteAttendByList", "callSiteAttendByList");
     try {
       isLoading.value = true;
 
-      TestByPerformanceListResponse response = await postRepository.testPerformerList(loginData.value.token??"");
+      TestByPerformanceListResponse response =
+          await postRepository.testPerformerList(loginData.value.token ?? "");
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
-        testPerformerList.value = response.data??[];
-      }else if(response.code == 401){
+      if (response.status ?? false) {
+        testPerformerList.value = response.data ?? [];
+      } else if (response.code == 401) {
         Helper().logout();
       }
     } catch (ex) {
@@ -281,26 +376,29 @@ class WorkReportController extends GetxController {
   }
 
   /// Work report create api call
-  Future<void> callCreateWorkReportList(
-      String attendanceId, String siteId) async {
-    printData("callWorkReportList", "callWorkReportList");
+  Future<void> callCreateWorkReportList(String date, String siteId) async {
+    printData("callCreateWorkReportList", "callCreateWorkReportList");
 
     try {
       isLoading.value = true;
 
       BaseModel response = await postRepository.createWorkReport(
-          loginData.value.token ?? "",
-          attendanceId,
-          siteId,
-          controllerTrain.value.text,
-          controllerBus.value.text,
-          controllerAuto.value.text,
-          controllerFuel.value.text,
-          controllerFoodAmount.value.text,
-          controllerOther.value.text,
-          controllerRemarksForOther.value.text,
-          remarksList,
-          billsList);
+        loginData.value.token ?? "",
+        date,
+        loginData.value.id.toString(),
+        siteId,
+        selectedSiteAttendByList,
+        remarksList,
+        conveyThrough,
+        controllerOther.value.text,
+        serviceStatusList,
+        sheetStatusList,
+        conveyThroughList,
+        (conveyanceData?.id ?? 0).toString(),
+        (serviceByNatureData?.id ?? 0).toString(),
+        controllerNameOfContactPerson.value.text,
+        controllerNameOfWitnessPerson.value.text,
+      );
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
@@ -326,28 +424,30 @@ class WorkReportController extends GetxController {
 
   /// Work report update api call
   Future<void> callUpdateWorkReportList(
-      String attendanceId, String siteId) async {
+      String id, String date, String siteId) async {
     printData("callUpdateWorkReportList", "callUpdateWorkReportList");
 
     try {
       isLoading.value = true;
 
       BaseModel response = await postRepository.updateWorkReport(
-          selectedWorkReportData.value.id.toString(),
-          loginData.value.token ?? "",
-          attendanceId,
-          siteId,
-          controllerTrain.value.text,
-          controllerBus.value.text,
-          controllerAuto.value.text,
-          controllerFuel.value.text,
-          controllerFoodAmount.value.text,
-          controllerOther.value.text,
-          controllerRemarksForOther.value.text,
-          remarksList,
-          billsList,
-          removedRemarkIds,
-          removedBillIds);
+        loginData.value.token ?? "",
+        id,
+        date,
+        loginData.value.id.toString(),
+        siteId,
+        selectedSiteAttendByList,
+        remarksList,
+        conveyThrough,
+        controllerOther.value.text,
+        serviceStatusList,
+        sheetStatusList,
+        conveyThroughList,
+        (conveyanceData?.id ?? 0).toString(),
+        (serviceByNatureData?.id ?? 0).toString(),
+        controllerNameOfContactPerson.value.text,
+        controllerNameOfWitnessPerson.value.text,
+      );
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
@@ -403,7 +503,6 @@ class WorkReportController extends GetxController {
       Get.snackbar('Error', errorMessage.value);
     }
   }
-
 
   @override
   void onClose() {

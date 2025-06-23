@@ -12,8 +12,6 @@ import '../../../Styles/my_colors.dart';
 
 
 class WorkReportListScreen extends StatefulWidget {
-
-
   final String attendanceId;
   final String date;
   final String siteId;
