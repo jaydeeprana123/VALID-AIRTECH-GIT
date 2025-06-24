@@ -13,20 +13,23 @@ import 'package:valid_airtech/Screens/Service/View/add_service_screen.dart';
 import 'package:valid_airtech/Screens/Service/View/edit_service_screen.dart';
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/View/add_site_screen.dart';
+import 'package:valid_airtech/Screens/TestPerform/Controller/test_perform_controller.dart';
+import 'package:valid_airtech/Screens/TestPerform/View/add_test_perform_screen.dart';
+import 'package:valid_airtech/Screens/TestPerform/View/edit_test_perform_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_details_screen.dart';
 import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 
 
-class ServiceListScreen extends StatefulWidget {
+class TestPerformListScreen extends StatefulWidget {
   @override
-  _ServiceListScreenState createState() => _ServiceListScreenState();
+  _TestPerformListScreenState createState() => _TestPerformListScreenState();
 }
 
-class _ServiceListScreenState extends State<ServiceListScreen> {
+class _TestPerformListScreenState extends State<TestPerformListScreen> {
 
-  ServiceController serviceController = Get.put(ServiceController());
+  TestPerformController testPerformController = Get.put(TestPerformController());
 
 
   @override
@@ -36,11 +39,11 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
   }
 
   void _initializeData() async {
-    await serviceController.getLoginData();
+    await testPerformController.getLoginData();
 
     printData("_initializeData", "_initializeData");
 
-    serviceController.callServiceListList();
+    testPerformController.callTestPerformListList();
   }
 
   @override
@@ -81,7 +84,7 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
                 padding: const EdgeInsets.all(12),
                 child:  Center(
                   child: Text(
-                    'Service',
+                    'Test Perform',
                     style: AppTextStyle.largeBold.copyWith(fontSize: 14
                         , color: Colors.white),
                     textAlign: TextAlign.center,
@@ -105,9 +108,9 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
                       ),
                       onPressed: () {
 
-                        Get.to(AddServiceScreen())?.then((value) {
-                          serviceController.isLoading.value = false;
-                          serviceController.callServiceListList();
+                        Get.to(AddTestPerformScreen())?.then((value) {
+                          testPerformController.isLoading.value = false;
+                          testPerformController.callTestPerformListList();
                         });
                       },
                       child: Text(
@@ -124,14 +127,14 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.all(10),
-                  itemCount: serviceController.serviceList.length,
+                  itemCount: testPerformController.testPerformList.length,
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
-                        serviceController.selectedService.value = serviceController.serviceList[index];
-                        Get.to(EditServiceScreen())?.then((value) {
-                          serviceController.isLoading.value = false;
-                          serviceController.callServiceListList();
+                        testPerformController.selectedTestPerform.value = testPerformController.testPerformList[index];
+                        Get.to(EditTestPerformScreen())?.then((value) {
+                          testPerformController.isLoading.value = false;
+                          testPerformController.testPerformList();
                         });
                       },
                       child: Card(
@@ -148,21 +151,11 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
                                     , color: color_brown_title),
                               ),
                               Text(
-                                serviceController.serviceList[index].testName??"",
+                                testPerformController.testPerformList[index].testName??"",
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
                               ),
-                              const SizedBox(height: 12),
-                               Text(
-                                'Test Code',
-                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                    , color: color_brown_title),
-                              ),
-                              Text(
-                                serviceController.serviceList[index].testCode??"",
-                                style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                    , color: Colors.black),
-                              ),
+
                             ],
                           ),
                         ),
@@ -174,7 +167,7 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
             ],
           ),
 
-          if(serviceController.isLoading.value)Center(child: CircularProgressIndicator(),)
+          if(testPerformController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
 

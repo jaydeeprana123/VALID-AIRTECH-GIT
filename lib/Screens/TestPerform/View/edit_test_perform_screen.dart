@@ -18,6 +18,8 @@ import 'package:valid_airtech/Screens/Service/Model/create_service_request.dart'
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/Model/create_site_request.dart';
 import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
+import 'package:valid_airtech/Screens/TestPerform/Controller/test_perform_controller.dart';
+import 'package:valid_airtech/Screens/TestPerform/Model/create_test_perform_request.dart';
 import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
 
 import 'package:valid_airtech/Widget/common_widget.dart';
@@ -26,20 +28,19 @@ import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
 import '../../Sites/Model/add_contact_model.dart';
 
-class EditServiceScreen extends StatefulWidget {
+class EditTestPerformScreen extends StatefulWidget {
   @override
-  _EditServiceScreenState createState() => _EditServiceScreenState();
+  _EditTestPerformScreenState createState() => _EditTestPerformScreenState();
 }
 
-class _EditServiceScreenState extends State<EditServiceScreen> {
-  ServiceController serviceController = Get.find<ServiceController>();
+class _EditTestPerformScreenState extends State<EditTestPerformScreen> {
+  TestPerformController testPerformController = Get.find<TestPerformController>();
   String? selectedInstrumentName;
   @override
   void initState() {
 
-    serviceController.isEdit.value = false;
-    serviceController.controllerTestName.value.text = serviceController.selectedService.value.testName??"";
-    serviceController.controllerTestCode.value.text = serviceController.selectedService.value.testCode??"";
+    testPerformController.isEdit.value = false;
+    testPerformController.controllerTestName.value.text = testPerformController.selectedTestPerform.value.testName??"";
     super.initState();
 
 
@@ -60,7 +61,7 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
           },
         ),
         title: Text(
-          'Service Details',
+          'Test Perform',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
@@ -69,7 +70,7 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
           IconButton(
             icon: Icon(Icons.edit_calendar, color: color_secondary),
             onPressed: () {
-              serviceController.isEdit.value = true;
+              testPerformController.isEdit.value = true;
             },
           ),
 
@@ -79,7 +80,7 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
               Get.defaultDialog(
                   title: "DELETE",
                   middleText:
-                  "Are you sure want to delete this Service?",
+                  "Are you sure want to delete this Test Perform?",
                   barrierDismissible: false,
                   titlePadding: const EdgeInsets.only(
                       left: 20, right: 20, top: 10),
@@ -95,7 +96,7 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                   },
                   onConfirm: () async {
                     Navigator.pop(context);
-                    serviceController.callDeleteService(serviceController.selectedService.value.id.toString());
+                    testPerformController.callDeleteTestPerform(testPerformController.selectedTestPerform.value.id.toString());
 
                   });
             },
@@ -115,19 +116,10 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
 
 
                 _buildTextField(
-                  serviceController.controllerTestName.value,
+                  testPerformController.controllerTestName.value,
                   "Test Name"
                     ),
 
-                SizedBox(
-                  height: 16,
-                ),
-
-
-                _buildTextField(
-                    serviceController.controllerTestCode.value,
-                    "Test Code"
-                ),
 
 
 
@@ -136,28 +128,22 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                 ),
 
                 // Login Button
-                serviceController.isEdit.value?Padding(
+                testPerformController.isEdit.value?Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: CommonButton(
                     titleText: "Save",
                     textColor: Colors.white,
                     onCustomButtonPressed: () async {
 
-                      if(serviceController.controllerTestName.value.text.isEmpty){
+                      if(testPerformController.controllerTestName.value.text.isEmpty){
                         snackBar(context, "Enter Test Name");
                         return;
                       }
 
-                      if(serviceController.controllerTestCode.value.text.isEmpty){
-                        snackBar(context, "Enter Test Code");
-                        return;
-                      }
-
-                      serviceController.createServiceRequest.value = CreateServiceRequest();
-                      serviceController.createServiceRequest.value.id = serviceController.selectedService.value.id.toString();
-                      serviceController.createServiceRequest.value.testName = serviceController.controllerTestName.value.text;
-                      serviceController.createServiceRequest.value.testCode = serviceController.controllerTestCode.value.text;
-                      serviceController.callUpdateService();
+                      testPerformController.createTestPerformRequest.value = CreateTestPerformRequest();
+                      testPerformController.createTestPerformRequest.value.id = testPerformController.selectedTestPerform.value.id.toString();
+                      testPerformController.createTestPerformRequest.value.testName = testPerformController.controllerTestName.value.text;
+                      testPerformController.callUpdateTestPerform();
 
                     },
                     borderColor: color_primary,
@@ -168,7 +154,7 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
             ),
           ),
 
-          if(serviceController.isLoading.value)Center(child: CircularProgressIndicator(),)
+          if(testPerformController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
     );

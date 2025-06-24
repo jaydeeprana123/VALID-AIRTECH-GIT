@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:valid_airtech/Screens/Service/View/add_service_screen.dart';
+import 'package:valid_airtech/Screens/WorkReport/Model/test_by_perform_list_response.dart';
 
 
 import '../../../RepoDB/repositories/api_repository.dart';
@@ -16,26 +17,24 @@ import '../../../utils/helper.dart';
 import '../../../utils/preference_utils.dart';
 import '../../../utils/share_predata.dart';
 import '../../Authentication/Model/login_response.dart';
-import '../Model/create_service_request.dart';
+import '../Model/create_test_perform_request.dart';
 import '../Model/service_list_response.dart';
 
 
 /// Controller
-class ServiceController extends GetxController {
+class TestPerformController extends GetxController {
   APIRepository postRepository = APIRepository();
   Rx<bool> isLoading = false.obs;
   var errorMessage = ''.obs;
 
   Rx<bool> isEdit = false.obs;
-  Rx<CreateServiceRequest> createServiceRequest = CreateServiceRequest().obs;
+  Rx<CreateTestPerformRequest> createTestPerformRequest = CreateTestPerformRequest().obs;
 
-  RxList<ServiceData> serviceList = <ServiceData>[].obs;
-  Rx<ServiceData> selectedService = ServiceData().obs;
+  RxList<TestByPerformData> testPerformList = <TestByPerformData>[].obs;
+  Rx<TestByPerformData> selectedTestPerform = TestByPerformData().obs;
   final Rx<TextEditingController> controllerTestName = TextEditingController(text: "")
       .obs;
 
-  final Rx<TextEditingController> controllerTestCode = TextEditingController(text:"")
-      .obs;
 
   Rx<LoginData> loginData = LoginData().obs;
 
@@ -44,18 +43,18 @@ class ServiceController extends GetxController {
   }
 
 
-  /// Service list api call
-  void callServiceListList() async {
+  /// TestPerform list api call
+  void callTestPerformListList() async {
     try {
       isLoading.value = true;
 
-      ServiceListResponse response = await postRepository.serviceList(loginData.value.token??"");
+      TestByPerformanceListResponse response = await postRepository.adminTestPerformList(loginData.value.token??"");
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status??false) {
-        serviceList.value = response.data??[];
+        testPerformList.value = response.data??[];
       } else if(response.code == 401){
         Helper().logout();
       }
@@ -69,15 +68,15 @@ class ServiceController extends GetxController {
     }
   }
 
-  /// Service create api call
-  Future<void> callCreateService() async {
+  /// TestPerform create api call
+  Future<void> callCreateTestPerform() async {
     try {
       isLoading.value = true;
 
       printData("site ", "api called");
 
       BaseModel response =
-      await postRepository.createService(loginData.value.token ?? "",createServiceRequest.value);
+      await postRepository.createTestPerform(loginData.value.token ?? "",createTestPerformRequest.value);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
@@ -104,14 +103,14 @@ class ServiceController extends GetxController {
   }
 
   /// Service update api call
-  Future<void> callUpdateService() async {
+  Future<void> callUpdateTestPerform() async {
     try {
       isLoading.value = true;
 
       printData("site ", "api called");
 
       BaseModel response =
-      await postRepository.updateService(loginData.value.token ?? "",createServiceRequest.value);
+      await postRepository.updateTestPerform(loginData.value.token ?? "",createTestPerformRequest.value);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
@@ -137,8 +136,8 @@ class ServiceController extends GetxController {
     }
   }
 
-  /// Service delete api call
-  Future<void> callDeleteService(String id) async {
+  /// test delete api call
+  Future<void> callDeleteTestPerform(String id) async {
     try {
       isLoading.value = true;
 
@@ -174,7 +173,7 @@ class ServiceController extends GetxController {
     super.onClose();
 
     printData("onClose", "onClose login controller");
-    Get.delete<ServiceController>();
+    Get.delete<TestPerformController>();
   }
 
 }

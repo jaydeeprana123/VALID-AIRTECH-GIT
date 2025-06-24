@@ -16,6 +16,7 @@ import 'package:valid_airtech/Screens/WorkReport/Model/service_status_model.dart
 import 'package:valid_airtech/Screens/WorkReport/Model/site_by_service_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/test_by_perform_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/work_report_list_response.dart';
+import 'package:valid_airtech/Screens/WorkmanProfile/Model/workman_list_response.dart';
 import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
@@ -93,7 +94,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
       workReportController.callSiteAttendByList();
       workReportController.callTestPerformerList();
       workReportController.callServiceByNatureByList();
-      workReportController.callEmployeeList();
+      workReportController.callWorkmanList();
     });
 
 
@@ -474,10 +475,10 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
 
                                      SizedBox(height: 8,),
 
-                                     DropdownButton<EmployeeData>(
-                                       value: workReportController.employeeList
-                                           .contains(workReportController.serviceStatusList[i].employeeData)
-                                           ? workReportController.serviceStatusList[i].employeeData
+                                     DropdownButton<WorkmanData>(
+                                       value: workReportController.workmanList
+                                           .contains(workReportController.serviceStatusList[i].workmanData)
+                                           ? workReportController.serviceStatusList[i].workmanData
                                            : null,
                                        // Ensure valid value
                                        hint: Text("Performed By",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
@@ -485,15 +486,15 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
 
 
                                        isExpanded: true,
-                                       onChanged: (EmployeeData? newValue) {
+                                       onChanged: (WorkmanData? newValue) {
                                          setState(() {
-                                           workReportController.serviceStatusList[i].employeeData = newValue;
+                                           workReportController.serviceStatusList[i].workmanData = newValue;
                                          });
                                        },
-                                       items: workReportController.employeeList.map((EmployeeData group) {
-                                         return DropdownMenuItem<EmployeeData>(
+                                       items: workReportController.workmanList.map((WorkmanData group) {
+                                         return DropdownMenuItem<WorkmanData>(
                                            value: group,
-                                           child: Text(group.eEmployeeName??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                                           child: Text(group.name??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
                                                , color: blackText),),
                                          );
                                        }).toList(),

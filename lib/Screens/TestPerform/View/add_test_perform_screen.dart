@@ -18,6 +18,8 @@ import 'package:valid_airtech/Screens/Service/Model/create_service_request.dart'
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/Model/create_site_request.dart';
 import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
+import 'package:valid_airtech/Screens/TestPerform/Controller/test_perform_controller.dart';
+import 'package:valid_airtech/Screens/TestPerform/Model/create_test_perform_request.dart';
 import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
 
 import '../../../Styles/app_text_style.dart';
@@ -26,27 +28,20 @@ import '../../../Widget/CommonButton.dart';
 import '../../../Widget/common_widget.dart';
 import '../../Sites/Model/add_contact_model.dart';
 
-class AddServiceScreen extends StatefulWidget {
+class AddTestPerformScreen extends StatefulWidget {
   @override
 
-
-
-
-
-
-  _AddServiceScreenState createState() => _AddServiceScreenState();
+  _AddTestPerformScreenState createState() => _AddTestPerformScreenState();
 }
 
-class _AddServiceScreenState extends State<AddServiceScreen> {
-  ServiceController serviceController = Get.find<ServiceController>();
-  String? selectedInstrumentName;
+class _AddTestPerformScreenState extends State<AddTestPerformScreen> {
+  TestPerformController testPerformController = Get.find<TestPerformController>();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    serviceController.controllerTestName.value.text = "";
-    serviceController.controllerTestCode.value.text = "";
+    testPerformController.controllerTestName.value.text = "";
 
 
 
@@ -90,19 +85,9 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
 
 
                 _buildTextField(
-                  serviceController.controllerTestName.value,
+                  testPerformController.controllerTestName.value,
                   "Test Name"
                     ),
-
-                SizedBox(
-                  height: 16,
-                ),
-
-
-                _buildTextField(
-                    serviceController.controllerTestCode.value,
-                    "Test Code"
-                ),
 
 
 
@@ -118,20 +103,15 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                     textColor: Colors.white,
                     onCustomButtonPressed: () async {
 
-                      if(serviceController.controllerTestName.value.text.isEmpty){
+                      if(testPerformController.controllerTestName.value.text.isEmpty){
                         snackBar(context, "Enter Test Name");
                         return;
                       }
 
-                      if(serviceController.controllerTestCode.value.text.isEmpty){
-                        snackBar(context, "Enter Test Code");
-                        return;
-                      }
 
-                      serviceController.createServiceRequest.value = CreateServiceRequest();
-                      serviceController.createServiceRequest.value.testName = serviceController.controllerTestName.value.text;
-                      serviceController.createServiceRequest.value.testCode = serviceController.controllerTestCode.value.text;
-                      serviceController.callCreateService();
+                      testPerformController.createTestPerformRequest.value = CreateTestPerformRequest();
+                      testPerformController.createTestPerformRequest.value.testName = testPerformController.controllerTestName.value.text;
+                      testPerformController.callCreateTestPerform();
 
                     },
                     borderColor: color_primary,
@@ -142,7 +122,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
             ),
           ),
 
-          if(serviceController.isLoading.value)Center(child: CircularProgressIndicator(),)
+          if(testPerformController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
     );

@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/test_by_perform_list_response.dart';
+import 'package:valid_airtech/Screens/WorkmanProfile/Model/workman_list_response.dart';
 
 import '../../Instruments/Model/isntrument_list_response.dart';
 import '../../Sites/Model/employee_list_response.dart';
@@ -13,7 +14,7 @@ import '../../Sites/Model/employee_list_response.dart';
 class ServiceStatusModel {
   String? dataSheetStatus;
   InstrumentData? usedInstrument;
-  EmployeeData? employeeData;
+  WorkmanData? workmanData;
   TestByPerformData? testPerformData;
   TextEditingController testLocationEditingController = TextEditingController(text: "");
   TextEditingController roomEquipmentEditingController = TextEditingController(text: "");
@@ -22,7 +23,7 @@ class ServiceStatusModel {
   ServiceStatusModel({
     this.dataSheetStatus,
     this.usedInstrument,
-    this.employeeData,
+    this.workmanData,
     this.testPerformData,
   });
 }

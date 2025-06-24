@@ -9,6 +9,7 @@ import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_list_scr
 import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_screen.dart';
 import 'package:valid_airtech/Screens/Master/View/admin_report_screen.dart';
 import 'package:valid_airtech/Screens/Planning/View/planning_screen.dart';
+import 'package:valid_airtech/Screens/TestPerform/View/test_perform_list_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_screen.dart';
 import 'package:valid_airtech/Widget/common_widget.dart';
 import 'package:valid_airtech/utils/helper.dart';
@@ -95,8 +96,18 @@ class HomePage extends StatelessWidget {
                 },child: _buildGridItem('Planning', Icons.schedule)),
 
                 InkWell(onTap: (){
+                  Get.to(TestPerformListScreen());
+                },child: _buildGridItem('Test Perform', Icons.schedule)),
+
+                InkWell(onTap: (){
                   Get.to(WorkReportAttendanceConveyScreen());
                 },child: _buildGridItem('Work Report', Icons.work_history_outlined)),
+
+
+                InkWell(onTap: (){
+                  Get.to(HomeAllowanceScreen());
+                },child: _buildGridItem('Calibration Certificates', Icons.monetization_on_sharp)),
+
                 InkWell(onTap: (){
                   Get.to(HomeAllowanceScreen());
                 },child: _buildGridItem('Allowance', Icons.monetization_on_sharp)),

@@ -35,6 +35,7 @@ import 'package:valid_airtech/Screens/Sites/Model/employee_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/site_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/test_type_list_response.dart';
 import 'package:valid_airtech/Screens/Sites/Model/transportation_list_response.dart';
+import 'package:valid_airtech/Screens/TestPerform/Model/create_test_perform_request.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/admin_work_report_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/service_by_nature_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/service_status_model.dart';
@@ -615,6 +616,105 @@ class APIRepository {
     }
   }
 
+  ///Admin Test perform list
+  Future<TestByPerformanceListResponse> adminTestPerformList(String token) async {
+    try {
+
+      var data = json.encode({
+        "admin_conveyance_id": "1",
+      });
+
+
+      Response response = await api.dio.get("/admin-test-performed/list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return TestByPerformanceListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  ///Admin Create Test Perform
+  Future<BaseModel> createTestPerform(String token, CreateTestPerformRequest createTestPerformRequest) async {
+    try {
+
+
+      Response response = await api.dio.post("/admin-test-performed/create",
+          data: createTestPerformRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Update Test Perform
+  Future<BaseModel> updateTestPerform(String token, CreateTestPerformRequest createTestPerformRequest) async {
+    try {
+
+      Response response = await api.dio.post("/admin-test-performed/update",
+          data: createTestPerformRequest.toJson(),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Delete Test Perform
+  Future<BaseModel> deleteTestPerform(String token, String id) async {
+    try {
+
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/admin-test-performed/delete",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+
+
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+
+
+
 
 
   /// Get Work report List
@@ -659,8 +759,8 @@ class APIRepository {
         testPerformedIdByMap['service_status[$i][test_perfomed_id]'] = serviceStatusList[i].testPerformData != null?serviceStatusList[i].testPerformData?.id.toString():"";
         instrumentIdByMap['service_status[$i][head_instrument_id]'] = serviceStatusList[i].usedInstrument != null?serviceStatusList[i].usedInstrument?.id.toString():"";
         statusMap['service_status[$i][status]'] = serviceStatusList[i].dataSheetStatus != null?sheetStatusList.indexOf(serviceStatusList[i].dataSheetStatus??"").toString():"";
-      // employeeMap['service_status[$i][perform_user_id]'] =serviceStatusList[i].employeeData != null?serviceStatusList[i].employeeData?.eId.toString():"";
-        employeeMap['service_status[$i][perform_user_id]'] ="3";
+        employeeMap['service_status[$i][perform_user_id]'] =serviceStatusList[i].workmanData != null?serviceStatusList[i].workmanData?.id.toString():"";
+
 
       }
 
@@ -747,7 +847,7 @@ class APIRepository {
         testPerformedIdByMap['service_status[$i][test_perfomed_id]'] = serviceStatusList[i].testPerformData != null?serviceStatusList[i].testPerformData?.id.toString():"";
         instrumentIdByMap['service_status[$i][head_instrument_id]'] = serviceStatusList[i].usedInstrument != null?serviceStatusList[i].usedInstrument?.id.toString():"";
         statusMap['service_status[$i][status]'] = serviceStatusList[i].dataSheetStatus != null?sheetStatusList.indexOf(serviceStatusList[i].dataSheetStatus??"").toString():"";
-        employeeMap['service_status[$i][perform_user_id]'] =serviceStatusList[i].employeeData != null?serviceStatusList[i].employeeData?.eId.toString():"";
+        employeeMap['service_status[$i][perform_user_id]'] =serviceStatusList[i].workmanData != null?serviceStatusList[i].workmanData?.id.toString():"";
 
       }
 

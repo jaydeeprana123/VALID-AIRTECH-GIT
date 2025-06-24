@@ -4,22 +4,22 @@
 
 import 'dart:convert';
 
-CreateServiceRequest createServiceRequestFromJson(String str) => CreateServiceRequest.fromJson(json.decode(str));
+CreateTestPerformRequest createServiceRequestFromJson(String str) => CreateTestPerformRequest.fromJson(json.decode(str));
 
-String createServiceRequestToJson(CreateServiceRequest data) => json.encode(data.toJson());
+String createTestPerformRequestToJson(CreateTestPerformRequest data) => json.encode(data.toJson());
 
-class CreateServiceRequest {
+class CreateTestPerformRequest {
   String? id;
   String? testName;
   String? testCode;
 
-  CreateServiceRequest({
+  CreateTestPerformRequest({
     this.id,
     this.testName,
     this.testCode,
   });
 
-  factory CreateServiceRequest.fromJson(Map<String, dynamic> json) => CreateServiceRequest(
+  factory CreateTestPerformRequest.fromJson(Map<String, dynamic> json) => CreateTestPerformRequest(
     id: json["id"],
     testName: json["test_name"],
     testCode: json["test_code"],

@@ -16,11 +16,13 @@ import 'package:valid_airtech/Screens/WorkReport/Model/service_status_model.dart
 import 'package:valid_airtech/Screens/WorkReport/Model/site_by_service_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/test_by_perform_list_response.dart';
 import 'package:valid_airtech/Screens/WorkReport/Model/work_report_list_response.dart';
+import 'package:valid_airtech/Screens/WorkmanProfile/Model/workman_list_response.dart';
 import 'package:valid_airtech/Widget/common_widget.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
 import '../../Sites/Model/employee_list_response.dart';
+import '../../Sites/Model/site_list_response.dart';
 
 class EditWorkReportScreen extends StatefulWidget {
   final String attendanceId;
@@ -90,8 +92,30 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
       workReportController.callSiteAttendByList();
       workReportController.callTestPerformerList();
       workReportController.callServiceByNatureByList();
-      workReportController.callEmployeeList();
+      workReportController.callWorkmanList();
     });
+
+
+    if((workReportController.selectedWorkReportData.value.date??"").isNotEmpty){
+      DateFormat format = DateFormat("dd-MM-yyyy");
+      selectedDate = format.parse(workReportController.selectedWorkReportData.value.date??"");
+
+      setState(() {
+
+      });
+    }
+
+
+    /// Site
+    if ((workReportController.selectedWorkReportData.value.siteId ?? 0) != 0) {
+      for (int i = 0; i < (workReportController.siteList).length; i++) {
+        if (workReportController.siteList[i].id ==
+            workReportController.selectedWorkReportData.value.siteId) {
+          workReportController.siteId =
+          workReportController.siteList[i];
+        }
+      }
+    }
 
     workReportController.controllerNameOfContactPerson.value.text =
         workReportController.selectedWorkReportData.value.contactPerson ?? "";
@@ -206,11 +230,11 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
 
 
         if ((workReportController.selectedWorkReportData.value.serviceStatus?[i].performUserId ?? 0) != 0) {
-          for (int z = 0; z < (workReportController.employeeList).length; i++) {
-            if (workReportController.employeeList[z].eId ==
-                workReportController.selectedWorkReportData.value.serviceStatus?[i].performUserId.toString()) {
-              serviceStatusModel.employeeData =
-              workReportController.employeeList[z];
+          for (int z = 0; z < (workReportController.workmanList).length; i++) {
+            if (workReportController.workmanList[z].id ==
+                workReportController.selectedWorkReportData.value.serviceStatus?[i].performUserId) {
+              serviceStatusModel.workmanData =
+              workReportController.workmanList[z];
             }
           }
         }
@@ -292,12 +316,38 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                     ),
 
                     _buildTextFieldOnlyReadableDate(
-                        TextEditingController(text: widget.date),
+                        TextEditingController(text: DateFormat('dd/MM/yyyy').format(selectedDate!)),
                         "Work Reporting Date"),
 
                     SizedBox(
                       height: 16,
                     ),
+
+                    DropdownButton<SiteData>(
+                      value: workReportController.siteList
+                          .contains(workReportController.siteId)
+                          ? workReportController.siteId
+                          : null,
+                      // Ensure valid value
+                      hint: Text("Select Site",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                          , color: color_hint_text)) ,
+
+                      isExpanded: true,
+                      onChanged: (SiteData? newValue) {
+                        setState(() {
+                          workReportController.siteId = newValue;
+                        });
+                      },
+                      items: workReportController.siteList.map((SiteData group) {
+                        return DropdownMenuItem<SiteData>(
+                          value: group,
+                          child: Text(group.headName??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                              , color: blackText),),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 12,),
+
 
                     // DropdownButton<SiteAttendByData>(
                     //   value: workReportController.siteAttendByList
@@ -718,10 +768,10 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                                             height: 8,
                                           ),
 
-                                          DropdownButton<EmployeeData>(
-                                            value: workReportController.employeeList
-                                                .contains(workReportController.serviceStatusList[i].employeeData)
-                                                ? workReportController.serviceStatusList[i].employeeData
+                                          DropdownButton<WorkmanData>(
+                                            value: workReportController.workmanList
+                                                .contains(workReportController.serviceStatusList[i].workmanData)
+                                                ? workReportController.serviceStatusList[i].workmanData
                                                 : null,
                                             // Ensure valid value
                                             hint: Text("Performed By",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
@@ -729,15 +779,15 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
 
 
                                             isExpanded: true,
-                                            onChanged: (EmployeeData? newValue) {
+                                            onChanged: (WorkmanData? newValue) {
                                               setState(() {
-                                                workReportController.serviceStatusList[i].employeeData = newValue;
+                                                workReportController.serviceStatusList[i].workmanData = newValue;
                                               });
                                             },
-                                            items: workReportController.employeeList.map((EmployeeData group) {
-                                              return DropdownMenuItem<EmployeeData>(
+                                            items: workReportController.workmanList.map((WorkmanData group) {
+                                              return DropdownMenuItem<WorkmanData>(
                                                 value: group,
-                                                child: Text(group.eEmployeeName??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                                                child: Text(group.name??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
                                                     , color: blackText),),
                                               );
                                             }).toList(),
@@ -956,6 +1006,11 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
 
                           if (workReportController.conveyanceData == null) {
                             snackBar(context, "Select Driver Name");
+                            return;
+                          }
+
+                          if(workReportController.siteId == null){
+                            snackBar(context, "Select Site ");
                             return;
                           }
 

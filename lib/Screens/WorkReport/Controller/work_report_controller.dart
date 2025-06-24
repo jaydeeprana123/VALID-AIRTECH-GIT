@@ -24,6 +24,7 @@ import '../../Conveyance/Model/conveyance_list_response.dart';
 import '../../Instruments/Model/isntrument_list_response.dart';
 import '../../Sites/Model/employee_list_response.dart';
 import '../../Sites/Model/site_list_response.dart';
+import '../../WorkmanProfile/Model/workman_list_response.dart';
 import '../Model/service_status_model.dart';
 import '../Model/site_by_service_list_response.dart';
 
@@ -62,15 +63,13 @@ class WorkReportController extends GetxController {
   RxList<String> conveyThroughList =
       ["Bike", "Auto Rikshaw", "Car", "Bus", "Train", "Other"].obs;
   RxList<String> sheetStatusList = ["Pending", "Complete"].obs;
+  RxList<WorkmanData> workmanList = <WorkmanData>[].obs;
 
   Rx<WorkReportData> selectedWorkReportData = WorkReportData().obs;
   RxList<InstrumentData> instrumentList = <InstrumentData>[].obs;
 
   RxList<ConveyanceData> conveysList = <ConveyanceData>[].obs;
 
-  RxList<EmployeeData> employeeList = <EmployeeData>[].obs;
-
-  EmployeeData? employeeData;
 
   final Rx<TextEditingController> controllerOther =
       TextEditingController(text: "0").obs;
@@ -131,19 +130,23 @@ class WorkReportController extends GetxController {
   }
 
 
-  /// Employee list api call
-  void callEmployeeList() async {
+  /// Workman list api call
+  void callWorkmanList() async {
     try {
       isLoading.value = true;
 
-      EmployeeListResponse response = await postRepository.employeeList();
+      WorkmanListResponse response = await postRepository.workmanList(loginData.value.token??"");
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status == 1) {
-        employeeList.value = response.data ?? [];
-      } else {}
+      if (response.status??false) {
+        workmanList.value = (response.data??[]);
+      } else if (response.code == 401) {
+        Helper().logout();
+      }else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
     } catch (ex) {
       if (ex is DioException) {
         errorMessage.value = ex.type.toString();
@@ -348,6 +351,33 @@ class WorkReportController extends GetxController {
     }
   }
 
+  /// Admin Test Perform  list api call
+  Future<void> callAdminTestPerformList() async {
+    printData("callAdminTestPerformList", "callAdminTestPerformList");
+    try {
+      isLoading.value = true;
+
+      TestByPerformanceListResponse response =
+      await postRepository.adminTestPerformList(loginData.value.token ?? "");
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        testPerformerList.value = response.data ?? [];
+      } else if (response.code == 401) {
+        Helper().logout();
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
   /// Test Performer  list api call
   Future<void> callTestPerformerList() async {
     printData("callSiteAttendByList", "callSiteAttendByList");
@@ -355,7 +385,7 @@ class WorkReportController extends GetxController {
       isLoading.value = true;
 
       TestByPerformanceListResponse response =
-          await postRepository.testPerformerList(loginData.value.token ?? "");
+          await postRepository.adminTestPerformList(loginData.value.token ?? "");
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
