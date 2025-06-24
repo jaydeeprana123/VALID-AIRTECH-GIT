@@ -6,21 +6,17 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/add_work_report_screen.dart';
+import 'package:valid_airtech/Screens/WorkReport/View/edit_work_report_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_details_screen.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 
 
 class WorkReportListScreen extends StatefulWidget {
-  final String attendanceId;
-  final String date;
-  final String siteId;
+
 
   WorkReportListScreen({
     Key? key,
-    required this.attendanceId,
-    required this.date,
-    required this.siteId
   }) : super(key: key);
 
 
@@ -30,9 +26,6 @@ class WorkReportListScreen extends StatefulWidget {
 }
 
 class _WorkReportListScreenState extends State<WorkReportListScreen> {
-
-
-
   WorkReportController workReportController = Get.put(WorkReportController());
 
   @override
@@ -44,7 +37,7 @@ class _WorkReportListScreenState extends State<WorkReportListScreen> {
 
   initData()async{
    await workReportController.getLoginData();
-    workReportController.callWorkReportList(widget.attendanceId);
+    workReportController.callWorkReportList();
   }
 
   @override
@@ -72,8 +65,8 @@ class _WorkReportListScreenState extends State<WorkReportListScreen> {
             icon: Icon(Icons.add_circle, color: color_secondary),
             onPressed: () {
 
-              Get.to(AddWorkReportScreen(attendanceId: widget.attendanceId, date: widget.date,siteId: widget.siteId,))?.then((value) {
-                workReportController.callWorkReportList(widget.attendanceId);
+              Get.to(AddWorkReportScreen())?.then((value) {
+                workReportController.callWorkReportList();
               });
             },
           ),
@@ -88,8 +81,8 @@ class _WorkReportListScreenState extends State<WorkReportListScreen> {
               return InkWell(
                 onTap: (){
                   workReportController.selectedWorkReportData.value = workReportController.workReportList[index];
-                  Get.to(WorkReportDetailsScreen(date: widget.date,attendanceId: widget.attendanceId,))?.then((value) {
-                    workReportController.callWorkReportList(widget.attendanceId);
+                  Get.to(EditWorkReportScreen())?.then((value) {
+                    workReportController.callWorkReportList();
                   });;
                 },
                 child: Card(
@@ -107,7 +100,7 @@ class _WorkReportListScreenState extends State<WorkReportListScreen> {
                               , color: color_brown_title),
                         ),
                         Text(
-                          widget.date,
+                          workReportController.workReportList[index].date??"",
                           style:  AppTextStyle.largeRegular.copyWith(fontSize: 13
                               , color: Colors.black),
                         ),
@@ -115,15 +108,42 @@ class _WorkReportListScreenState extends State<WorkReportListScreen> {
                         const SizedBox(height: 12),
 
                          Text(
-                          'Contact Name',
+                          'Driver Name',
                           style: AppTextStyle.largeMedium.copyWith(fontSize: 15
                               , color: color_brown_title),
                         ),
                         Text(
-                          workReportController.workReportList[index].contactName??"",
+                          workReportController.workReportList[index].conveyanceName??"",
                           style:  AppTextStyle.largeRegular.copyWith(fontSize: 13
                               , color: Colors.black),
                         ),
+
+                        const SizedBox(height: 12),
+
+                        Text(
+                          'Contact Person',
+                          style: AppTextStyle.largeMedium.copyWith(fontSize: 15
+                              , color: color_brown_title),
+                        ),
+                        Text(
+                          workReportController.workReportList[index].contactPerson??"",
+                          style:  AppTextStyle.largeRegular.copyWith(fontSize: 13
+                              , color: Colors.black),
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        Text(
+                          'Witness Person',
+                          style: AppTextStyle.largeMedium.copyWith(fontSize: 15
+                              , color: color_brown_title),
+                        ),
+                        Text(
+                          workReportController.workReportList[index].witnessPerson??"",
+                          style:  AppTextStyle.largeRegular.copyWith(fontSize: 13
+                              , color: Colors.black),
+                        ),
+
 
                       ],
                     ),
@@ -136,13 +156,13 @@ class _WorkReportListScreenState extends State<WorkReportListScreen> {
           if(workReportController.isLoading.value)Center(child: CircularProgressIndicator(),)
         ],
       )),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.menu), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.arrow_back), label: ''),
-        ],
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   items: const [
+      //     BottomNavigationBarItem(icon: Icon(Icons.menu), label: ''),
+      //     BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+      //     BottomNavigationBarItem(icon: Icon(Icons.arrow_back), label: ''),
+      //   ],
+      // ),
     );
   }
 }

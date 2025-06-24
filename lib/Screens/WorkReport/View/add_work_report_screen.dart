@@ -25,15 +25,8 @@ import '../../Sites/Model/employee_list_response.dart';
 
 class AddWorkReportScreen extends StatefulWidget {
 
-  final String attendanceId;
-  final String date;
-  final String siteId;
-
   AddWorkReportScreen({
     Key? key,
-    required this.attendanceId,
-    required this.date,
-    required this.siteId
   }) : super(key: key);
 
   @override

@@ -12,6 +12,7 @@ import 'package:valid_airtech/Screens/Appointment/Model/create_appointment_reque
 import 'package:valid_airtech/Screens/Attendance/Model/admin_attendance_list_response.dart';
 import 'package:valid_airtech/Screens/Attendance/Model/admin_create_attendance_request.dart';
 import 'package:valid_airtech/Screens/Authentication/Model/change_password_request.dart';
+import 'package:valid_airtech/Screens/CalibrationCertificate/Model/calibration_certificate_list_response.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/admin_conveyance_list_response.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/conveyance_list_response.dart';
 import 'package:valid_airtech/Screens/Conveyance/Model/create_conveyance_request.dart';
@@ -77,7 +78,7 @@ class APIRepository {
           data: formData,
           options: Options(
             headers: {
-            'Cookie': 'ci_session=769b4e56ca5cbcf48ab63c7bc45489bcc579903b'
+              'Cookie': 'ci_session=769b4e56ca5cbcf48ab63c7bc45489bcc579903b'
             },
           ));
       dynamic postMaps = response.data;
@@ -93,10 +94,8 @@ class APIRepository {
       var user = {'user_token': userToken};
       var formData = FormData.fromMap(user);
 
-      Response response = await api.dio.post("/get_user_profile_detail",
-          data: formData,
-          options: Options(
-          ));
+      Response response = await api.dio
+          .post("/get_user_profile_detail", data: formData, options: Options());
       dynamic postMaps = response.data;
       return LoginResponse.fromJson(postMaps);
     } catch (ex) {
@@ -105,7 +104,8 @@ class APIRepository {
   }
 
   /// Change Password
-  Future<BaseModel> changePassword(ChangePasswordRequest changePasswordRequest, String token) async {
+  Future<BaseModel> changePassword(
+      ChangePasswordRequest changePasswordRequest, String token) async {
     try {
       // var user = {'mail': email, "password" : password};
       var formData = FormData.fromMap(changePasswordRequest.toJson());
@@ -126,13 +126,13 @@ class APIRepository {
   }
 
   /// Change Password
-  Future<LoginResponse> editProfile(LoginData loginData, String? filePath,String token) async {
+  Future<LoginResponse> editProfile(
+      LoginData loginData, String? filePath, String token) async {
     try {
       // var user = {'mail': email, "password" : password};
       var data = FormData.fromMap({
-        if((filePath??"").isNotEmpty)'files': [
-          await MultipartFile.fromFile(filePath??"", filename: '')
-        ],
+        if ((filePath ?? "").isNotEmpty)
+          'files': [await MultipartFile.fromFile(filePath ?? "", filename: '')],
         'id': loginData.id,
         'name': loginData.name,
         'user_name': loginData.userName,
@@ -155,11 +155,10 @@ class APIRepository {
     }
   }
 
-
   /// Get Attendance List
-  Future<AttendanceListResponse> attendanceList(String token, String empId) async {
+  Future<AttendanceListResponse> attendanceList(
+      String token, String empId) async {
     try {
-
       Response response = await api.dio.get("/attendence/list",
           queryParameters: {'emp_id': empId}, // <-- This is the right way
           options: Options(
@@ -175,13 +174,15 @@ class APIRepository {
     }
   }
 
-
   /// Get Attendance List
-  Future<AttendanceListResponse> attendanceListByDate(String token, String empId, String date) async {
+  Future<AttendanceListResponse> attendanceListByDate(
+      String token, String empId, String date) async {
     try {
-
       Response response = await api.dio.get("/attendence/calender-list",
-          queryParameters: {'emp_id': empId, "date":date}, // <-- This is the right way
+          queryParameters: {
+            'emp_id': empId,
+            "date": date
+          }, // <-- This is the right way
           options: Options(
             headers: {
               'Content-Type': 'application/json',
@@ -195,9 +196,9 @@ class APIRepository {
     }
   }
 
-
   /// Create Attendance
-  Future<BaseModel> createAdminAttendance(String token, AdminCreateAttendanceRequest adminCreateAttendanceRequest) async {
+  Future<BaseModel> createAdminAttendance(String token,
+      AdminCreateAttendanceRequest adminCreateAttendanceRequest) async {
     try {
       Response response = await api.dio.post("/admin-attendence/create",
           data: adminCreateAttendanceRequest.toJson(),
@@ -206,8 +207,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -217,7 +216,8 @@ class APIRepository {
   }
 
   /// Update Attendance
-  Future<BaseModel> updateAdminAttendance(String token, AdminUpdateAttendanceRequest adminUpdateAttendanceRequest) async {
+  Future<BaseModel> updateAdminAttendance(String token,
+      AdminUpdateAttendanceRequest adminUpdateAttendanceRequest) async {
     try {
       Response response = await api.dio.post("/admin-attendence/update",
           data: adminUpdateAttendanceRequest.toJson(),
@@ -226,8 +226,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -236,10 +234,9 @@ class APIRepository {
     }
   }
 
-
-
   /// Create Attendance
-  Future<BaseModel> createAttendanceIn(String token, CreateAttendanceInRequest createAttendanceRequest) async {
+  Future<BaseModel> createAttendanceIn(
+      String token, CreateAttendanceInRequest createAttendanceRequest) async {
     try {
       Response response = await api.dio.post("/attendence/in",
           data: createAttendanceRequest.toJson(),
@@ -248,8 +245,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -259,7 +254,8 @@ class APIRepository {
   }
 
   /// Create Attendance
-  Future<BaseModel> createAttendanceOut(String token, CreateAttendanceInRequest createAttendanceRequest) async {
+  Future<BaseModel> createAttendanceOut(
+      String token, CreateAttendanceInRequest createAttendanceRequest) async {
     try {
       Response response = await api.dio.post("/attendence/out",
           data: createAttendanceRequest.toJson(),
@@ -268,8 +264,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -278,30 +272,10 @@ class APIRepository {
     }
   }
 
-
-
-  /// Get Appointment List
-  Future<AppointmentListResponse> appointmentList(String token) async {
-    try {
-
-      Response response = await api.dio.get("/appointment/list",
-          options: Options(
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
-            },
-          ));
-      dynamic postMaps = response.data;
-      return AppointmentListResponse.fromJson(postMaps);
-    } catch (ex) {
-      rethrow;
-    }
-  }
-
   /// Get Appointment List By Date
-  Future<AppointmentListResponse> appointmentListByDate(String token, String date) async {
+  Future<AppointmentListResponse> appointmentListByDate(
+      String token, String date) async {
     try {
-
       var data = json.encode({
         "date": date,
       });
@@ -322,9 +296,9 @@ class APIRepository {
   }
 
   /// Get Appointment List By Date
-  Future<AppointmentContactListResponse> appointmentContactList(String token, String headId) async {
+  Future<AppointmentContactListResponse> appointmentContactList(
+      String token, String headId) async {
     try {
-
       var data = json.encode({
         "head_id": headId,
       });
@@ -344,12 +318,26 @@ class APIRepository {
     }
   }
 
-
-
-
+  /// Get Appointment List
+  Future<AppointmentListResponse> appointmentList(String token) async {
+    try {
+      Response response = await api.dio.get("/appointment/list",
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return AppointmentListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
 
   /// Create Appointment
-  Future<BaseModel> createAppointment(String token, CreateAppointmentRequest createAppointmentRequest) async {
+  Future<BaseModel> createAppointment(
+      String token, CreateAppointmentRequest createAppointmentRequest) async {
     try {
       Response response = await api.dio.post("/appointment/create",
           data: createAppointmentRequest.toJson(),
@@ -358,8 +346,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -369,7 +355,8 @@ class APIRepository {
   }
 
   /// Update Appointment
-  Future<BaseModel> updateAppointment(String token, CreateAppointmentRequest createAppointmentRequest) async {
+  Future<BaseModel> updateAppointment(
+      String token, CreateAppointmentRequest createAppointmentRequest) async {
     try {
       Response response = await api.dio.post("/appointment/update",
           data: createAppointmentRequest.toJson(),
@@ -378,8 +365,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -388,11 +373,9 @@ class APIRepository {
     }
   }
 
-
   /// Delete Appointment
   Future<BaseModel> deleteAppointment(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -404,8 +387,99 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
 
+  /// Get Calibration List
+  Future<CalibrationCertificateListResponse> calibrationList(
+      String token) async {
+    try {
+      Response response = await api.dio.get("/calibration-certificate/list",
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return CalibrationCertificateListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
 
+  /// Create Calibration
+  Future<BaseModel> createCalibration(
+      String token, String title, String pdfPath, String fileName) async {
+    try {
+      printData("pdfPath 11", pdfPath);
+
+      var data = FormData.fromMap({
+        'pdf': [await MultipartFile.fromFile(pdfPath, filename: fileName)],
+        'title': title
+      });
+
+      Response response = await api.dio.post("/calibration-certificate/create",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Update Calibration
+  Future<BaseModel> updateCalibration(String token, String id, String title,
+      String pdfPath, String fileName) async {
+    try {
+      printData("pdfPath 11", pdfPath);
+
+      var data = FormData.fromMap({
+        'pdf': [await MultipartFile.fromFile(pdfPath, filename: fileName)],
+        'id': id,
+        'title': title
+      });
+
+      Response response = await api.dio.post("/calibration-certificate/update",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return BaseModel.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Delete Calibration
+  Future<BaseModel> deleteCalibration(String token, String id) async {
+    try {
+      var data = json.encode({
+        "id": id,
+      });
+
+      Response response = await api.dio.post("/calibration-certificate/delete",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -436,7 +510,6 @@ class APIRepository {
   /// Get Site List
   Future<SiteListResponse> siteList(String token) async {
     try {
-
       Response response = await api.dio.get("/site/list",
           options: Options(
             headers: {
@@ -451,12 +524,10 @@ class APIRepository {
     }
   }
 
-
   /// Create Head
-  Future<BaseModel> createSite(String token, CreateSiteRequest createSiteRequest) async {
+  Future<BaseModel> createSite(
+      String token, CreateSiteRequest createSiteRequest) async {
     try {
-
-
       Response response = await api.dio.post("/site/create",
           data: createSiteRequest.toJson(),
           options: Options(
@@ -464,8 +535,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -477,7 +546,6 @@ class APIRepository {
   /// Delete Allowance
   Future<BaseModel> deleteSite(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -489,8 +557,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -499,11 +565,9 @@ class APIRepository {
     }
   }
 
-
   /// Get Office List
   Future<OfficeListResponse> officeList(String token) async {
     try {
-
       Response response = await api.dio.get("/office/list",
           options: Options(
             headers: {
@@ -518,15 +582,12 @@ class APIRepository {
     }
   }
 
-
   /// Get Office List
   Future<OfficeListResponse> empOfficeList(String token, String empId) async {
     try {
-
       var data = json.encode({
         "emp_id": empId,
       });
-
 
       Response response = await api.dio.post("/attendence/office-list",
           data: data,
@@ -543,15 +604,12 @@ class APIRepository {
     }
   }
 
-
   ///Site attend by list
   Future<SiteByServiceLIstResponse> siteAttendByList(String token) async {
     try {
-
       var data = json.encode({
         "attendence_id": "3",
       });
-
 
       Response response = await api.dio.get("/work-report/site-attend-by-list",
           data: data,
@@ -571,11 +629,9 @@ class APIRepository {
   ///Service by Nature list
   Future<ServiceByNatureResponse> serviceByNatureList(String token) async {
     try {
-
       var data = json.encode({
         "attendence_id": "3",
       });
-
 
       Response response = await api.dio.get("/work-report/service-nature-list",
           data: data,
@@ -595,11 +651,9 @@ class APIRepository {
   ///Test performer list
   Future<TestByPerformanceListResponse> testPerformerList(String token) async {
     try {
-
       var data = json.encode({
         "attendence_id": "3",
       });
-
 
       Response response = await api.dio.get("/work-report/test-perform-list",
           data: data,
@@ -616,16 +670,17 @@ class APIRepository {
     }
   }
 
+
   ///Admin Test perform list
   Future<TestByPerformanceListResponse> adminTestPerformList(String token) async {
-    try {
 
+    try {
       var data = json.encode({
         "admin_conveyance_id": "1",
       });
 
 
-      Response response = await api.dio.get("/admin-test-performed/list",
+      Response response = await api.dio.post("/admin-test-performed/list",
           data: data,
           options: Options(
             headers: {
@@ -725,7 +780,6 @@ class APIRepository {
         "emp_id": empId,
       });
 
-
       Response response = await api.dio.get("/work-report/list",
           data: data,
           options: Options(
@@ -742,6 +796,7 @@ class APIRepository {
   }
 
   /// Create Work report
+
   Future<BaseModel> createWorkReport(String token, String date, String empId,
       String siteId,List<SiteAttendByData> siteAttendByList,  List<RemarkWorkReport> comments, String? conveyThrough, String other,  List<ServiceStatusModel> serviceStatusList,  List<String> sheetStatusList,  List<String> conveyThroughList,String conveyanceId,String serviceNatureIdId,String contactPerson, String witnessPerson) async {
     try {
@@ -753,14 +808,13 @@ class APIRepository {
       Map<String, dynamic> instrumentIdByMap = {};
       Map<String, dynamic> statusMap = {};
       for (int i = 0; i < serviceStatusList.length; i++){
-        remarkMap['remark[$i][remark]'] = serviceStatusList[i].remarkTextEditingController.text;
+        remarkMap['service_status[$i][remark]'] = serviceStatusList[i].remarkTextEditingController.text;
         testLocationMap['service_status[$i][test_location]'] = serviceStatusList[i].testLocationEditingController.text;
         roomEquipmentMap['service_status[$i][room_equipment]'] = serviceStatusList[i].roomEquipmentEditingController.text;
         testPerformedIdByMap['service_status[$i][test_perfomed_id]'] = serviceStatusList[i].testPerformData != null?serviceStatusList[i].testPerformData?.id.toString():"";
         instrumentIdByMap['service_status[$i][head_instrument_id]'] = serviceStatusList[i].usedInstrument != null?serviceStatusList[i].usedInstrument?.id.toString():"";
         statusMap['service_status[$i][status]'] = serviceStatusList[i].dataSheetStatus != null?sheetStatusList.indexOf(serviceStatusList[i].dataSheetStatus??"").toString():"";
         employeeMap['service_status[$i][perform_user_id]'] =serviceStatusList[i].workmanData != null?serviceStatusList[i].workmanData?.id.toString():"";
-
 
       }
 
@@ -791,6 +845,7 @@ class APIRepository {
       // }
 
       var data = FormData.fromMap({
+
 
         'emp_id': empId,
         'site_id': siteId,
@@ -827,8 +882,8 @@ class APIRepository {
     }
   }
 
-
   /// eDIT Work report
+
   Future<BaseModel> updateWorkReport(String token,String id, String date, String empId,
       String siteId,List<SiteAttendByData> siteAttendByList,   List<RemarkWorkReport> comments, String? conveyThrough, String other,  List<ServiceStatusModel> serviceStatusList,  List<String> sheetStatusList,  List<String> conveyThroughList,String conveyanceId,String serviceNatureIdId,String contactPerson, String witnessPerson) async {
     try {
@@ -841,7 +896,7 @@ class APIRepository {
       Map<String, dynamic> statusMap = {};
       Map<String, dynamic> employeeMap = {};
       for (int i = 0; i < serviceStatusList.length; i++){
-        remarkMap['remark[$i][remark]'] = serviceStatusList[i].remarkTextEditingController.text;
+        remarkMap['service_status[$i][remark]'] = serviceStatusList[i].remarkTextEditingController.text;
         testLocationMap['service_status[$i][test_location]'] = serviceStatusList[i].testLocationEditingController.text;
         roomEquipmentMap['service_status[$i][room_equipment]'] = serviceStatusList[i].roomEquipmentEditingController.text;
         testPerformedIdByMap['service_status[$i][test_perfomed_id]'] = serviceStatusList[i].testPerformData != null?serviceStatusList[i].testPerformData?.id.toString():"";
@@ -882,6 +937,7 @@ class APIRepository {
         "id": id,
         'emp_id': empId,
         'site_id': siteId,
+
         'convenyence_through_status': conveyThrough != null?(conveyThroughList.indexOf(conveyThrough) + 1).toString():"",
         'other':other,
         'conveyance_id': conveyanceId,
@@ -915,13 +971,9 @@ class APIRepository {
     }
   }
 
-
-
-
   /// Delete Allowance
   Future<BaseModel> deleteWorkReport(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -933,8 +985,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -944,7 +994,8 @@ class APIRepository {
   }
 
   /// Create Office
-  Future<BaseModel> createOffice(String token, CreateOfficeRequest createOfficeRequest) async {
+  Future<BaseModel> createOffice(
+      String token, CreateOfficeRequest createOfficeRequest) async {
     try {
       Response response = await api.dio.post("/office/create",
           data: createOfficeRequest.toJson(),
@@ -953,8 +1004,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -964,9 +1013,9 @@ class APIRepository {
   }
 
   /// Update Office
-  Future<BaseModel> updateOffice(String token, CreateOfficeRequest createOfficeRequest) async {
+  Future<BaseModel> updateOffice(
+      String token, CreateOfficeRequest createOfficeRequest) async {
     try {
-
       Response response = await api.dio.post("/office/update",
           data: createOfficeRequest.toJson(),
           options: Options(
@@ -974,8 +1023,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -984,11 +1031,9 @@ class APIRepository {
     }
   }
 
-
   /// Delete Allowance
   Future<BaseModel> deleteOffice(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -1000,8 +1045,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1013,7 +1056,6 @@ class APIRepository {
   /// Delete Allowance
   Future<BaseModel> deleteHead(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -1025,8 +1067,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1036,10 +1076,9 @@ class APIRepository {
   }
 
   /// Edit Head
-  Future<BaseModel> editSite(String token, CreateSiteRequest createSiteRequest) async {
+  Future<BaseModel> editSite(
+      String token, CreateSiteRequest createSiteRequest) async {
     try {
-
-
       Response response = await api.dio.post("/site/update",
           data: createSiteRequest.toJson(),
           options: Options(
@@ -1047,8 +1086,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1057,11 +1094,9 @@ class APIRepository {
     }
   }
 
-
   /// Test Type List
   Future<HeadListResponse> headListList(String token) async {
     try {
-
       Response response = await api.dio.get("/head/list",
           options: Options(
             headers: {
@@ -1077,10 +1112,9 @@ class APIRepository {
   }
 
   /// Create Head
-  Future<BaseModel> createHead(String token, CreateHeadRequest createHeadRequest) async {
+  Future<BaseModel> createHead(
+      String token, CreateHeadRequest createHeadRequest) async {
     try {
-
-
       Response response = await api.dio.post("/head/create",
           data: createHeadRequest.toJson(),
           options: Options(
@@ -1088,8 +1122,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1099,10 +1131,9 @@ class APIRepository {
   }
 
   /// Update Head
-  Future<BaseModel> updateHead(String token, CreateHeadRequest createHeadRequest) async {
+  Future<BaseModel> updateHead(
+      String token, CreateHeadRequest createHeadRequest) async {
     try {
-
-
       Response response = await api.dio.post("/head/update",
           data: createHeadRequest.toJson(),
           options: Options(
@@ -1110,8 +1141,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1120,15 +1149,9 @@ class APIRepository {
     }
   }
 
-
-
-
-
-
   /// Service List
   Future<ServiceListResponse> serviceList(String token) async {
     try {
-
       Response response = await api.dio.get("/service/list",
           options: Options(
             headers: {
@@ -1143,12 +1166,10 @@ class APIRepository {
     }
   }
 
-
   /// Create Service
-  Future<BaseModel> createService(String token, CreateServiceRequest createServiceRequest) async {
+  Future<BaseModel> createService(
+      String token, CreateServiceRequest createServiceRequest) async {
     try {
-
-
       Response response = await api.dio.post("/service/create",
           data: createServiceRequest.toJson(),
           options: Options(
@@ -1156,8 +1177,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1166,12 +1185,10 @@ class APIRepository {
     }
   }
 
-
   /// Update Service
-  Future<BaseModel> updateService(String token, CreateServiceRequest updateServiceRequest) async {
+  Future<BaseModel> updateService(
+      String token, CreateServiceRequest updateServiceRequest) async {
     try {
-
-
       Response response = await api.dio.post("/service/update",
           data: updateServiceRequest.toJson(),
           options: Options(
@@ -1179,8 +1196,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1189,11 +1204,9 @@ class APIRepository {
     }
   }
 
-
   /// Delete Service
   Future<BaseModel> deleteService(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -1205,8 +1218,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1215,13 +1226,12 @@ class APIRepository {
     }
   }
 
-
   /// Admin Expense List
-  Future<AdminExpenseListResponse> adminExpenseList(String token, String type, String empId, String startDate, String endDate) async {
+  Future<AdminExpenseListResponse> adminExpenseList(String token, String type,
+      String empId, String startDate, String endDate) async {
     try {
-
       var data = json.encode({
-        "type":type,
+        "type": type,
         "emp_id": empId,
         "start_date": startDate,
         "end_date": endDate
@@ -1242,12 +1252,9 @@ class APIRepository {
     }
   }
 
-
   /// Admin Conveyance  List
   Future<AdminConveyanceListResponse> adminConveyanceList(String token) async {
     try {
-
-
       Response response = await api.dio.get("/admin-conveyance/list",
           options: Options(
             headers: {
@@ -1263,9 +1270,9 @@ class APIRepository {
   }
 
   ///Admin Conveyance List by date
-  Future<AdminConveyanceListResponse> adminConveyanceListDate(String token, String date) async {
+  Future<AdminConveyanceListResponse> adminConveyanceListDate(
+      String token, String date) async {
     try {
-
       var user = {"date": date};
       var formData = FormData.fromMap(user);
 
@@ -1284,13 +1291,10 @@ class APIRepository {
     }
   }
 
-
-
   /// Create Admin Conveyance
-  Future<BaseModel> adminCreateConveyance(String token, AdminCreateConveyanceRequest createConveyanceRequest) async {
+  Future<BaseModel> adminCreateConveyance(String token,
+      AdminCreateConveyanceRequest createConveyanceRequest) async {
     try {
-
-
       Response response = await api.dio.post("/admin-conveyance/create",
           data: createConveyanceRequest.toJson(),
           options: Options(
@@ -1298,8 +1302,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1308,12 +1310,10 @@ class APIRepository {
     }
   }
 
-
   /// Update Admin Conveyance
-  Future<BaseModel> adminUpdateConveyance(String token, AdminCreateConveyanceRequest updateConveyanceRequest) async {
+  Future<BaseModel> adminUpdateConveyance(String token,
+      AdminCreateConveyanceRequest updateConveyanceRequest) async {
     try {
-
-
       Response response = await api.dio.post("/admin-conveyance/update",
           data: updateConveyanceRequest.toJson(),
           options: Options(
@@ -1321,8 +1321,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1331,11 +1329,9 @@ class APIRepository {
     }
   }
 
-
   /// Delete Admin Conveyance
   Future<BaseModel> adminDeleteConveyance(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -1347,8 +1343,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1357,11 +1351,11 @@ class APIRepository {
     }
   }
 
-
-///  admin-conveyance-payment
+  ///  admin-conveyance-payment
 
   /// Admin admin-conveyance-payment  List
-  Future<AdminConveyancePaymentListResponse> adminConveyancePaymentList(String token, String adminConveyanceId) async {
+  Future<AdminConveyancePaymentListResponse> adminConveyancePaymentList(
+      String token, String adminConveyanceId) async {
     try {
       var data = json.encode({
         "admin_conveyance_id": adminConveyanceId,
@@ -1383,20 +1377,21 @@ class APIRepository {
   }
 
   /// admin-conveyance-payment List by date
-  Future<AdminConveyancePaymentListResponse> adminConveyancePaymentListDate(String token, String date) async {
+  Future<AdminConveyancePaymentListResponse> adminConveyancePaymentListDate(
+      String token, String date) async {
     try {
-
       var user = {"date": date};
       var formData = FormData.fromMap(user);
 
-      Response response = await api.dio.post("/admin-conveyance-payment/calender-list",
-          data: formData,
-          options: Options(
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
-            },
-          ));
+      Response response =
+          await api.dio.post("/admin-conveyance-payment/calender-list",
+              data: formData,
+              options: Options(
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer $token'
+                },
+              ));
       dynamic postMaps = response.data;
       return AdminConveyancePaymentListResponse.fromJson(postMaps);
     } catch (ex) {
@@ -1404,13 +1399,10 @@ class APIRepository {
     }
   }
 
-
-
   /// Create admin-conveyance-payment
-  Future<BaseModel> adminCreateConveyancePayment(String token, AdminCreateConveyancePaymentRequest createConveyanceRequest) async {
+  Future<BaseModel> adminCreateConveyancePayment(String token,
+      AdminCreateConveyancePaymentRequest createConveyanceRequest) async {
     try {
-
-
       Response response = await api.dio.post("/admin-conveyance-payment/create",
           data: createConveyanceRequest.toJson(),
           options: Options(
@@ -1418,8 +1410,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1428,12 +1418,10 @@ class APIRepository {
     }
   }
 
-
   /// Update admin-conveyance-payment
-  Future<BaseModel> adminUpdateConveyancePayment(String token, AdminCreateConveyancePaymentRequest updateConveyanceRequest) async {
+  Future<BaseModel> adminUpdateConveyancePayment(String token,
+      AdminCreateConveyancePaymentRequest updateConveyanceRequest) async {
     try {
-
-
       Response response = await api.dio.post("/admin-conveyance-payment/update",
           data: updateConveyanceRequest.toJson(),
           options: Options(
@@ -1441,8 +1429,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1451,11 +1437,10 @@ class APIRepository {
     }
   }
 
-
   /// Delete Admin Conveyance
-  Future<BaseModel> adminDeleteConveyancePayment(String token, String id) async {
+  Future<BaseModel> adminDeleteConveyancePayment(
+      String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -1467,8 +1452,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1477,16 +1460,12 @@ class APIRepository {
     }
   }
 
-
-
-
-
   /// Admin Conveyance Report List
-  Future<AdminConveyanceListResponse> adminConveyanceReportList(String token, String type, String empId, String startDate, String endDate) async {
+  Future<AdminConveyanceListResponse> adminConveyanceReportList(String token,
+      String type, String empId, String startDate, String endDate) async {
     try {
-
       var data = json.encode({
-        "type":type,
+        "type": type,
         "emp_id": empId,
         "start_date": startDate,
         "end_date": endDate
@@ -1507,26 +1486,26 @@ class APIRepository {
     }
   }
 
-
   /// Admin Attendance List
-  Future<AdminAttendanceListResponse> adminAttendanceList(String token, String type, String empId, String startDate, String endDate) async {
+  Future<AdminAttendanceListResponse> adminAttendanceList(String token,
+      String type, String empId, String startDate, String endDate) async {
     try {
-
       var data = json.encode({
-        "type":type,
+        "type": type,
         "emp_id": empId,
         "start_date": startDate,
         "end_date": endDate
       });
 
-      Response response = await api.dio.post("/admin-report/admin-attendence-list",
-          data: data,
-          options: Options(
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
-            },
-          ));
+      Response response =
+          await api.dio.post("/admin-report/admin-attendence-list",
+              data: data,
+              options: Options(
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer $token'
+                },
+              ));
       dynamic postMaps = response.data;
       return AdminAttendanceListResponse.fromJson(postMaps);
     } catch (ex) {
@@ -1534,15 +1513,12 @@ class APIRepository {
     }
   }
 
-
-
-
   /// Admin Work Report List
-  Future<AdminWorkReportListResponse> adminWorkReportList(String token, String type, String empId, String startDate, String endDate) async {
+  Future<AdminWorkReportListResponse> adminWorkReportList(String token,
+      String type, String empId, String startDate, String endDate) async {
     try {
-
       var data = json.encode({
-        "type":type,
+        "type": type,
         "emp_id": empId,
         "start_date": startDate,
         "end_date": endDate
@@ -1563,12 +1539,9 @@ class APIRepository {
     }
   }
 
-
-
   /// Allowance List
   Future<AllowanceListResponse> allowanceList(String token) async {
     try {
-
       Response response = await api.dio.get("/allowance/list",
           options: Options(
             headers: {
@@ -1586,7 +1559,6 @@ class APIRepository {
   ///Home Allowance List
   Future<HomeAllowanceListResponse> homeAllowanceList(String token) async {
     try {
-
       Response response = await api.dio.get("/home_allowance/list",
           options: Options(
             headers: {
@@ -1602,9 +1574,9 @@ class APIRepository {
   }
 
   ///Home Allowance List
-  Future<HomeAllowanceListResponse> homeAllowanceListByDate(String token, String date) async {
+  Future<HomeAllowanceListResponse> homeAllowanceListByDate(
+      String token, String date) async {
     try {
-
       var user = {"date": date};
       var formData = FormData.fromMap(user);
 
@@ -1623,12 +1595,10 @@ class APIRepository {
     }
   }
 
-
   /// Create Allowance
-  Future<BaseModel> createAllowance(String token, CreateAllowanceRequest createAllowanceRequest) async {
+  Future<BaseModel> createAllowance(
+      String token, CreateAllowanceRequest createAllowanceRequest) async {
     try {
-
-
       Response response = await api.dio.post("/allowance/create",
           data: createAllowanceRequest.toJson(),
           options: Options(
@@ -1636,8 +1606,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1649,7 +1617,6 @@ class APIRepository {
   /// Delete Allowance
   Future<BaseModel> deleteHomeAllowance(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -1661,8 +1628,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1671,9 +1636,9 @@ class APIRepository {
     }
   }
 
-
   /// Create Home Allowance
-  Future<BaseModel> createHomeAllowance(String token, CreateHomeAllowanceRequest createHomeAllowanceRequest) async {
+  Future<BaseModel> createHomeAllowance(String token,
+      CreateHomeAllowanceRequest createHomeAllowanceRequest) async {
     try {
       Response response = await api.dio.post("/home_allowance/create",
           data: createHomeAllowanceRequest.toJson(),
@@ -1682,8 +1647,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1692,9 +1655,9 @@ class APIRepository {
     }
   }
 
-
   /// Update Home Allowance
-  Future<BaseModel> updateHomeAllowance(String token, CreateHomeAllowanceRequest createHomeAllowanceRequest) async {
+  Future<BaseModel> updateHomeAllowance(String token,
+      CreateHomeAllowanceRequest createHomeAllowanceRequest) async {
     try {
       Response response = await api.dio.post("/home_allowance/update",
           data: createHomeAllowanceRequest.toJson(),
@@ -1703,8 +1666,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1713,12 +1674,10 @@ class APIRepository {
     }
   }
 
-
   /// Update Allowance
-  Future<BaseModel> updateAllowance(String token, CreateAllowanceRequest updateAllowanceRequest) async {
+  Future<BaseModel> updateAllowance(
+      String token, CreateAllowanceRequest updateAllowanceRequest) async {
     try {
-
-
       Response response = await api.dio.post("/allowance/update",
           data: updateAllowanceRequest.toJson(),
           options: Options(
@@ -1726,8 +1685,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1736,11 +1693,9 @@ class APIRepository {
     }
   }
 
-
   /// Delete Allowance
   Future<BaseModel> deleteAllowance(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -1752,8 +1707,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1762,12 +1715,9 @@ class APIRepository {
     }
   }
 
-
-
   /// Conveyance List
   Future<ConveyanceListResponse> conveyanceList(String token) async {
     try {
-
       Response response = await api.dio.get("/conveyance/list",
           options: Options(
             headers: {
@@ -1783,10 +1733,9 @@ class APIRepository {
   }
 
   /// Create Conveyance
-  Future<BaseModel> createConveyance(String token, CreateConveyanceRequest createConveyanceRequest) async {
+  Future<BaseModel> createConveyance(
+      String token, CreateConveyanceRequest createConveyanceRequest) async {
     try {
-
-
       Response response = await api.dio.post("/conveyance/create",
           data: createConveyanceRequest.toJson(),
           options: Options(
@@ -1794,8 +1743,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1804,12 +1751,10 @@ class APIRepository {
     }
   }
 
-
   /// Update Conveyance
-  Future<BaseModel> updateConveyance(String token, UpdateConveyanceRequest updateConveyanceRequest) async {
+  Future<BaseModel> updateConveyance(
+      String token, UpdateConveyanceRequest updateConveyanceRequest) async {
     try {
-
-
       Response response = await api.dio.post("/conveyance/update",
           data: updateConveyanceRequest.toJson(),
           options: Options(
@@ -1817,8 +1762,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1827,11 +1770,9 @@ class APIRepository {
     }
   }
 
-
   /// Delete Conveyance
   Future<BaseModel> deleteConveyance(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -1843,8 +1784,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1853,11 +1792,9 @@ class APIRepository {
     }
   }
 
-
   /// Head Conveyance List
   Future<HeadConveyanceListResponse> headConveyanceList(String token) async {
     try {
-
       Response response = await api.dio.get("/head-conveyance/list",
           options: Options(
             headers: {
@@ -1875,10 +1812,7 @@ class APIRepository {
   /// Create Conveyance Head
   Future<BaseModel> createHeadConveyance(String token, String name) async {
     try {
-
-      var data = json.encode({
-        "name": name
-      });
+      var data = json.encode({"name": name});
 
       Response response = await api.dio.post("/head-conveyance/create",
           data: data,
@@ -1887,8 +1821,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1897,15 +1829,11 @@ class APIRepository {
     }
   }
 
-
   /// Update Conveyance Head
-  Future<BaseModel> updateHeadConveyance(String token, String name, String id) async {
+  Future<BaseModel> updateHeadConveyance(
+      String token, String name, String id) async {
     try {
-
-      var data = json.encode({
-        "id": id,
-        "name": name
-      });
+      var data = json.encode({"id": id, "name": name});
 
       Response response = await api.dio.post("/head-conveyance/update",
           data: data,
@@ -1914,8 +1842,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1924,11 +1850,9 @@ class APIRepository {
     }
   }
 
-
   /// Delete Conveyance Head
   Future<BaseModel> deleteConveyanceHead(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -1940,8 +1864,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1950,11 +1872,9 @@ class APIRepository {
     }
   }
 
-
   /// Head Instrument List
   Future<HeadInstrumentResponse> headInstrumentList(String token) async {
     try {
-
       Response response = await api.dio.get("/head-instrument/list",
           options: Options(
             headers: {
@@ -1969,11 +1889,9 @@ class APIRepository {
     }
   }
 
-
   /// Delete Instrument Head
   Future<BaseModel> deleteInstrumentHead(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -1985,8 +1903,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -1998,10 +1914,7 @@ class APIRepository {
   /// Create Instrument Head
   Future<BaseModel> createHeadInstrument(String token, String name) async {
     try {
-
-      var data = json.encode({
-        "name": name
-      });
+      var data = json.encode({"name": name});
 
       Response response = await api.dio.post("/head-instrument/create",
           data: data,
@@ -2010,8 +1923,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2021,13 +1932,10 @@ class APIRepository {
   }
 
   /// Update Instrument Head
-  Future<BaseModel> updateHeadInstrument(String token, String name, String id) async {
+  Future<BaseModel> updateHeadInstrument(
+      String token, String name, String id) async {
     try {
-
-      var data = json.encode({
-        "id": id,
-        "name": name
-      });
+      var data = json.encode({"id": id, "name": name});
 
       Response response = await api.dio.post("/head-instrument/update",
           data: data,
@@ -2036,8 +1944,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2049,7 +1955,6 @@ class APIRepository {
   /// instrument List
   Future<InstrumentListResponse> instrumentList(String token) async {
     try {
-
       Response response = await api.dio.get("/instrument/list",
           options: Options(
             headers: {
@@ -2065,10 +1970,9 @@ class APIRepository {
   }
 
   /// Create Instrument
-  Future<BaseModel> createInstrument(String token, CreateInstrumentRequest createInstrumentRequest) async {
+  Future<BaseModel> createInstrument(
+      String token, CreateInstrumentRequest createInstrumentRequest) async {
     try {
-
-
       Response response = await api.dio.post("/instrument/create",
           data: createInstrumentRequest.toJson(),
           options: Options(
@@ -2076,8 +1980,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2087,10 +1989,9 @@ class APIRepository {
   }
 
   /// Update Instrument
-  Future<BaseModel> updateInstrument(String token, CreateInstrumentRequest createInstrumentRequest) async {
+  Future<BaseModel> updateInstrument(
+      String token, CreateInstrumentRequest createInstrumentRequest) async {
     try {
-
-
       Response response = await api.dio.post("/instrument/update",
           data: createInstrumentRequest.toJson(),
           options: Options(
@@ -2098,8 +1999,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2108,11 +2007,9 @@ class APIRepository {
     }
   }
 
-
   /// Delete Instrument
   Future<BaseModel> deleteInstrument(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -2124,8 +2021,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2133,9 +2028,6 @@ class APIRepository {
       rethrow;
     }
   }
-
-
-
 
   /// Note List
   Future<NoteListResponse> noteList(String token, String empId) async {
@@ -2158,10 +2050,10 @@ class APIRepository {
   }
 
   /// Note List
-  Future<NoteListResponse> noteListByDate(String token, String date, String empId) async {
+  Future<NoteListResponse> noteListByDate(
+      String token, String date, String empId) async {
     try {
-
-      var user = {"date": date,'emp_id':empId};
+      var user = {"date": date, 'emp_id': empId};
       var formData = FormData.fromMap(user);
 
       Response response = await api.dio.post("/note/calender-list",
@@ -2179,9 +2071,9 @@ class APIRepository {
     }
   }
 
-
   /// Create Note
-  Future<BaseModel> createNote(String token, CreateNotesRequest createNoteRequest) async {
+  Future<BaseModel> createNote(
+      String token, CreateNotesRequest createNoteRequest) async {
     try {
       Response response = await api.dio.post("/note/create",
           data: createNoteRequest.toJson(),
@@ -2190,8 +2082,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2201,10 +2091,9 @@ class APIRepository {
   }
 
   /// Update Note
-  Future<BaseModel> updateNote(String token, CreateNotesRequest createNoteRequest) async {
+  Future<BaseModel> updateNote(
+      String token, CreateNotesRequest createNoteRequest) async {
     try {
-
-
       Response response = await api.dio.post("/note/update",
           data: createNoteRequest.toJson(),
           options: Options(
@@ -2212,8 +2101,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2222,11 +2109,9 @@ class APIRepository {
     }
   }
 
-
   /// Delete Note
   Future<BaseModel> deleteNote(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -2238,8 +2123,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2248,12 +2131,9 @@ class APIRepository {
     }
   }
 
-
-
   /// Planning List
   Future<PlanningListResponse> planningList(String token) async {
     try {
-
       Response response = await api.dio.get("/planning/list",
           options: Options(
             headers: {
@@ -2269,9 +2149,9 @@ class APIRepository {
   }
 
   /// Planning List
-  Future<PlanningListResponse> planningListByDate(String token, String date) async {
+  Future<PlanningListResponse> planningListByDate(
+      String token, String date) async {
     try {
-
       var user = {"date": date};
       var formData = FormData.fromMap(user);
 
@@ -2290,9 +2170,9 @@ class APIRepository {
     }
   }
 
-
   /// Create Planning
-  Future<BaseModel> createPlanning(String token, AddPlanningRequest addPlanningRequest) async {
+  Future<BaseModel> createPlanning(
+      String token, AddPlanningRequest addPlanningRequest) async {
     try {
       Response response = await api.dio.post("/planning/create",
           data: addPlanningRequest.toJson(),
@@ -2301,8 +2181,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2312,10 +2190,9 @@ class APIRepository {
   }
 
   /// Update Planning
-  Future<BaseModel> updatePlanning(String token, AddPlanningRequest addPlanningRequest) async {
+  Future<BaseModel> updatePlanning(
+      String token, AddPlanningRequest addPlanningRequest) async {
     try {
-
-
       Response response = await api.dio.post("/planning/update",
           data: addPlanningRequest.toJson(),
           options: Options(
@@ -2323,8 +2200,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2333,11 +2208,9 @@ class APIRepository {
     }
   }
 
-
   /// Delete Planning
   Future<BaseModel> deletePlanning(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -2349,8 +2222,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2379,9 +2250,9 @@ class APIRepository {
     }
   }
 
-
   /// Circular List
-  Future<CircularListResponse> employeeCircularList(String token, String empId) async {
+  Future<CircularListResponse> employeeCircularList(
+      String token, String empId) async {
     try {
       var user = {'emp_id': empId};
       var formData = FormData.fromMap(user);
@@ -2401,9 +2272,10 @@ class APIRepository {
   }
 
   /// Circular List By date
-  Future<CircularListResponse> employeeCircularListByDate(String token, String empId, String date) async {
+  Future<CircularListResponse> employeeCircularListByDate(
+      String token, String empId, String date) async {
     try {
-      var user = {'emp_id': empId, "date" :date};
+      var user = {'emp_id': empId, "date": date};
       var formData = FormData.fromMap(user);
       Response response = await api.dio.post("/employee-circular/calender-list",
           data: formData,
@@ -2420,31 +2292,26 @@ class APIRepository {
     }
   }
 
-
   /// Create Circular
-  Future<BaseModel> createCircular(String token, String empId, String date,String title, String pdfPath,String fileName) async {
+  Future<BaseModel> createCircular(String token, String empId, String date,
+      String title, String pdfPath, String fileName) async {
     try {
-
       printData("pdfPath 11", pdfPath);
 
       var data = FormData.fromMap({
-        'pdf': [
-          await MultipartFile.fromFile(pdfPath, filename: fileName)
-        ],
+        'pdf': [await MultipartFile.fromFile(pdfPath, filename: fileName)],
         'emp_id': empId,
         'date': date,
         'title': title
       });
 
       Response response = await api.dio.post("/employee-circular/create",
-          data: data ,
+          data: data,
           options: Options(
             headers: {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2454,13 +2321,12 @@ class APIRepository {
   }
 
   /// Update Circular
-  Future<BaseModel> updateCircular(String token, String id, String empId, String date,String title, String pdfPath) async {
+  Future<BaseModel> updateCircular(String token, String id, String empId,
+      String date, String title, String pdfPath) async {
     try {
-
       var data = FormData.fromMap({
-        if(pdfPath.isNotEmpty)'pdf': [
-          await MultipartFile.fromFile(pdfPath, filename: '')
-        ],
+        if (pdfPath.isNotEmpty)
+          'pdf': [await MultipartFile.fromFile(pdfPath, filename: '')],
         'id': id,
         'emp_id': empId,
         'date': date,
@@ -2473,8 +2339,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2483,11 +2347,9 @@ class APIRepository {
     }
   }
 
-
   /// Delete Circular
   Future<BaseModel> deleteCircular(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -2499,8 +2361,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2509,16 +2369,9 @@ class APIRepository {
     }
   }
 
-
-
-
-
-
-
   /// Workman List
   Future<WorkmanListResponse> workmanList(String token) async {
     try {
-
       Response response = await api.dio.get("/workman-profile/list",
           options: Options(
             headers: {
@@ -2534,7 +2387,8 @@ class APIRepository {
   }
 
   /// Create Conveyance
-  Future<BaseModel> createWorkman(String token, CreateWorkmanRequest createWorkmanRequest) async {
+  Future<BaseModel> createWorkman(
+      String token, CreateWorkmanRequest createWorkmanRequest) async {
     try {
       Response response = await api.dio.post("/workman-profile/create",
           data: createWorkmanRequest.toJson(),
@@ -2543,8 +2397,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2554,7 +2406,8 @@ class APIRepository {
   }
 
   /// Create Workman
-  Future<BaseModel> updateWorkman(String token, CreateWorkmanRequest createWorkmanRequest) async {
+  Future<BaseModel> updateWorkman(
+      String token, CreateWorkmanRequest createWorkmanRequest) async {
     try {
       Response response = await api.dio.post("/workman-profile/update",
           data: createWorkmanRequest.toJson(),
@@ -2563,8 +2416,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2573,11 +2424,9 @@ class APIRepository {
     }
   }
 
-
   /// Delete Workman
   Future<BaseModel> deleteWorkman(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -2589,8 +2438,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2599,11 +2446,10 @@ class APIRepository {
     }
   }
 
-
   /// Emp leave requet list
-  Future<EmpLeaveRequestListResponse> employeeLeaveRequestList(String token, String empId) async {
+  Future<EmpLeaveRequestListResponse> employeeLeaveRequestList(
+      String token, String empId) async {
     try {
-
       var user = {'emp_id': empId};
       var formData = FormData.fromMap(user);
 
@@ -2614,8 +2460,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return EmpLeaveRequestListResponse.fromJson(postMaps);
@@ -2624,12 +2468,10 @@ class APIRepository {
     }
   }
 
-
   /// Create EmpLeaveRequest
-  Future<BaseModel> createEmpLeaveRequest(String token, AddLeaveRequest addLeaveRequest) async {
+  Future<BaseModel> createEmpLeaveRequest(
+      String token, AddLeaveRequest addLeaveRequest) async {
     try {
-
-
       Response response = await api.dio.post("/employee-leave-request/create",
           data: addLeaveRequest.toJson(),
           options: Options(
@@ -2637,8 +2479,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2647,12 +2487,10 @@ class APIRepository {
     }
   }
 
-
   /// Update EmpLeaveRequest
-  Future<BaseModel> updateEmpLeaveRequest(String token, AddLeaveRequest addLeaveRequest) async {
+  Future<BaseModel> updateEmpLeaveRequest(
+      String token, AddLeaveRequest addLeaveRequest) async {
     try {
-
-
       Response response = await api.dio.post("/employee-leave-request/update",
           data: addLeaveRequest.toJson(),
           options: Options(
@@ -2660,8 +2498,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2670,11 +2506,9 @@ class APIRepository {
     }
   }
 
-
   /// Delete EmpLeaveRequest
   Future<BaseModel> deleteEmpLeaveRequest(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -2686,8 +2520,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -2696,9 +2528,9 @@ class APIRepository {
     }
   }
 
-
   /// Admin leave requet list
-  Future<AdminLeaveRequestListResponse> adminLeaveRequestList(String token) async {
+  Future<AdminLeaveRequestListResponse> adminLeaveRequestList(
+      String token) async {
     try {
       Response response = await api.dio.get("/admin-leave-request/list",
           options: Options(
@@ -2706,8 +2538,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return AdminLeaveRequestListResponse.fromJson(postMaps);
@@ -2717,22 +2547,21 @@ class APIRepository {
   }
 
   /// Admin leave requet list
-  Future<AdminLeaveRequestListResponse> adminLeaveRequestListByDateWorkman(String token, String empId, String date) async {
+  Future<AdminLeaveRequestListResponse> adminLeaveRequestListByDateWorkman(
+      String token, String empId, String date) async {
     try {
-
       var user = {'emp_id': empId, "date": date};
       var formData = FormData.fromMap(user);
 
-      Response response = await api.dio.post("/admin-leave-request/calender-list",
-          data: formData,
-          options: Options(
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
-            },
-
-
-          ));
+      Response response =
+          await api.dio.post("/admin-leave-request/calender-list",
+              data: formData,
+              options: Options(
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer $token'
+                },
+              ));
       dynamic postMaps = response.data;
       return AdminLeaveRequestListResponse.fromJson(postMaps);
     } catch (ex) {
@@ -2741,7 +2570,8 @@ class APIRepository {
   }
 
   /// Admin leave requet list
-  Future<AdminLeaveRequestListResponse> adminLeaveRequestPendingList(String token) async {
+  Future<AdminLeaveRequestListResponse> adminLeaveRequestPendingList(
+      String token) async {
     try {
       Response response = await api.dio.get("/admin-leave-request/pending_list",
           options: Options(
@@ -2749,8 +2579,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return AdminLeaveRequestListResponse.fromJson(postMaps);
@@ -2762,10 +2590,8 @@ class APIRepository {
   /// Test Type List
   Future<TestTypeListResponse> testTypeList() async {
     try {
-
-      Response response = await api.dio.post("/get_all_test_type",
-          options: Options(
-          ));
+      Response response =
+          await api.dio.post("/get_all_test_type", options: Options());
       dynamic postMaps = response.data;
       return TestTypeListResponse.fromJson(postMaps);
     } catch (ex) {
@@ -2777,9 +2603,11 @@ class APIRepository {
   Future<EmployeeListResponse> employeeList() async {
     try {
 
+
       Response response = await api.dio.get("/get_all_employee",
           options: Options(
           ));
+
       dynamic postMaps = response.data;
       return EmployeeListResponse.fromJson(postMaps);
     } catch (ex) {
@@ -2790,10 +2618,8 @@ class APIRepository {
   /// Get Transportation List
   Future<TransportationListResponse> transportationList() async {
     try {
-
-      Response response = await api.dio.post("/get_all_transportation",
-          options: Options(
-          ));
+      Response response =
+          await api.dio.post("/get_all_transportation", options: Options());
       dynamic postMaps = response.data;
       return TransportationListResponse.fromJson(postMaps);
     } catch (ex) {
@@ -2804,20 +2630,12 @@ class APIRepository {
   /// Get Driver List
   Future<DriverListResponse> driverList() async {
     try {
-
-      Response response = await api.dio.post("/get_all_driver",
-          options: Options(
-          ));
+      Response response =
+          await api.dio.post("/get_all_driver", options: Options());
       dynamic postMaps = response.data;
       return DriverListResponse.fromJson(postMaps);
     } catch (ex) {
       rethrow;
     }
   }
-
-
-
-
-
-
 }

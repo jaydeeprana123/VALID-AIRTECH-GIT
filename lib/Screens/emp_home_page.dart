@@ -20,11 +20,11 @@ import '../Styles/my_colors.dart';
 import '../Styles/my_icons.dart';
 import 'AdminLeaveRequest/View/admin_leave_request_list_screen.dart';
 import 'AdminLeaveRequest/View/select_workman_calender_leave_request_screen.dart';
+import 'CalibrationCertificate/View/emp_calibration_list_screen.dart';
 import 'Circular/View/circular_list_screen.dart';
 import 'Circular/View/emp_circular_screen.dart';
 import 'Master/View/master_index_screen.dart';
 import 'Notes/View/notes_screen.dart';
-
 
 class EmpHomePage extends StatelessWidget {
   @override
@@ -41,8 +41,8 @@ class EmpHomePage extends StatelessWidget {
         ),
         title: Text(
           'Profile',
-          style: AppTextStyle.largeBold.copyWith(fontSize: 18
-              , color: color_secondary),
+          style: AppTextStyle.largeBold
+              .copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
         actions: [
@@ -60,25 +60,24 @@ class EmpHomePage extends StatelessWidget {
           Center(
             child: Row(
               children: [
-
-                SizedBox(width: 52,),
-
+                SizedBox(
+                  width: 52,
+                ),
                 Expanded(
                   child: Image.asset(
                     iconLogo, // Replace with your logo path
                     height: 80,
                   ),
                 ),
-
-
                 Icon(Icons.calendar_month, color: color_secondary, size: 36),
-
                 SizedBox(width: 16),
               ],
             ),
           ),
 
-          SizedBox(height: 16,),
+          SizedBox(
+            height: 16,
+          ),
 
           Expanded(
             child: GridView.count(
@@ -89,36 +88,44 @@ class EmpHomePage extends StatelessWidget {
               childAspectRatio: 1.6, // Adjust aspect ratio for rectangle shape
               children: [
 
-                InkWell(onTap: (){
-                  Get.to(EmpPlanningScreen());
-                },child: _buildGridItem('Planning', Icons.schedule)),
-
-
-                InkWell(onTap: (){
-                  Get.to(WorkReportListScreen(attendanceId: "3", date: "date", siteId: "siteId"));
-                },child: _buildGridItem('Work Report', Icons.work_history_outlined)),
-
-                InkWell(onTap: (){
-                  Get.to(EmpAttendanceScreen());
-                },child: _buildGridItem('Attendance Status', Icons.event_note)),
-
-
-                InkWell(onTap: (){
-                  Get.to(EmpExpenseScreen());
-                },child: _buildGridItem('Expense', Icons.event_note)),
-
-
-                InkWell(onTap: (){
-                  Get.to(EmplLeaveRequestListScreen());
-                },child: _buildGridItem('Leave Request', Icons.note_add_outlined)),
-                InkWell(onTap: (){
-                  Get.to(NotesScreen());
-                },child: _buildGridItem('Note', Icons.note_alt)),
                 InkWell(
-                  onTap: (){
-                    Get.to(EmployeeCircularScreen());
-                  }
-                    ,child: _buildGridItem('Circular', Icons.newspaper)),
+                    onTap: () {
+                      Get.to(EmpPlanningScreen());
+                    },
+                    child: _buildGridItem('Planning', Icons.schedule)),
+                InkWell(
+                    onTap: () {
+                      Get.to(EmpCalibrationListScreen());
+                    },
+                    child: _buildGridItem(
+                        'Calibration Certificates', Icons.compass_calibration)),
+                InkWell(
+                    onTap: () {
+                      Get.to(EmpAttendanceScreen());
+                    },
+                    child:
+                        _buildGridItem('Attendance Status', Icons.event_note)),
+                InkWell(
+                    onTap: () {
+                      Get.to(EmpExpenseScreen());
+                    },
+                    child: _buildGridItem('Expense', Icons.event_note)),
+                InkWell(
+                    onTap: () {
+                      Get.to(EmplLeaveRequestListScreen());
+                    },
+                    child: _buildGridItem(
+                        'Leave Request', Icons.note_add_outlined)),
+                InkWell(
+                    onTap: () {
+                      Get.to(NotesScreen());
+                    },
+                    child: _buildGridItem('Note', Icons.note_alt)),
+                InkWell(
+                    onTap: () {
+                      Get.to(EmployeeCircularScreen());
+                    },
+                    child: _buildGridItem('Circular', Icons.newspaper)),
                 _buildGridItem('Help/Query', Icons.contact_support),
               ],
             ),
@@ -158,8 +165,8 @@ class EmpHomePage extends StatelessWidget {
           SizedBox(height: 2),
           Text(
             title,
-            style: AppTextStyle.largeBold.copyWith(fontSize: 14
-                , color: color_secondary),
+            style: AppTextStyle.largeBold
+                .copyWith(fontSize: 14, color: color_secondary),
             textAlign: TextAlign.center,
           ),
         ],
@@ -169,7 +176,6 @@ class EmpHomePage extends StatelessWidget {
 
   Widget _buildFooterButton(String title) {
     return Container(
-
       margin: EdgeInsets.only(right: 8, left: 8),
       alignment: Alignment.center,
       padding: EdgeInsets.symmetric(vertical: 10),
@@ -181,8 +187,8 @@ class EmpHomePage extends StatelessWidget {
         child: Text(
           textAlign: TextAlign.center,
           title,
-          style: AppTextStyle.largeBold.copyWith(fontSize: 14
-              , color: Colors.white),
+          style: AppTextStyle.largeBold
+              .copyWith(fontSize: 14, color: Colors.white),
         ),
       ),
     );

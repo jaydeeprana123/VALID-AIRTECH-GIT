@@ -13,13 +13,10 @@ import 'edit_work_report_screen.dart';
 
 class WorkReportDetailsScreen extends StatefulWidget {
 
-  final String attendanceId;
-  final String date;
 
   WorkReportDetailsScreen({
     Key? key,
-    required this.attendanceId,
-    required this.date
+
   }) : super(key: key);
 
   @override
@@ -57,7 +54,7 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
           IconButton(
             icon: Icon(Icons.edit, color: color_secondary),
             onPressed: () {
-              Get.to(EditWorkReportScreen(attendanceId: widget.attendanceId,date: widget.date, siteId: workReportController.selectedWorkReportData.value.siteId.toString(),));
+              Get.to(EditWorkReportScreen());
             },
           ),
         ],
@@ -69,7 +66,7 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
           children: [
             Center(child: SectionHeader(title: 'Site Details')),
             SizedBox(height: 8.0),
-            InfoRow(label: 'Work Report Date', value: widget.date),
+            InfoRow(label: 'Work Report Date', value: workReportController.selectedWorkReportData.value.date??""),
 
             Center(child: SectionHeader(title: 'Remarks')),
             SizedBox(height: 8.0),

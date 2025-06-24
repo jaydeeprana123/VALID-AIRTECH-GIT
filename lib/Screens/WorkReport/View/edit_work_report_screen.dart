@@ -25,15 +25,10 @@ import '../../Sites/Model/employee_list_response.dart';
 import '../../Sites/Model/site_list_response.dart';
 
 class EditWorkReportScreen extends StatefulWidget {
-  final String attendanceId;
-  final String date;
-  final String siteId;
 
   EditWorkReportScreen(
       {Key? key,
-      required this.attendanceId,
-      required this.date,
-      required this.siteId})
+      })
       : super(key: key);
 
   @override
@@ -374,17 +369,19 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                     //   }).toList(),
                     // ),
 
-                    DropDownMultiSelect(
+                    _buildSectionTitle('Site Attend By'),
+
+                    DropDownMultiSelect<SiteAttendByData>(
                       options: workReportController.siteAttendByList,
-                      selectedValues:
-                          workReportController.selectedSiteAttendByList,
+                      selectedValues: workReportController.selectedSiteAttendByList,
                       onChanged: (List<SiteAttendByData> values) {
-                        setState(() {
-                          workReportController.selectedSiteAttendByList.value =
-                              values;
-                        });
+
+                        workReportController.selectedSiteAttendListInString = values.toString();
+                        printData("selected", values.toString());
+                        //  workReportController.updateSelectedSiteAttendByList(values.toString().split(','));
+
                       },
-                      whenEmpty: 'Site Attend By',
+
                     ),
 
                     SizedBox(
@@ -1014,8 +1011,18 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                             return;
                           }
 
+                          String cleaned = workReportController.selectedSiteAttendListInString.toString().replaceAll('[', '').replaceAll(']', '');
+
+// Step 2: Split by comma and trim spaces
+                          List<String> result = cleaned.split(',').map((e) => e.trim()).toList();
+
+                          await workReportController.updateSelectedSiteAttendByList(result);
+
+                          printData("seletced", workReportController.selectedSiteAttendListInString??"");
+
+
                           workReportController.callUpdateWorkReportList(workReportController.selectedWorkReportData.value.id.toString(),
-                              DateFormat('dd/MM/yyyy').format(selectedDate!), widget.siteId);
+                              DateFormat('dd-MM-yyyy').format(selectedDate!), (workReportController.siteId?.id??0).toString());
                         },
                         borderColor: color_primary,
                         borderWidth: 0,

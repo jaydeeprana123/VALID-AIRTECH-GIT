@@ -5,11 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:valid_airtech/Screens/Appointment/View/appointment_screen.dart';
 import 'package:valid_airtech/Screens/Attendance/View/admin_attendance_screen.dart';
 import 'package:valid_airtech/Screens/Authentication/View/profile_screen_view.dart';
+import 'package:valid_airtech/Screens/CalibrationCertificate/View/calibration_list_screen.dart';
 import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_list_screen.dart';
 import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_screen.dart';
 import 'package:valid_airtech/Screens/Master/View/admin_report_screen.dart';
 import 'package:valid_airtech/Screens/Planning/View/planning_screen.dart';
 import 'package:valid_airtech/Screens/TestPerform/View/test_perform_list_screen.dart';
+import 'package:valid_airtech/Screens/WorkReport/View/work_report_list_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_screen.dart';
 import 'package:valid_airtech/Widget/common_widget.dart';
 import 'package:valid_airtech/utils/helper.dart';
@@ -24,7 +26,6 @@ import 'Master/View/master_index_screen.dart';
 import 'Notes/View/notes_screen.dart';
 import 'WorkReport/View/admin_work_report_list_screen.dart';
 import 'WorkReport/View/work_report_attendance_convey_screen.dart';
-
 
 class HomePage extends StatelessWidget {
   @override
@@ -41,8 +42,8 @@ class HomePage extends StatelessWidget {
         ),
         title: Text(
           'Profile',
-          style: AppTextStyle.largeBold.copyWith(fontSize: 18
-              , color: color_secondary),
+          style: AppTextStyle.largeBold
+              .copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
         actions: [
@@ -60,26 +61,23 @@ class HomePage extends StatelessWidget {
           Center(
             child: Row(
               children: [
-
-                SizedBox(width: 52,),
-
+                SizedBox(
+                  width: 52,
+                ),
                 Expanded(
                   child: Image.asset(
                     iconLogo, // Replace with your logo path
                     height: 80,
                   ),
                 ),
-
-
                 Icon(Icons.calendar_month, color: color_secondary, size: 36),
-
                 SizedBox(width: 16),
               ],
             ),
           ),
-
-          SizedBox(height: 16,),
-
+          SizedBox(
+            height: 16,
+          ),
           Expanded(
             child: GridView.count(
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -88,40 +86,51 @@ class HomePage extends StatelessWidget {
               mainAxisSpacing: 20,
               childAspectRatio: 1.6, // Adjust aspect ratio for rectangle shape
               children: [
-                InkWell(onTap: (){
-                  Get.to(AppointmentScreen());
-                },child: _buildGridItem('Appointment', Icons.event_note)),
-                InkWell(onTap: (){
-                  Get.to(PlanningScreen());
-                },child: _buildGridItem('Planning', Icons.schedule)),
 
-                InkWell(onTap: (){
-                  Get.to(TestPerformListScreen());
-                },child: _buildGridItem('Test Perform', Icons.schedule)),
-
-                InkWell(onTap: (){
-                  Get.to(WorkReportAttendanceConveyScreen());
-                },child: _buildGridItem('Work Report', Icons.work_history_outlined)),
-
-
-                InkWell(onTap: (){
-                  Get.to(HomeAllowanceScreen());
-                },child: _buildGridItem('Calibration Certificates', Icons.monetization_on_sharp)),
-
-                InkWell(onTap: (){
-                  Get.to(HomeAllowanceScreen());
-                },child: _buildGridItem('Allowance', Icons.monetization_on_sharp)),
-                InkWell(onTap: (){
-                  Get.to(SelectWorkmanLeaveRequestScreen());
-                },child: _buildGridItem('Leave Request', Icons.note_add_outlined)),
-                InkWell(onTap: (){
-                  Get.to(NotesScreen());
-                },child: _buildGridItem('Note', Icons.note_alt)),
                 InkWell(
-                  onTap: (){
-                    Get.to(CircularListScreen());
-                  }
-                    ,child: _buildGridItem('Circular', Icons.newspaper)),
+                    onTap: () {
+                      Get.to(AppointmentScreen());
+                    },
+                    child: _buildGridItem('Appointment', Icons.event_note)),
+                InkWell(
+                    onTap: () {
+                      Get.to(PlanningScreen());
+                    },
+                    child: _buildGridItem('Planning', Icons.schedule)),
+                InkWell(
+                    onTap: () {
+                      Get.to(WorkReportListScreen());
+                    },
+                    child: _buildGridItem(
+                        'Work Report', Icons.work_history_outlined)),
+                InkWell(
+                    onTap: () {
+                      Get.to(CalibrationListScreen());
+                    },
+                    child: _buildGridItem(
+                        'Calibration Certificates', Icons.compass_calibration)),
+                InkWell(
+                    onTap: () {
+                      Get.to(HomeAllowanceScreen());
+                    },
+                    child: _buildGridItem(
+                        'Allowance', Icons.monetization_on_sharp)),
+                InkWell(
+                    onTap: () {
+                      Get.to(SelectWorkmanLeaveRequestScreen());
+                    },
+                    child: _buildGridItem(
+                        'Leave Request', Icons.note_add_outlined)),
+                InkWell(
+                    onTap: () {
+                      Get.to(NotesScreen());
+                    },
+                    child: _buildGridItem('Note', Icons.note_alt)),
+                InkWell(
+                    onTap: () {
+                      Get.to(CircularListScreen());
+                    },
+                    child: _buildGridItem('Circular', Icons.newspaper)),
                 _buildGridItem('Query', Icons.contact_support),
               ],
             ),
@@ -132,16 +141,24 @@ class HomePage extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Expanded(child: InkWell(onTap: (){
-                  Get.to(MasterIndexScreen());
-                },child: _buildFooterButton('Master /\nIndex'))),
-                Expanded(child: InkWell(onTap: (){
-                  Get.to(AdminReportScreen());
-                  printData("AdminExpenseListScreen", "AdminExpenseListScreen");
-                },child: _buildFooterButton('Admin\nReport'))),
-                Expanded(child: InkWell(onTap: (){
-
-                },child: _buildFooterButton('Workman\nRecord'))),
+                Expanded(
+                    child: InkWell(
+                        onTap: () {
+                          Get.to(MasterIndexScreen());
+                        },
+                        child: _buildFooterButton('Master /\nIndex'))),
+                Expanded(
+                    child: InkWell(
+                        onTap: () {
+                          Get.to(AdminReportScreen());
+                          printData("AdminExpenseListScreen",
+                              "AdminExpenseListScreen");
+                        },
+                        child: _buildFooterButton('Admin\nReport'))),
+                Expanded(
+                    child: InkWell(
+                        onTap: () {},
+                        child: _buildFooterButton('Workman\nRecord'))),
               ],
             ),
           ),
@@ -164,8 +181,8 @@ class HomePage extends StatelessWidget {
           SizedBox(height: 2),
           Text(
             title,
-            style: AppTextStyle.largeBold.copyWith(fontSize: 14
-                , color: color_secondary),
+            style: AppTextStyle.largeBold
+                .copyWith(fontSize: 14, color: color_secondary),
             textAlign: TextAlign.center,
           ),
         ],
@@ -175,7 +192,6 @@ class HomePage extends StatelessWidget {
 
   Widget _buildFooterButton(String title) {
     return Container(
-
       margin: EdgeInsets.only(right: 8, left: 8),
       alignment: Alignment.center,
       padding: EdgeInsets.symmetric(vertical: 10),
@@ -187,8 +203,8 @@ class HomePage extends StatelessWidget {
         child: Text(
           textAlign: TextAlign.center,
           title,
-          style: AppTextStyle.largeBold.copyWith(fontSize: 14
-              , color: Colors.white),
+          style: AppTextStyle.largeBold
+              .copyWith(fontSize: 14, color: Colors.white),
         ),
       ),
     );

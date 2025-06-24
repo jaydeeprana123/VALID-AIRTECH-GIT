@@ -269,7 +269,7 @@ class WorkReportController extends GetxController {
   }
 
   /// Work report list api call
-  Future<void> callWorkReportList(String attendanceId) async {
+  Future<void> callWorkReportList() async {
     printData("callWorkReportList", "callWorkReportList");
     try {
       isLoading.value = true;

@@ -226,42 +226,42 @@ class _AttendanceListByDateScreenState extends State<AttendanceListByDateScreen>
                                       ),
 
                                       const SizedBox(height: 12),
-                                      InkWell(
-                                        onTap: () {
-                                          Get.to(WorkReportListScreen(
-                                            siteId: (attendanceController
-                                                .attendanceList[index]
-                                                .headName??"").isNotEmpty?attendanceController
-                                                .attendanceList[index]
-                                                .headId.toString():attendanceController
-                                                .attendanceList[index]
-                                                .officeId.toString(),
-                                              attendanceId:
-                                              attendanceController
-                                                  .attendanceList[index]
-                                                  .id
-                                                  .toString(),
-                                              date: attendanceController
-                                                  .attendanceList[index]
-                                                  .date ??
-                                                  ""));
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.add_circle),
-                                            SizedBox(
-                                              width: 2,
-                                            ),
-                                            Text(
-                                              "Work Report",
-                                              style: AppTextStyle.largeBold
-                                                  .copyWith(
-                                                  fontSize: 15,
-                                                  color: Colors.black),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                      // InkWell(
+                                      //   onTap: () {
+                                      //     Get.to(WorkReportListScreen(
+                                      //       siteId: (attendanceController
+                                      //           .attendanceList[index]
+                                      //           .headName??"").isNotEmpty?attendanceController
+                                      //           .attendanceList[index]
+                                      //           .headId.toString():attendanceController
+                                      //           .attendanceList[index]
+                                      //           .officeId.toString(),
+                                      //         attendanceId:
+                                      //         attendanceController
+                                      //             .attendanceList[index]
+                                      //             .id
+                                      //             .toString(),
+                                      //         date: attendanceController
+                                      //             .attendanceList[index]
+                                      //             .date ??
+                                      //             ""));
+                                      //   },
+                                      //   child: Row(
+                                      //     children: [
+                                      //       Icon(Icons.add_circle),
+                                      //       SizedBox(
+                                      //         width: 2,
+                                      //       ),
+                                      //       Text(
+                                      //         "Work Report",
+                                      //         style: AppTextStyle.largeBold
+                                      //             .copyWith(
+                                      //             fontSize: 15,
+                                      //             color: Colors.black),
+                                      //       ),
+                                      //     ],
+                                      //   ),
+                                      // ),
 
 
 
