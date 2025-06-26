@@ -670,15 +670,13 @@ class APIRepository {
     }
   }
 
-
   ///Admin Test perform list
-  Future<TestByPerformanceListResponse> adminTestPerformList(String token) async {
-
+  Future<TestByPerformanceListResponse> adminTestPerformList(
+      String token) async {
     try {
       var data = json.encode({
         "admin_conveyance_id": "1",
       });
-
 
       Response response = await api.dio.post("/admin-test-performed/list",
           data: data,
@@ -695,12 +693,10 @@ class APIRepository {
     }
   }
 
-
   ///Admin Create Test Perform
-  Future<BaseModel> createTestPerform(String token, CreateTestPerformRequest createTestPerformRequest) async {
+  Future<BaseModel> createTestPerform(
+      String token, CreateTestPerformRequest createTestPerformRequest) async {
     try {
-
-
       Response response = await api.dio.post("/admin-test-performed/create",
           data: createTestPerformRequest.toJson(),
           options: Options(
@@ -708,8 +704,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -718,11 +712,10 @@ class APIRepository {
     }
   }
 
-
   /// Update Test Perform
-  Future<BaseModel> updateTestPerform(String token, CreateTestPerformRequest createTestPerformRequest) async {
+  Future<BaseModel> updateTestPerform(
+      String token, CreateTestPerformRequest createTestPerformRequest) async {
     try {
-
       Response response = await api.dio.post("/admin-test-performed/update",
           data: createTestPerformRequest.toJson(),
           options: Options(
@@ -730,8 +723,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -740,11 +731,9 @@ class APIRepository {
     }
   }
 
-
   /// Delete Test Perform
   Future<BaseModel> deleteTestPerform(String token, String id) async {
     try {
-
       var data = json.encode({
         "id": id,
       });
@@ -756,8 +745,6 @@ class APIRepository {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token'
             },
-
-
           ));
       dynamic postMaps = response.data;
       return BaseModel.fromJson(postMaps);
@@ -766,16 +753,10 @@ class APIRepository {
     }
   }
 
-
-
-
-
-
-
   /// Get Work report List
-  Future<WorkReportListResponse> workReportList(String token, String empId) async {
+  Future<WorkReportListResponse> workReportList(
+      String token, String empId) async {
     try {
-
       var data = json.encode({
         "emp_id": empId,
       });
@@ -797,8 +778,22 @@ class APIRepository {
 
   /// Create Work report
 
-  Future<BaseModel> createWorkReport(String token, String date, String empId,
-      String siteId,List<SiteAttendByData> siteAttendByList,  List<RemarkWorkReport> comments, String? conveyThrough, String other,  List<ServiceStatusModel> serviceStatusList,  List<String> sheetStatusList,  List<String> conveyThroughList,String conveyanceId,String serviceNatureIdId,String contactPerson, String witnessPerson) async {
+  Future<BaseModel> createWorkReport(
+      String token,
+      String date,
+      String empId,
+      String siteId,
+      List<SiteAttendByData> siteAttendByList,
+      List<RemarkWorkReport> comments,
+      String? conveyThrough,
+      String other,
+      List<ServiceStatusModel> serviceStatusList,
+      List<String> sheetStatusList,
+      List<String> conveyThroughList,
+      String conveyanceId,
+      String serviceNatureIdId,
+      String contactPerson,
+      String witnessPerson) async {
     try {
       Map<String, dynamic> employeeMap = {};
       Map<String, dynamic> remarkMap = {};
@@ -807,17 +802,32 @@ class APIRepository {
       Map<String, dynamic> testPerformedIdByMap = {};
       Map<String, dynamic> instrumentIdByMap = {};
       Map<String, dynamic> statusMap = {};
-      for (int i = 0; i < serviceStatusList.length; i++){
-        remarkMap['service_status[$i][remark]'] = serviceStatusList[i].remarkTextEditingController.text;
-        testLocationMap['service_status[$i][test_location]'] = serviceStatusList[i].testLocationEditingController.text;
-        roomEquipmentMap['service_status[$i][room_equipment]'] = serviceStatusList[i].roomEquipmentEditingController.text;
-        testPerformedIdByMap['service_status[$i][test_perfomed_id]'] = serviceStatusList[i].testPerformData != null?serviceStatusList[i].testPerformData?.id.toString():"";
-        instrumentIdByMap['service_status[$i][head_instrument_id]'] = serviceStatusList[i].usedInstrument != null?serviceStatusList[i].usedInstrument?.id.toString():"";
-        statusMap['service_status[$i][status]'] = serviceStatusList[i].dataSheetStatus != null?sheetStatusList.indexOf(serviceStatusList[i].dataSheetStatus??"").toString():"";
-        employeeMap['service_status[$i][perform_user_id]'] =serviceStatusList[i].workmanData != null?serviceStatusList[i].workmanData?.id.toString():"";
-
+      for (int i = 0; i < serviceStatusList.length; i++) {
+        remarkMap['service_status[$i][remark]'] =
+            serviceStatusList[i].remarkTextEditingController.text;
+        testLocationMap['service_status[$i][test_location]'] =
+            serviceStatusList[i].testLocationEditingController.text;
+        roomEquipmentMap['service_status[$i][room_equipment]'] =
+            serviceStatusList[i].roomEquipmentEditingController.text;
+        testPerformedIdByMap['service_status[$i][test_perfomed_id]'] =
+            serviceStatusList[i].testPerformData != null
+                ? serviceStatusList[i].testPerformData?.id.toString()
+                : "";
+        instrumentIdByMap['service_status[$i][head_instrument_id]'] =
+            serviceStatusList[i].usedInstrument != null
+                ? serviceStatusList[i].usedInstrument?.id.toString()
+                : "";
+        statusMap['service_status[$i][status]'] =
+            serviceStatusList[i].dataSheetStatus != null
+                ? sheetStatusList
+                    .indexOf(serviceStatusList[i].dataSheetStatus ?? "")
+                    .toString()
+                : "";
+        employeeMap['service_status[$i][perform_user_id]'] =
+            serviceStatusList[i].workmanData != null
+                ? serviceStatusList[i].workmanData?.id.toString()
+                : "";
       }
-
 
       Map<String, dynamic> commentsByMap = {};
       for (int i = 0; i < comments.length; i++) {
@@ -831,8 +841,7 @@ class APIRepository {
             siteAttendByList[i].id.toString();
       }
 
-
-        // Map<String, dynamic> photoFileMap = {};
+      // Map<String, dynamic> photoFileMap = {};
       //
       // for (int i = 0; i < bills.length; i++) {
       //   final filePath = bills[i].path;
@@ -845,12 +854,12 @@ class APIRepository {
       // }
 
       var data = FormData.fromMap({
-
-
         'emp_id': empId,
         'site_id': siteId,
-        'convenyence_through_status': conveyThrough != null?(conveyThroughList.indexOf(conveyThrough) + 1).toString():"",
-        'other':other,
+        'convenyence_through_status': conveyThrough != null
+            ? (conveyThroughList.indexOf(conveyThrough) + 1).toString()
+            : "",
+        'other': other,
         'conveyance_id': conveyanceId,
         'service_nature_id': serviceNatureIdId,
         'contact_person': contactPerson,
@@ -884,10 +893,25 @@ class APIRepository {
 
   /// eDIT Work report
 
-  Future<BaseModel> updateWorkReport(String token,String id, String date, String empId,
-      String siteId,List<SiteAttendByData> siteAttendByList,   List<RemarkWorkReport> comments, String? conveyThrough, String other,  List<ServiceStatusModel> serviceStatusList,  List<String> sheetStatusList,  List<String> conveyThroughList,String conveyanceId,String serviceNatureIdId,String contactPerson, String witnessPerson) async {
+  Future<BaseModel> updateWorkReport(
+      String token,
+      String id,
+      String date,
+      String empId,
+      String siteId,
+      List<SiteAttendByData> siteAttendByList,
+      List<RemarkWorkReport> comments,
+      String? conveyThrough,
+      String other,
+      List<ServiceStatusModel> serviceStatusList,
+      List<String> sheetStatusList,
+      List<String> conveyThroughList,
+      String conveyanceId,
+      String serviceNatureIdId,
+      String contactPerson,
+      String witnessPerson,
+      List<String> removedRemarksId,List<String> removedStatusId,) async {
     try {
-
       Map<String, dynamic> remarkMap = {};
       Map<String, dynamic> testLocationMap = {};
       Map<String, dynamic> roomEquipmentMap = {};
@@ -895,15 +919,43 @@ class APIRepository {
       Map<String, dynamic> instrumentIdByMap = {};
       Map<String, dynamic> statusMap = {};
       Map<String, dynamic> employeeMap = {};
-      for (int i = 0; i < serviceStatusList.length; i++){
-        remarkMap['service_status[$i][remark]'] = serviceStatusList[i].remarkTextEditingController.text;
-        testLocationMap['service_status[$i][test_location]'] = serviceStatusList[i].testLocationEditingController.text;
-        roomEquipmentMap['service_status[$i][room_equipment]'] = serviceStatusList[i].roomEquipmentEditingController.text;
-        testPerformedIdByMap['service_status[$i][test_perfomed_id]'] = serviceStatusList[i].testPerformData != null?serviceStatusList[i].testPerformData?.id.toString():"";
-        instrumentIdByMap['service_status[$i][head_instrument_id]'] = serviceStatusList[i].usedInstrument != null?serviceStatusList[i].usedInstrument?.id.toString():"";
-        statusMap['service_status[$i][status]'] = serviceStatusList[i].dataSheetStatus != null?sheetStatusList.indexOf(serviceStatusList[i].dataSheetStatus??"").toString():"";
-        employeeMap['service_status[$i][perform_user_id]'] =serviceStatusList[i].workmanData != null?serviceStatusList[i].workmanData?.id.toString():"";
+      for (int i = 0; i < serviceStatusList.length; i++) {
+        remarkMap['service_status[$i][remark]'] =
+            serviceStatusList[i].remarkTextEditingController.text;
+        testLocationMap['service_status[$i][test_location]'] =
+            serviceStatusList[i].testLocationEditingController.text;
+        roomEquipmentMap['service_status[$i][room_equipment]'] =
+            serviceStatusList[i].roomEquipmentEditingController.text;
+        testPerformedIdByMap['service_status[$i][test_perfomed_id]'] =
+            serviceStatusList[i].testPerformData != null
+                ? serviceStatusList[i].testPerformData?.id.toString()
+                : "";
+        instrumentIdByMap['service_status[$i][head_instrument_id]'] =
+            serviceStatusList[i].usedInstrument != null
+                ? serviceStatusList[i].usedInstrument?.id.toString()
+                : "";
+        statusMap['service_status[$i][status]'] =
+            serviceStatusList[i].dataSheetStatus != null
+                ? sheetStatusList
+                    .indexOf(serviceStatusList[i].dataSheetStatus ?? "")
+                    .toString()
+                : "";
+        employeeMap['service_status[$i][perform_user_id]'] =
+            serviceStatusList[i].workmanData != null
+                ? serviceStatusList[i].workmanData?.id.toString()
+                : "";
+      }
 
+      Map<String, dynamic> removedRemarksMap = {};
+      for (int i = 0; i < removedRemarksId.length; i++) {
+        removedRemarksMap['removed_remark[$i][id]'] =
+            removedRemarksId[i];
+      }
+
+      Map<String, dynamic> removedStatusMap = {};
+      for (int i = 0; i < removedStatusId.length; i++) {
+        removedStatusMap['remove_service_status[$i][id]'] =
+        removedStatusId[i];
       }
 
 
@@ -919,7 +971,6 @@ class APIRepository {
             siteAttendByList[i].id.toString();
       }
 
-
       // Map<String, dynamic> photoFileMap = {};
       //
       // for (int i = 0; i < bills.length; i++) {
@@ -933,13 +984,14 @@ class APIRepository {
       // }
 
       var data = FormData.fromMap({
-
         "id": id,
         'emp_id': empId,
         'site_id': siteId,
 
-        'convenyence_through_status': conveyThrough != null?(conveyThroughList.indexOf(conveyThrough) + 1).toString():"",
-        'other':other,
+        'convenyence_through_status': conveyThrough != null
+            ? (conveyThroughList.indexOf(conveyThrough) + 1).toString()
+            : "",
+        'other': other,
         'conveyance_id': conveyanceId,
         'service_nature_id': serviceNatureIdId,
         'contact_person': contactPerson,
@@ -954,6 +1006,8 @@ class APIRepository {
         ...instrumentIdByMap,
         ...statusMap,
         ...employeeMap,
+        ...removedRemarksMap,
+        ...removedStatusMap,
       });
 
       Response response = await api.dio.post("/work-report/update",
@@ -2602,11 +2656,8 @@ class APIRepository {
   /// Get Employee List
   Future<EmployeeListResponse> employeeList() async {
     try {
-
-
-      Response response = await api.dio.get("/get_all_employee",
-          options: Options(
-          ));
+      Response response =
+          await api.dio.get("/get_all_employee", options: Options());
 
       dynamic postMaps = response.data;
       return EmployeeListResponse.fromJson(postMaps);

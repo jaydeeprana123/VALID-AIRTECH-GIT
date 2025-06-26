@@ -108,6 +108,10 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
             workReportController.selectedWorkReportData.value.siteId) {
           workReportController.siteId =
           workReportController.siteList[i];
+
+          setState(() {
+
+          });
         }
       }
     }
@@ -131,6 +135,10 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
             workReportController.selectedWorkReportData.value.conveyanceId) {
           workReportController.conveyanceData =
               workReportController.conveysList[i];
+
+          setState(() {
+
+          });
         }
       }
     }
@@ -144,6 +152,10 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
             workReportController.selectedWorkReportData.value.serviceNatureId) {
           workReportController.serviceByNatureData =
           workReportController.serviceByNatureList[i];
+
+          setState(() {
+
+          });
         }
       }
     }
@@ -182,7 +194,8 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
 
 
         ServiceStatusModel serviceStatusModel = ServiceStatusModel();
-
+        serviceStatusModel.id = workReportController.selectedWorkReportData.value
+            .serviceStatus?[i].id.toString();
         serviceStatusModel
             .testLocationEditingController
             .text = workReportController.selectedWorkReportData.value
@@ -237,6 +250,10 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
 
         serviceStatusModel.dataSheetStatus = workReportController.sheetStatusList[ workReportController.selectedWorkReportData.value.serviceStatus?[i].status??0];
         workReportController.serviceStatusList.add(serviceStatusModel);
+
+        setState(() {
+
+        });
 
       }
     } else {
@@ -594,249 +611,281 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                           for (int i = 0;
                               i < workReportController.serviceStatusList.length;
                               i++)
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: Column(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
                                         children: [
-                                          _buildTextField(
-                                              workReportController
-                                                  .serviceStatusList[i]
-                                                  .testLocationEditingController,
-                                              'Test Location ${i + 1}'),
-                                          SizedBox(
-                                            height: 8,
-                                          ),
-                                          _buildTextField(
-                                              workReportController
-                                                  .serviceStatusList[i]
-                                                  .roomEquipmentEditingController,
-                                              'Room/Equipment/System Identification ${i + 1}'),
-                                          SizedBox(
-                                            height: 16,
-                                          ),
-                                          DropdownButton<TestByPerformData>(
-                                            value: workReportController
-                                                    .testPerformerList
-                                                    .contains(
-                                                        workReportController
-                                                            .serviceStatusList[
-                                                                i]
-                                                            .testPerformData)
-                                                ? workReportController
-                                                    .serviceStatusList[i]
-                                                    .testPerformData
-                                                : null,
-                                            // Ensure valid value
-                                            hint: Text("Test Performed",
-                                                style: AppTextStyle.largeMedium
-                                                    .copyWith(
-                                                        fontSize: 16,
-                                                        color:
-                                                            color_hint_text)),
-
-                                            isExpanded: true,
-                                            onChanged:
-                                                (TestByPerformData? newValue) {
-                                              setState(() {
-                                                workReportController
-                                                    .serviceStatusList[i]
-                                                    .testPerformData = newValue;
-                                              });
-                                            },
-                                            items: workReportController
-                                                .testPerformerList
-                                                .map((TestByPerformData group) {
-                                              return DropdownMenuItem<
-                                                  TestByPerformData>(
-                                                value: group,
-                                                child: Text(
-                                                  group.testName ?? "",
-                                                  style: AppTextStyle
-                                                      .largeMedium
-                                                      .copyWith(
-                                                          fontSize: 16,
-                                                          color: blackText),
+                                          Expanded(
+                                            child: Column(
+                                              children: [
+                                                _buildTextField(
+                                                    workReportController
+                                                        .serviceStatusList[i]
+                                                        .testLocationEditingController,
+                                                    'Test Location ${i + 1}'),
+                                                SizedBox(
+                                                  height: 8,
                                                 ),
-                                              );
-                                            }).toList(),
-                                          ),
-                                          SizedBox(
-                                            height: 16,
-                                          ),
-                                          DropdownButton<String>(
-                                            value: workReportController
-                                                    .sheetStatusList
-                                                    .contains(
-                                                        workReportController
-                                                            .serviceStatusList[
-                                                                i]
-                                                            .dataSheetStatus)
-                                                ? workReportController
-                                                    .serviceStatusList[i]
-                                                    .dataSheetStatus
-                                                : null,
-                                            // Ensure valid value
-                                            hint: Text("Sheet Status",
-                                                style: AppTextStyle.largeMedium
-                                                    .copyWith(
-                                                        fontSize: 16,
-                                                        color:
-                                                            color_hint_text)),
-
-                                            isExpanded: true,
-                                            onChanged: (String? newValue) {
-                                              setState(() {
-                                                workReportController
-                                                    .serviceStatusList[i]
-                                                    .dataSheetStatus = newValue;
-                                              });
-                                            },
-                                            items: workReportController
-                                                .sheetStatusList
-                                                .map((String group) {
-                                              return DropdownMenuItem<String>(
-                                                value: group,
-                                                child: Text(
-                                                  group,
-                                                  style: AppTextStyle
-                                                      .largeMedium
-                                                      .copyWith(
-                                                          fontSize: 16,
-                                                          color: blackText),
+                                                _buildTextField(
+                                                    workReportController
+                                                        .serviceStatusList[i]
+                                                        .roomEquipmentEditingController,
+                                                    'Room/Equipment/System Identification ${i + 1}'),
+                                                SizedBox(
+                                                  height: 16,
                                                 ),
-                                              );
-                                            }).toList(),
-                                          ),
-                                          SizedBox(
-                                            height: 16,
-                                          ),
-                                          DropdownButton<InstrumentData>(
-                                            value: workReportController
-                                                    .instrumentList
-                                                    .contains(
-                                                        workReportController
-                                                            .serviceStatusList[
-                                                                i]
-                                                            .usedInstrument)
-                                                ? workReportController
-                                                    .serviceStatusList[i]
-                                                    .usedInstrument
-                                                : null,
-                                            // Ensure valid value
-                                            hint: Text("Select Used Instrument",
-                                                style: AppTextStyle.largeMedium
-                                                    .copyWith(
-                                                        fontSize: 16,
-                                                        color:
-                                                            color_hint_text)),
+                                                DropdownButton<TestByPerformData>(
+                                                  value: workReportController
+                                                          .testPerformerList
+                                                          .contains(
+                                                              workReportController
+                                                                  .serviceStatusList[
+                                                                      i]
+                                                                  .testPerformData)
+                                                      ? workReportController
+                                                          .serviceStatusList[i]
+                                                          .testPerformData
+                                                      : null,
+                                                  // Ensure valid value
+                                                  hint: Text("Test Performed",
+                                                      style: AppTextStyle.largeMedium
+                                                          .copyWith(
+                                                              fontSize: 16,
+                                                              color:
+                                                                  color_hint_text)),
 
-                                            isExpanded: true,
-                                            onChanged:
-                                                (InstrumentData? newValue) {
-                                              setState(() {
-                                                workReportController
-                                                    .serviceStatusList[i]
-                                                    .usedInstrument = newValue;
-                                              });
-                                            },
-                                            items: workReportController
-                                                .instrumentList
-                                                .map((InstrumentData group) {
-                                              return DropdownMenuItem<
-                                                  InstrumentData>(
-                                                value: group,
-                                                child: Text(
-                                                  group.headInstrumentName ??
-                                                      "",
-                                                  style: AppTextStyle
-                                                      .largeMedium
-                                                      .copyWith(
-                                                          fontSize: 16,
-                                                          color: blackText),
+                                                  isExpanded: true,
+                                                  onChanged:
+                                                      (TestByPerformData? newValue) {
+                                                    setState(() {
+                                                      workReportController
+                                                          .serviceStatusList[i]
+                                                          .testPerformData = newValue;
+                                                    });
+                                                  },
+                                                  items: workReportController
+                                                      .testPerformerList
+                                                      .map((TestByPerformData group) {
+                                                    return DropdownMenuItem<
+                                                        TestByPerformData>(
+                                                      value: group,
+                                                      child: Text(
+                                                        group.testName ?? "",
+                                                        style: AppTextStyle
+                                                            .largeMedium
+                                                            .copyWith(
+                                                                fontSize: 16,
+                                                                color: blackText),
+                                                      ),
+                                                    );
+                                                  }).toList(),
                                                 ),
-                                              );
-                                            }).toList(),
+                                                SizedBox(
+                                                  height: 16,
+                                                ),
+                                                DropdownButton<String>(
+                                                  value: workReportController
+                                                          .sheetStatusList
+                                                          .contains(
+                                                              workReportController
+                                                                  .serviceStatusList[
+                                                                      i]
+                                                                  .dataSheetStatus)
+                                                      ? workReportController
+                                                          .serviceStatusList[i]
+                                                          .dataSheetStatus
+                                                      : null,
+                                                  // Ensure valid value
+                                                  hint: Text("Sheet Status",
+                                                      style: AppTextStyle.largeMedium
+                                                          .copyWith(
+                                                              fontSize: 16,
+                                                              color:
+                                                                  color_hint_text)),
+
+                                                  isExpanded: true,
+                                                  onChanged: (String? newValue) {
+                                                    setState(() {
+                                                      workReportController
+                                                          .serviceStatusList[i]
+                                                          .dataSheetStatus = newValue;
+                                                    });
+                                                  },
+                                                  items: workReportController
+                                                      .sheetStatusList
+                                                      .map((String group) {
+                                                    return DropdownMenuItem<String>(
+                                                      value: group,
+                                                      child: Text(
+                                                        group,
+                                                        style: AppTextStyle
+                                                            .largeMedium
+                                                            .copyWith(
+                                                                fontSize: 16,
+                                                                color: blackText),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                ),
+                                                SizedBox(
+                                                  height: 16,
+                                                ),
+                                                DropdownButton<InstrumentData>(
+                                                  value: workReportController
+                                                          .instrumentList
+                                                          .contains(
+                                                              workReportController
+                                                                  .serviceStatusList[
+                                                                      i]
+                                                                  .usedInstrument)
+                                                      ? workReportController
+                                                          .serviceStatusList[i]
+                                                          .usedInstrument
+                                                      : null,
+                                                  // Ensure valid value
+                                                  hint: Text("Select Used Instrument",
+                                                      style: AppTextStyle.largeMedium
+                                                          .copyWith(
+                                                              fontSize: 16,
+                                                              color:
+                                                                  color_hint_text)),
+
+                                                  isExpanded: true,
+                                                  onChanged:
+                                                      (InstrumentData? newValue) {
+                                                    setState(() {
+                                                      workReportController
+                                                          .serviceStatusList[i]
+                                                          .usedInstrument = newValue;
+                                                    });
+                                                  },
+                                                  items: workReportController
+                                                      .instrumentList
+                                                      .map((InstrumentData group) {
+                                                    return DropdownMenuItem<
+                                                        InstrumentData>(
+                                                      value: group,
+                                                      child: Text(
+                                                        group.headInstrumentName ??
+                                                            "",
+                                                        style: AppTextStyle
+                                                            .largeMedium
+                                                            .copyWith(
+                                                                fontSize: 16,
+                                                                color: blackText),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                ),
+                                                SizedBox(
+                                                  height: 8,
+                                                ),
+
+                                                DropdownButton<WorkmanData>(
+                                                  value: workReportController.workmanList
+                                                      .contains(workReportController.serviceStatusList[i].workmanData)
+                                                      ? workReportController.serviceStatusList[i].workmanData
+                                                      : null,
+                                                  // Ensure valid value
+                                                  hint: Text("Performed By",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                                                      , color: color_hint_text)) ,
+
+
+                                                  isExpanded: true,
+                                                  onChanged: (WorkmanData? newValue) {
+                                                    setState(() {
+                                                      workReportController.serviceStatusList[i].workmanData = newValue;
+                                                    });
+                                                  },
+                                                  items: workReportController.workmanList.map((WorkmanData group) {
+                                                    return DropdownMenuItem<WorkmanData>(
+                                                      value: group,
+                                                      child: Text(group.name??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                                                          , color: blackText),),
+                                                    );
+                                                  }).toList(),
+                                                ),
+
+                                                SizedBox(height: 8,),
+
+                                                _buildTextField(
+                                                    workReportController
+                                                        .serviceStatusList[i]
+                                                        .remarkTextEditingController,
+                                                    'Remarks ${i + 1}'),
+                                              ],
+                                            ),
                                           ),
                                           SizedBox(
-                                            height: 8,
+                                            width: 12,
                                           ),
+                                          (i ==
+                                                  (workReportController
+                                                          .serviceStatusList.length -
+                                                      1))
+                                              ? InkWell(
+                                                  onTap: () {
 
-                                          DropdownButton<WorkmanData>(
-                                            value: workReportController.workmanList
-                                                .contains(workReportController.serviceStatusList[i].workmanData)
-                                                ? workReportController.serviceStatusList[i].workmanData
-                                                : null,
-                                            // Ensure valid value
-                                            hint: Text("Performed By",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                                                , color: color_hint_text)) ,
+                                                    workReportController
+                                                        .removedServiceStatusIds
+                                                        .add(workReportController
+                                                        .serviceStatusList[i].id
+                                                        .toString());
 
-
-                                            isExpanded: true,
-                                            onChanged: (WorkmanData? newValue) {
-                                              setState(() {
-                                                workReportController.serviceStatusList[i].workmanData = newValue;
-                                              });
-                                            },
-                                            items: workReportController.workmanList.map((WorkmanData group) {
-                                              return DropdownMenuItem<WorkmanData>(
-                                                value: group,
-                                                child: Text(group.name??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                                                    , color: blackText),),
-                                              );
-                                            }).toList(),
-                                          ),
-
-                                          SizedBox(height: 8,),
-
-                                          _buildTextField(
-                                              workReportController
-                                                  .serviceStatusList[i]
-                                                  .remarkTextEditingController,
-                                              'Remarks ${i + 1}'),
+                                                    workReportController
+                                                        .serviceStatusList
+                                                        .add(ServiceStatusModel());
+                                                    setState(() {});
+                                                  },
+                                                  child: Icon(
+                                                    Icons.add_circle,
+                                                    size: 30,
+                                                    color: color_brown_title,
+                                                  ))
+                                              : InkWell(
+                                                  onTap: () {
+                                                    workReportController
+                                                        .serviceStatusList
+                                                        .removeAt(i);
+                                                    setState(() {});
+                                                  },
+                                                  child: Icon(
+                                                    Icons.remove_circle,
+                                                    size: 30,
+                                                    color: color_primary,
+                                                  ))
                                         ],
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: 12,
-                                    ),
-                                    (i ==
-                                            (workReportController
-                                                    .serviceStatusList.length -
-                                                1))
-                                        ? InkWell(
-                                            onTap: () {
-                                              workReportController
-                                                  .serviceStatusList
-                                                  .add(ServiceStatusModel());
-                                              setState(() {});
-                                            },
-                                            child: Icon(
-                                              Icons.add_circle,
-                                              size: 30,
-                                              color: color_brown_title,
-                                            ))
-                                        : InkWell(
-                                            onTap: () {
-                                              workReportController
-                                                  .serviceStatusList
-                                                  .removeAt(i);
-                                              setState(() {});
-                                            },
-                                            child: Icon(
-                                              Icons.remove_circle,
-                                              size: 30,
-                                              color: color_primary,
-                                            ))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 12,
-                                ),
-                              ],
+                                      SizedBox(
+                                        height: 12,
+                                      ),
+                                    ],
+                                  ),
+
+                                  SizedBox(height: 12,),
+
+                                  Container(width: double.infinity,
+                                    height: 1,color: color_primary,),
+
+                                  SizedBox(height: 2,),
+
+                                  Container(width: double.infinity,
+                                    height: 1,color: color_primary,),
+
+                                  SizedBox(height: 2,),
+
+                                  Container(width: double.infinity,
+                                    height: 1,color: color_primary,),
+
+                                  SizedBox(height: 16,),
+
+                                ],
+                              ),
                             )
                         ],
                       ),

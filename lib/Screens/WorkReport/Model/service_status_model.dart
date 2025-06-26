@@ -12,6 +12,8 @@ import '../../Instruments/Model/isntrument_list_response.dart';
 import '../../Sites/Model/employee_list_response.dart';
 
 class ServiceStatusModel {
+
+  String? id;
   String? dataSheetStatus;
   InstrumentData? usedInstrument;
   WorkmanData? workmanData;
@@ -21,6 +23,7 @@ class ServiceStatusModel {
   TextEditingController remarkTextEditingController = TextEditingController(text: "");
 
   ServiceStatusModel({
+    this.id,
     this.dataSheetStatus,
     this.usedInstrument,
     this.workmanData,

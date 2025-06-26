@@ -57,6 +57,8 @@ class WorkReportController extends GetxController {
   RxList<ServiceStatusModel> serviceStatusList = <ServiceStatusModel>[].obs;
 
   RxList<String> removedRemarkIds = <String>[].obs;
+  RxList<String> removedServiceStatusIds = <String>[].obs;
+
   RxList<String> removedBillIds = <String>[].obs;
   // RxList<WorkReportExpensesBill> billsList = <WorkReportExpensesBill>[].obs;
   RxList<WorkReportData> workReportList = <WorkReportData>[].obs;
@@ -477,6 +479,9 @@ class WorkReportController extends GetxController {
         (serviceByNatureData?.id ?? 0).toString(),
         controllerNameOfContactPerson.value.text,
         controllerNameOfWitnessPerson.value.text,
+          removedRemarkIds,
+          removedServiceStatusIds
+
       );
       isLoading.value = false;
 
