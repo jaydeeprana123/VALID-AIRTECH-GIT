@@ -97,24 +97,24 @@ class _EmpAttendanceScreenState extends State<EmpAttendanceScreen> {
                         , color: Colors.white),
                   ),
                 ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: () {
-
-                    Get.to(AddAttendanceInScreen());
-
-                  },
-                  child: Text(
-                    '+Add',
-                    style: AppTextStyle.largeBold.copyWith(fontSize: 13
-                        , color: Colors.white),
-                  ),
-                ),
+                // ElevatedButton(
+                //   style: ElevatedButton.styleFrom(
+                //     backgroundColor: Colors.green,
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(8),
+                //     ),
+                //   ),
+                //   onPressed: () {
+                //
+                //     Get.to(AddAttendanceInScreen());
+                //
+                //   },
+                //   child: Text(
+                //     '+Add',
+                //     style: AppTextStyle.largeBold.copyWith(fontSize: 13
+                //         , color: Colors.white),
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -128,6 +128,7 @@ class _EmpAttendanceScreenState extends State<EmpAttendanceScreen> {
                 selectedDayPredicate: (day) {
                   return isSameDay(_selectedDay, day);
                 },
+
                 onDaySelected: (selectedDay, focusedDay) {
                   setState(() {
                     _selectedDay = selectedDay;

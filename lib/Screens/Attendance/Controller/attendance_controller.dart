@@ -32,6 +32,15 @@ import '../Model/admin_update_attendance_request.dart';
 
 /// Controller
 class AttendanceController extends GetxController {
+
+
+  String? selectedPlace;
+  String? statusOfAttendance;
+  String? selectedSite;
+  String? selectedOffice;
+  String? attendanceId;
+
+
   APIRepository postRepository = APIRepository();
   RxBool isLoading = false.obs;
   var errorMessage = ''.obs;
@@ -55,7 +64,8 @@ class AttendanceController extends GetxController {
   Rx<TextEditingController> toDateEditingController =
       TextEditingController().obs;
   Rx<CreateAttendanceInRequest> createAttendanceInRequest = CreateAttendanceInRequest().obs;
-  Future getLoginData()async{
+
+  Future<void> getLoginData()async{
     loginData.value =  await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel)??LoginData();
 
     statusList.clear();
@@ -90,7 +100,7 @@ class AttendanceController extends GetxController {
 
 
   /// Workman list api call
-  void callWorkmanList() async {
+  Future<void> callWorkmanList() async {
     try {
       isLoading.value = true;
 
@@ -118,7 +128,7 @@ class AttendanceController extends GetxController {
   }
 
   /// Admin Attendance list api call
-  void callAdminAttendanceList(String empId) async {
+  Future<void> callAdminAttendanceList(String empId) async {
     try {
       isLoading.value = true;
 
@@ -143,7 +153,7 @@ class AttendanceController extends GetxController {
   }
 
   /// site list api call
-  Future callSiteList() async {
+  Future<void> callSiteList() async {
 
     printData("callSiteList", "callSiteList");
     try {
@@ -171,7 +181,7 @@ class AttendanceController extends GetxController {
 
 
   /// office list api call
-  Future callOfficeList() async {
+  Future<void> callOfficeList() async {
 
     printData("callSiteList", "callSiteList");
     try {
@@ -256,7 +266,7 @@ class AttendanceController extends GetxController {
 
 
   /// Attendance list api call
-  void callAttendanceList() async {
+  Future<void> callAttendanceList() async {
     try {
       isLoading.value = true;
 
@@ -282,7 +292,7 @@ class AttendanceController extends GetxController {
 
 
   /// Attendance list api call
-  void callAttendanceListByDate(String date) async {
+  Future<void> callAttendanceListByDate(String date) async {
     try {
       isLoading.value = true;
 
@@ -321,10 +331,17 @@ class AttendanceController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
-        Get.back();
         Get.snackbar("Success", response.message??"");
         printData("response", response.message??"");
 
+        selectedSite = null;
+        selectedOffice = null;
+        selectedPlace = null;
+        statusOfAttendance = null;
+
+        refresh();
+
+        callAttendanceListByDate(createAttendanceInRequest.value.date??"");
 
       } else if (response.code == 401) {
         Helper().logout();
@@ -427,10 +444,17 @@ class AttendanceController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
-        Get.back();
+        // Get.back();
         Get.snackbar("Success", response.message??"");
         printData("response", response.message??"");
+        selectedSite = null;
+        selectedOffice = null;
+        selectedPlace = null;
+        statusOfAttendance = null;
 
+        refresh();
+
+        callAttendanceListByDate(createAttendanceInRequest.value.date??"");
 
       } else if (response.code == 401) {
         Helper().logout();

@@ -100,93 +100,75 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
                   ),
                   attendanceController.attendanceList.isNotEmpty
                       ? Expanded(
-                          child: ListView.builder(
+                          child:  ListView.builder(
                             padding: const EdgeInsets.all(10),
                             itemCount:
-                                attendanceController.attendanceList.length,
+                            attendanceController.attendanceList.length,
                             itemBuilder: (context, index) {
                               return Card(
                                 elevation: 2,
                                 margin:
-                                    const EdgeInsets.symmetric(vertical: 8),
+                                const EdgeInsets.symmetric(vertical: 8),
                                 child: Padding(
                                   padding: const EdgeInsets.all(12),
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        'Attendance Date',
-                                        style: AppTextStyle.largeMedium
-                                            .copyWith(
-                                                fontSize: 12,
-                                                color: color_brown_title),
-                                      ),
-                                      Text(
-                                        attendanceController
-                                                .attendanceList[index].date ??
-                                            "",
-                                        style: AppTextStyle.largeRegular
-                                            .copyWith(
-                                                fontSize: 15,
-                                                color: Colors.black),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        'Attendance Status',
-                                        style: AppTextStyle.largeMedium
-                                            .copyWith(
-                                                fontSize: 12,
-                                                color: color_brown_title),
-                                      ),
-                                      Text(
-                                        (attendanceController
-                                                    .attendanceList[index]
-                                                    .statusType ??
-                                                "")
-                                            .toString(),
-                                        style: AppTextStyle.largeRegular
-                                            .copyWith(
-                                                fontSize: 15,
-                                                color: Colors.black),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        'Date',
-                                        style: AppTextStyle.largeMedium
-                                            .copyWith(
-                                                fontSize: 12,
-                                                color: color_brown_title),
-                                      ),
-                                      Text(
-                                        (attendanceController
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start
+                                              ,children: [
+                                              Text(
+                                                'Date',
+                                                style: AppTextStyle.largeMedium
+                                                    .copyWith(
+                                                    fontSize: 12,
+                                                    color: color_brown_title),
+                                              ),
+                                              Text(
+                                                "${attendanceController
                                                     .attendanceList[index]
                                                     .date ??
-                                                "")
-                                            .toString(),
-                                        style: AppTextStyle.largeRegular
-                                            .copyWith(
-                                                fontSize: 15,
-                                                color: Colors.black),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        'Time',
-                                        style: AppTextStyle.largeMedium
-                                            .copyWith(
-                                                fontSize: 12,
-                                                color: color_brown_title),
-                                      ),
-                                      Text(
-                                        (attendanceController
+                                                    ""} || ${attendanceController
                                                     .attendanceList[index]
                                                     .time ??
-                                                "")
-                                            .toString(),
-                                        style: AppTextStyle.largeRegular
-                                            .copyWith(
-                                                fontSize: 15,
-                                                color: Colors.black),
+                                                    ""}",
+                                                style: AppTextStyle.largeRegular
+                                                    .copyWith(
+                                                    fontSize: 15,
+                                                    color: Colors.black),
+                                              ),
+                                            ],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 12),
+                                          Column(
+                                            children: [
+                                              Text(
+                                                'Status',
+                                                style: AppTextStyle.largeMedium
+                                                    .copyWith(
+                                                    fontSize: 12,
+                                                    color: color_brown_title),
+                                              ),
+                                              Text(
+                                                (attendanceController
+                                                    .attendanceList[index]
+                                                    .statusType ??
+                                                    "")
+                                                    .toString(),
+                                                style: AppTextStyle.largeRegular
+                                                    .copyWith(
+                                                    fontSize: 15,
+                                                    color: Colors.black),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
 
 
@@ -258,40 +240,40 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
 
 
 
-                                      const SizedBox(height: 12),
-                                      attendanceController
-                                          .attendanceList[index].status ==
-                                          1? InkWell(
-                                        onTap: () {
-                                          attendanceController
-                                              .selectedAttendance.value =
-                                          attendanceController
-                                              .attendanceList[index];
-                                          Get.to(AddAttendanceOutScreen(isSite: (attendanceController
-                                              .attendanceList[index].headName??"").isNotEmpty?true:false,date: attendanceController
-                                              .attendanceList[index].date??""))
-                                              ?.then((value) {
-                                            attendanceController.isLoading.value =
-                                            false;
-                                            attendanceController.callAttendanceList();
-                                          });
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.add_circle),
-                                            SizedBox(
-                                              width: 2,
-                                            ),
-                                            Text(
-                                              "Sign Out",
-                                              style: AppTextStyle.largeBold
-                                                  .copyWith(
-                                                  fontSize: 15,
-                                                  color: Colors.black),
-                                            ),
-                                          ],
-                                        ),
-                                      ):SizedBox()
+                                      // const SizedBox(height: 12),
+                                      // attendanceController
+                                      //     .attendanceList[index].status ==
+                                      //     1? InkWell(
+                                      //   onTap: () {
+                                      //     attendanceController
+                                      //         .selectedAttendance.value =
+                                      //     attendanceController
+                                      //         .attendanceList[index];
+                                      //     Get.to(AddAttendanceOutScreen(isSite: (attendanceController
+                                      //         .attendanceList[index].headName??"").isNotEmpty?true:false,date: attendanceController
+                                      //         .attendanceList[index].date??""))
+                                      //         ?.then((value) {
+                                      //       attendanceController.isLoading.value =
+                                      //       false;
+                                      //       attendanceController.callAttendanceList();
+                                      //     });
+                                      //   },
+                                      //   child: Row(
+                                      //     children: [
+                                      //       Icon(Icons.add_circle),
+                                      //       SizedBox(
+                                      //         width: 2,
+                                      //       ),
+                                      //       Text(
+                                      //         "Sign Out",
+                                      //         style: AppTextStyle.largeBold
+                                      //             .copyWith(
+                                      //             fontSize: 15,
+                                      //             color: Colors.black),
+                                      //       ),
+                                      //     ],
+                                      //   ),
+                                      // ):SizedBox()
 
 
                                     ],

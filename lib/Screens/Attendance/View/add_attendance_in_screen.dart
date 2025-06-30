@@ -85,7 +85,7 @@ class _AddAttendanceInScreenState extends State<AddAttendanceInScreen> {
           },
         ),
         title: Text(
-          'Add Appointment',
+          'Add Attendance',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
