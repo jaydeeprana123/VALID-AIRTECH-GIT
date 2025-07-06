@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:valid_airtech/Screens/Allowance/View/emp_expense_screen.dart';
 import 'package:valid_airtech/Screens/Appointment/View/appointment_screen.dart';
 import 'package:valid_airtech/Screens/Attendance/View/emp_attendance_screen.dart';
+import 'package:valid_airtech/Screens/Attendance/View/emp_site_attendance_for_work_report_calener_screen.dart';
 import 'package:valid_airtech/Screens/Authentication/View/profile_screen_view.dart';
 import 'package:valid_airtech/Screens/EmpLeaveRequest/View/emp_leave_request_list_screen.dart';
 import 'package:valid_airtech/Screens/HomeAllowance/View/home_allowance_list_screen.dart';
@@ -336,7 +337,7 @@ class _EmpHomePageState extends State<EmpHomePage> {
                         _buildGridItem('Work Report', Icons.work_history_outlined)),
                     InkWell(
                         onTap: () {
-                          Get.to(EmpAttendanceScreen());
+                          Get.to(EmpSiteAttendanceForWorkReportCalenderScreen());
                         },
                         child:
                         _buildGridItem('Site Report', Icons.event_note)),

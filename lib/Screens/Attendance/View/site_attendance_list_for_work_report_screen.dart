@@ -23,6 +23,7 @@ import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/View/add_site_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_details_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_list_screen.dart';
+import 'package:valid_airtech/Widget/CommonButton.dart';
 import 'package:valid_airtech/Widget/common_widget.dart';
 import 'package:valid_airtech/utils/share_predata.dart';
 import '../../../Styles/app_text_style.dart';
@@ -31,18 +32,19 @@ import '../../AdminLeaveRequest/View/leave_filter_dialog.dart';
 import '../../Notes/View/edit_note_screen.dart';
 import '../Controller/attendance_controller.dart';
 
-class AttendanceListScreen extends StatefulWidget {
+class SiteAttendanceListForWorkReportScreen extends StatefulWidget {
   @override
-  _AttendanceListScreenState createState() => _AttendanceListScreenState();
+  _SiteAttendanceListForWorkReportScreenState createState() => _SiteAttendanceListForWorkReportScreenState();
 }
 
-class _AttendanceListScreenState extends State<AttendanceListScreen> {
+class _SiteAttendanceListForWorkReportScreenState extends State<SiteAttendanceListForWorkReportScreen> {
   AttendanceController attendanceController = Get.find<AttendanceController>();
 
   @override
   void initState() {
     super.initState();
-    attendanceController.filterAttendanceData.clear();
+    attendanceController.attendanceList.clear();
+    attendanceController.siteAttendanceData.clear();
     _initializeData();
   }
 
@@ -91,19 +93,19 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
                     padding: const EdgeInsets.all(12),
                     child: Center(
                       child: Text(
-                        'Attendance',
+                        'Work Report',
                         style: AppTextStyle.largeBold
                             .copyWith(fontSize: 14, color: Colors.white),
                         textAlign: TextAlign.center,
                       ),
                     ),
                   ),
-                  attendanceController.filterAttendanceData.isNotEmpty
+                  attendanceController.siteAttendanceData.isNotEmpty
                       ? Expanded(
                           child: ListView.builder(
                           padding: const EdgeInsets.all(10),
                           itemCount:
-                              attendanceController.filterAttendanceData.length,
+                          attendanceController.siteAttendanceData.length,
                           itemBuilder: (context, index) {
                             return Card(
                               elevation: 2,
@@ -125,15 +127,115 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
                                                   color: color_brown_title),
                                         ),
                                         Text(
-                                          attendanceController
-                                                  .filterAttendanceData[index]
-                                                  .date ??
+                                          attendanceController.siteAttendanceData[index]
+                                                  .dateOfAttendance ??
                                               "",
                                           style: AppTextStyle.largeRegular
                                               .copyWith(
                                                   fontSize: 15,
                                                   color: Colors.black),
                                         ),
+
+
+                                        SizedBox(height: 8,),
+
+                                        Text(
+                                          attendanceController.siteAttendanceData[index]
+                                              .siteName ??
+                                              "",
+                                          style: AppTextStyle.largeMedium
+                                              .copyWith(
+                                              fontSize: 15,
+                                              color: color_brown_title),
+                                        ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  Text(
+                                                    'In : ',
+                                                    style: AppTextStyle
+                                                        .largeMedium
+                                                        .copyWith(
+                                                        fontSize: 15,
+                                                        color:
+                                                        color_brown_title),
+                                                  ),
+                                                  Text(
+                                                    attendanceController.siteAttendanceData[index]
+                                                        .inTime ??
+                                                        "",
+                                                    style: AppTextStyle
+                                                        .largeRegular
+                                                        .copyWith(
+                                                        fontSize: 15,
+                                                        color: Colors
+                                                            .black),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(height: 12),
+                                            Expanded(
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  Text(
+                                                    'Out : ',
+                                                    style: AppTextStyle
+                                                        .largeMedium
+                                                        .copyWith(
+                                                        fontSize: 15,
+                                                        color:
+                                                        color_brown_title),
+                                                  ),
+                                                  Text(
+                                                    attendanceController.siteAttendanceData[index]
+                                                        .outTime ??
+                                                        "",
+                                                    style: AppTextStyle
+                                                        .largeRegular
+                                                        .copyWith(
+                                                        fontSize: 15,
+                                                        color: Colors
+                                                            .black),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 12,
+                                        ),
+                                        Container(
+                                          width: 180,
+                                         height: 40,
+                                         // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                                          child: CommonButton(
+                                            titleText: "+ Work Report",
+                                            textColor: Colors.white,
+                                            onCustomButtonPressed: () async {
+
+                                            },
+                                            borderColor: color_primary,
+                                            borderWidth: 0,
+                                          ),
+                                        ),
+
+
+
                                       ],
                                     ),
 
@@ -141,130 +243,6 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
                                       height: 12,
                                     ),
 
-                                    for (int i = 0;
-                                        i <
-                                            attendanceController
-                                                .filterAttendanceData[index]
-                                                .siteAttendanceData
-                                                .length;
-                                        i++)
-                                      Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              attendanceController
-                                                      .filterAttendanceData[
-                                                          index]
-                                                      .siteAttendanceData[i]
-                                                      .siteName ??
-                                                  "",
-                                              style: AppTextStyle.largeMedium
-                                                  .copyWith(
-                                                      fontSize: 15,
-                                                      color: color_brown_title),
-                                            ),
-                                            SizedBox(
-                                              height: 2,
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Expanded(
-                                                  child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        'In : ',
-                                                        style: AppTextStyle
-                                                            .largeMedium
-                                                            .copyWith(
-                                                                fontSize: 15,
-                                                                color:
-                                                                    color_brown_title),
-                                                      ),
-                                                      Text(
-                                                        attendanceController
-                                                                .filterAttendanceData[
-                                                                    index]
-                                                                .siteAttendanceData[
-                                                                    i]
-                                                                .inTime ??
-                                                            "",
-                                                        style: AppTextStyle
-                                                            .largeRegular
-                                                            .copyWith(
-                                                                fontSize: 15,
-                                                                color: Colors
-                                                                    .black),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 12),
-                                                Expanded(
-                                                  child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        'Out : ',
-                                                        style: AppTextStyle
-                                                            .largeMedium
-                                                            .copyWith(
-                                                                fontSize: 15,
-                                                                color:
-                                                                    color_brown_title),
-                                                      ),
-                                                      Text(
-                                                        attendanceController
-                                                                .filterAttendanceData[
-                                                                    index]
-                                                                .siteAttendanceData[
-                                                                    i]
-                                                                .outTime ??
-                                                            "",
-                                                        style: AppTextStyle
-                                                            .largeRegular
-                                                            .copyWith(
-                                                                fontSize: 15,
-                                                                color: Colors
-                                                                    .black),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-
-                                           if(i != (attendanceController
-                                               .filterAttendanceData[
-                                           index]
-                                               .siteAttendanceData.length -1)) Column(
-                                              children: [
-
-                                                SizedBox(
-                                                  height: 12,
-                                                ),
-
-                                                Container(
-                                                  width: double.infinity,
-                                                  height: 0.5,
-                                                  color: color_primary,
-                                                ),
-                                                SizedBox(
-                                                  height: 8,
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      )
 
                                     // InkWell(
                                     //   onTap: () {

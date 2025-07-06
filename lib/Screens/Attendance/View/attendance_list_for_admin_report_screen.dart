@@ -31,13 +31,22 @@ import '../../AdminLeaveRequest/View/leave_filter_dialog.dart';
 import '../../Notes/View/edit_note_screen.dart';
 import '../Controller/attendance_controller.dart';
 
-class AttendanceListScreen extends StatefulWidget {
+class AttendanceListForAdminReportScreen extends StatefulWidget {
+
+  final String empId;
+  final String empName;
+  AttendanceListForAdminReportScreen({
+    Key? key,
+    required this.empId,
+    required this.empName,
+  }) : super(key: key);
+
   @override
-  _AttendanceListScreenState createState() => _AttendanceListScreenState();
+  _AttendanceListForAdminReportScreenState createState() => _AttendanceListForAdminReportScreenState();
 }
 
-class _AttendanceListScreenState extends State<AttendanceListScreen> {
-  AttendanceController attendanceController = Get.find<AttendanceController>();
+class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAdminReportScreen> {
+  AttendanceController attendanceController = Get.put(AttendanceController());
 
   @override
   void initState() {
@@ -51,7 +60,7 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
 
     printData("_initializeData", "_initializeData");
 
-    attendanceController.callAttendanceList();
+    attendanceController.callAttendanceListForAdmin(widget.empId);
   }
 
   @override
@@ -91,7 +100,7 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
                     padding: const EdgeInsets.all(12),
                     child: Center(
                       child: Text(
-                        'Attendance',
+                        "${widget.empName}'s Attendance",
                         style: AppTextStyle.largeBold
                             .copyWith(fontSize: 14, color: Colors.white),
                         textAlign: TextAlign.center,
@@ -264,7 +273,59 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
                                             ),
                                           ],
                                         ),
-                                      )
+                                      ),
+                                    SizedBox(height: 12,),
+
+                                    Row(
+                                      children: [
+
+                                        Text("Office Duration : ",
+                                          style: AppTextStyle.largeRegular
+                                              .copyWith(
+                                            fontSize: 15,
+                                            color: Colors.black
+                                            ,),
+                                        ),
+
+                                        Text(
+                                          attendanceController
+                                              .filterAttendanceData[index]
+                                              .officeDuration ??
+                                              "",
+                                          style: AppTextStyle.largeBold
+                                              .copyWith(
+                                              fontSize: 15,
+                                              color: Colors.black),
+                                        ),
+                                      ],
+                                    ),
+
+                                    SizedBox(height: 8,),
+
+                                    Row(
+                                      children: [
+
+                                        Text("Site Duration : ",
+                                          style: AppTextStyle.largeRegular
+                                              .copyWith(
+                                            fontSize: 15,
+                                            color: Colors.black
+                                            ,),
+                                        ),
+
+                                        Text(
+                                          attendanceController
+                                              .filterAttendanceData[index]
+                                              .siteDuration ??
+                                              "",
+                                          style: AppTextStyle.largeBold
+                                              .copyWith(
+                                              fontSize: 15,
+                                              color: Colors.black),
+                                        ),
+
+                                      ],
+                                    ),
 
                                     // InkWell(
                                     //   onTap: () {

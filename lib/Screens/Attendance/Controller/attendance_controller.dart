@@ -11,6 +11,7 @@ import 'package:valid_airtech/Screens/Appointment/Model/create_appointment_reque
 import 'package:valid_airtech/Screens/Attendance/Model/admin_attendance_list_response.dart';
 import 'package:valid_airtech/Screens/Attendance/Model/attendance_list_response.dart';
 import 'package:valid_airtech/Screens/Attendance/Model/create_attendance_in_request.dart';
+import 'package:valid_airtech/Screens/Attendance/Model/filter_attendance_data.dart';
 import 'package:valid_airtech/Screens/Offices/Model/office_list_response.dart';
 
 
@@ -28,6 +29,7 @@ import 'package:intl/intl.dart';
 import '../../WorkmanProfile/Model/workman_list_response.dart';
 import '../Model/admin_create_attendance_request.dart';
 import '../Model/admin_update_attendance_request.dart';
+import '../Model/site_attendance_data.dart';
 
 
 /// Controller
@@ -51,6 +53,10 @@ class AttendanceController extends GetxController {
   RxList<String> statusList = <String>[].obs;
   RxList<String> attendanceStatusList = <String>[].obs;
   Rx<AdminCreateAttendanceRequest> adminCreateAttendanceRequest = AdminCreateAttendanceRequest().obs;
+
+  RxList<FilterAttendanceData> filterAttendanceData = <FilterAttendanceData>[].obs;
+
+  RxList<SiteAttendanceData> siteAttendanceData = <SiteAttendanceData>[].obs;
 
   RxList<AdminAttendanceData> adminAttendanceList = <AdminAttendanceData>[].obs;
   RxList<WorkmanData> workmanList = <WorkmanData>[].obs;
@@ -277,6 +283,257 @@ class AttendanceController extends GetxController {
 
       if (response.status??false) {
         attendanceList.value = response.data??[];
+
+        for (int i = 0; i < attendanceList.length; i++) {
+          bool isDateAvail = false;
+
+          for (int j = 0; j < filterAttendanceData.length; j++) {
+            if (attendanceList[i].date == filterAttendanceData[j].date) {
+              isDateAvail = true;
+              bool entryUpdated = false;
+
+              for (int z = 0; z < filterAttendanceData[j].siteAttendanceData.length; z++) {
+                final siteData = filterAttendanceData[j].siteAttendanceData[z];
+
+                if (attendanceList[i].headId == siteData.headId || attendanceList[i].officeId == siteData.officeId) {
+                  if (attendanceList[i].status == 1) {
+                    siteData.inTime = attendanceList[i].time ?? "";
+                  } else if (attendanceList[i].status == 2) {
+                    siteData.outTime = attendanceList[i].time ?? "";
+                  }
+
+                  entryUpdated = true;
+                  break;
+                }
+              }
+
+              // If no existing site/office match, add new
+              if (!entryUpdated) {
+                filterAttendanceData[j].siteAttendanceData.add(
+                  SiteAttendanceData(
+                    siteName: (attendanceList[i].officeName ?? "").isNotEmpty
+                        ? attendanceList[i].officeName!
+                        : (attendanceList[i].headName ?? ""),
+                    headId: attendanceList[i].headId,
+                    officeId: attendanceList[i].officeId,
+                    inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
+                    outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+                  ),
+                );
+              }
+
+              break;
+            }
+          }
+
+          if (!isDateAvail) {
+            // New date entry
+            final newFilterData = FilterAttendanceData();
+            newFilterData.date = attendanceList[i].date ?? "";
+            newFilterData.siteAttendanceData = [
+              SiteAttendanceData(
+                siteName: (attendanceList[i].officeName ?? "").isNotEmpty
+                    ? attendanceList[i].officeName!
+                    : (attendanceList[i].headName ?? ""),
+                headId: attendanceList[i].headId,
+                officeId: attendanceList[i].officeId,
+                inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
+                outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+              )
+            ];
+            filterAttendanceData.add(newFilterData); // ✅ Important: Add to list
+          }
+        }
+
+
+        for (int i = 0; i < attendanceList.length; i++) {
+
+          bool entryUpdated = false;
+          for (int j = 0; j < siteAttendanceData.length; j++) {
+
+            if(attendanceList[i].date == siteAttendanceData[j].dateOfAttendance){
+              if (attendanceList[i].headId == siteAttendanceData[j].headId ||
+                  attendanceList[i].officeId == siteAttendanceData[j].officeId) {
+                if (attendanceList[i].status == 1) {
+                  siteAttendanceData[j].inTime = attendanceList[i].time ?? "";
+                } else if (attendanceList[i].status == 2) {
+                  siteAttendanceData[j].outTime = attendanceList[i].time ?? "";
+                }
+
+                entryUpdated = true;
+                break;
+              }
+            }
+
+          }
+
+              // If no existing site/office match, add new
+              if (!entryUpdated) {
+                siteAttendanceData.add(
+                  SiteAttendanceData(
+                    dateOfAttendance: attendanceList[i].date??"",
+                    siteName: (attendanceList[i].officeName ?? "").isNotEmpty
+                        ? attendanceList[i].officeName!
+                        : (attendanceList[i].headName ?? ""),
+                    headId: attendanceList[i].headId,
+                    officeId: attendanceList[i].officeId,
+                    inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
+                    outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+                  ),
+                );
+              }
+
+        }
+
+
+      }else if(response.code == 401){
+        Helper().logout();
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Attendance list api call
+  Future<void> callAttendanceListForAdmin(String empId) async {
+    try {
+      isLoading.value = true;
+
+      AttendanceListResponse response = await postRepository.attendanceList(loginData.value.token??"",empId);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        attendanceList.value = response.data??[];
+
+        for (int i = 0; i < attendanceList.length; i++) {
+          bool isDateAvail = false;
+
+          for (int j = 0; j < filterAttendanceData.length; j++) {
+            if (attendanceList[i].date == filterAttendanceData[j].date) {
+              isDateAvail = true;
+              bool entryUpdated = false;
+
+              for (int z = 0; z < filterAttendanceData[j].siteAttendanceData.length; z++) {
+                final siteData = filterAttendanceData[j].siteAttendanceData[z];
+
+                if (attendanceList[i].headId == siteData.headId || attendanceList[i].officeId == siteData.officeId) {
+                  if (attendanceList[i].status == 1) {
+                    siteData.inTime = attendanceList[i].time ?? "";
+                  } else if (attendanceList[i].status == 2) {
+                    siteData.outTime = attendanceList[i].time ?? "";
+                  }
+
+                  entryUpdated = true;
+                  break;
+                }
+              }
+
+              // If no existing site/office match, add new
+              if (!entryUpdated) {
+                filterAttendanceData[j].siteAttendanceData.add(
+                  SiteAttendanceData(
+                    siteName: (attendanceList[i].officeName ?? "").isNotEmpty
+                        ? attendanceList[i].officeName!
+                        : (attendanceList[i].headName ?? ""),
+                    headId: attendanceList[i].headId,
+                    officeId: attendanceList[i].officeId,
+                    inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
+                    outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+                  ),
+                );
+              }
+
+              break;
+            }
+          }
+
+          if (!isDateAvail) {
+            // New date entry
+            final newFilterData = FilterAttendanceData();
+            newFilterData.date = attendanceList[i].date ?? "";
+            newFilterData.siteAttendanceData = [
+              SiteAttendanceData(
+                siteName: (attendanceList[i].officeName ?? "").isNotEmpty
+                    ? attendanceList[i].officeName!
+                    : (attendanceList[i].headName ?? ""),
+                headId: attendanceList[i].headId,
+                officeId: attendanceList[i].officeId,
+                inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
+                outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+              )
+            ];
+            filterAttendanceData.add(newFilterData); // ✅ Important: Add to list
+          }
+
+        }
+
+
+        for (int i = 0; i < attendanceList.length; i++) {
+
+          bool entryUpdated = false;
+          for (int j = 0; j < siteAttendanceData.length; j++) {
+
+            if(attendanceList[i].date == siteAttendanceData[j].dateOfAttendance){
+              if (attendanceList[i].headId == siteAttendanceData[j].headId ||
+                  attendanceList[i].officeId == siteAttendanceData[j].officeId) {
+                if (attendanceList[i].status == 1) {
+                  siteAttendanceData[j].inTime = attendanceList[i].time ?? "";
+                } else if (attendanceList[i].status == 2) {
+                  siteAttendanceData[j].outTime = attendanceList[i].time ?? "";
+                }
+
+                entryUpdated = true;
+                break;
+              }
+            }
+
+          }
+
+          // If no existing site/office match, add new
+          if (!entryUpdated) {
+            siteAttendanceData.add(
+              SiteAttendanceData(
+                dateOfAttendance: attendanceList[i].date??"",
+                siteName: (attendanceList[i].officeName ?? "").isNotEmpty
+                    ? attendanceList[i].officeName!
+                    : (attendanceList[i].headName ?? ""),
+                headId: attendanceList[i].headId,
+                officeId: attendanceList[i].officeId,
+                inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
+                outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+              ),
+            );
+          }
+
+        }
+
+        for (int j = 0; j < filterAttendanceData.length; j++) {
+          final officeDurations = calculateTotalOfficeDuration(filterAttendanceData[j].siteAttendanceData);
+          final siteDurations = calculateTotalSiteDuration(filterAttendanceData[j].siteAttendanceData);
+
+          officeDurations.forEach((officeId, duration) {
+
+            filterAttendanceData[j].officeDuration = "${duration.inHours} hours ${duration.inMinutes % 60} mins";
+
+            print("Office $officeId total duration: ${duration.inHours} hours ${duration.inMinutes % 60} mins");
+          });
+
+          siteDurations.forEach((siteName, duration) {
+
+            filterAttendanceData[j].siteDuration = "${duration.inHours} hours ${duration.inMinutes % 60} mins";
+
+            print("Site $siteName total duration: ${duration.inHours} hours ${duration.inMinutes % 60} mins");
+          });
+        }
+
+
       }else if(response.code == 401){
         Helper().logout();
       }
@@ -484,4 +741,39 @@ class AttendanceController extends GetxController {
   clearAllField() {
 
   }
+
+  Map<int, Duration> calculateTotalOfficeDuration(List<SiteAttendanceData> dataList) {
+    Map<int, Duration> officeDurations = {};
+
+    for (var data in dataList) {
+      if (data.officeId != null && data.inTime != null && data.outTime != null) {
+        final inTime = DateFormat('HH:mm').parse(data.inTime!);
+        final outTime = DateFormat('HH:mm').parse(data.outTime!);
+
+        final duration = outTime.difference(inTime);
+
+        officeDurations[data.officeId!] = (officeDurations[data.officeId!] ?? Duration()) + duration;
+      }
+    }
+
+    return officeDurations;
+  }
+
+  Map<String, Duration> calculateTotalSiteDuration(List<SiteAttendanceData> dataList) {
+    Map<String, Duration> siteDurations = {};
+
+    for (var data in dataList) {
+      if (data.headId != null && data.inTime != null && data.outTime != null) {
+        final inTime = DateFormat('HH:mm').parse(data.inTime!);
+        final outTime = DateFormat('HH:mm').parse(data.outTime!);
+
+        final duration = outTime.difference(inTime);
+
+        siteDurations[data.siteName!] = (siteDurations[data.siteName!] ?? Duration()) + duration;
+      }
+    }
+
+    return siteDurations;
+  }
+
 }

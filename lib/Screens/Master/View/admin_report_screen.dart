@@ -25,6 +25,8 @@ import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
 import '../../Allowance/View/admin_expnese_list_screen.dart';
+import '../../Attendance/View/attendance_list_for_admin_report_screen.dart';
+import '../../Attendance/View/site_attendance_list_for_admin_screen.dart';
 import '../../Sites/Model/add_contact_model.dart';
 import '../../WorkmanProfile/Controller/workman_profile_controller.dart';
 
@@ -115,10 +117,15 @@ class _AdminReportScreenState extends State<AdminReportScreen> {
                         titleText: "Find",
                         textColor: Colors.white,
                         onCustomButtonPressed: () async {
-                          Get.to(AdminAttendanceListScreen(empId: (selectedWorkmanId == null ||
+                          String? empName = "";
+                          if(selectedWorkmanId != null || selectedWorkmanId != "0"){
+                            empName = getUserNameById(int.parse(selectedWorkmanId??"0"), workmanProfileController.workmanList);
+                          }
+
+                          Get.to(AttendanceListForAdminReportScreen(empId: (selectedWorkmanId == null ||
                               selectedWorkmanId == "0")
                               ? ""
-                              : selectedWorkmanId ?? "",));
+                              : selectedWorkmanId ?? "",empName: empName??"",),);
                         },
                         borderColor: color_primary,
                         borderWidth: 0,
@@ -302,6 +309,14 @@ class _AdminReportScreenState extends State<AdminReportScreen> {
     ;
   }
 
+
+  String? getUserNameById(int id, List<WorkmanData> items) {
+    try {
+      return items.firstWhere((item) => item.id == id).name;
+    } catch (e) {
+      return null; // Return null if not found
+    }
+  }
 
   Widget _buildDropdown(List<WorkmanData> items, String? selectedValue,
       Function(String?) onChanged, String hint) {
