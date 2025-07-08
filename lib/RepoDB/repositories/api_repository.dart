@@ -755,10 +755,42 @@ class APIRepository {
 
   /// Get Work report List
   Future<WorkReportListResponse> workReportList(
-      String token, String empId) async {
+      String token, String empId, String siteId, String date) async {
     try {
       var data = json.encode({
+        "site_id": siteId,
         "emp_id": empId,
+        "start_date": date,
+        "end_date": date
+      });
+
+      printData("dataa", data);
+
+      Response response = await api.dio.get("/work-report/list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return WorkReportListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
+  /// Get Work report List
+  Future<WorkReportListResponse> adminWorkReportList(
+  String token, String empId, String startDate, String endDate) async {
+    try {
+      var data = json.encode({
+        "site_id": "",
+        "emp_id": empId,
+        "start_date": startDate,
+        "end_date": endDate
       });
 
       Response response = await api.dio.get("/work-report/list",
@@ -775,6 +807,7 @@ class APIRepository {
       rethrow;
     }
   }
+
 
   /// Create Work report
 
@@ -912,6 +945,7 @@ class APIRepository {
       String witnessPerson,
       List<String> removedRemarksId,List<String> removedStatusId,) async {
     try {
+      Map<String, dynamic> serviceStatusIdMap = {};
       Map<String, dynamic> remarkMap = {};
       Map<String, dynamic> testLocationMap = {};
       Map<String, dynamic> roomEquipmentMap = {};
@@ -920,6 +954,7 @@ class APIRepository {
       Map<String, dynamic> statusMap = {};
       Map<String, dynamic> employeeMap = {};
       for (int i = 0; i < serviceStatusList.length; i++) {
+        serviceStatusIdMap['service_status[$i][id]'] = serviceStatusList[i].id;
         remarkMap['service_status[$i][remark]'] =
             serviceStatusList[i].remarkTextEditingController.text;
         testLocationMap['service_status[$i][test_location]'] =
@@ -960,14 +995,21 @@ class APIRepository {
 
 
       Map<String, dynamic> commentsByMap = {};
+      Map<String, dynamic> commentsIdMap = {};
       for (int i = 0; i < comments.length; i++) {
+        commentsIdMap['remark[$i][id]'] =
+            comments[i].id;
         commentsByMap['remark[$i][remark]'] =
             comments[i].remarkTextEditingController.text;
       }
 
       Map<String, dynamic> siteAttendByMap = {};
+      Map<String, dynamic> siteAttendIdMap = {};
       for (int i = 0; i < siteAttendByList.length; i++) {
-        remarkMap['site_attend_by[$i][user_id]'] =
+
+        siteAttendIdMap['site_attend_by[$i][id]'] =
+            siteAttendByList[i].id.toString();
+        siteAttendByMap['site_attend_by[$i][user_id]'] =
             siteAttendByList[i].id.toString();
       }
 
@@ -998,7 +1040,9 @@ class APIRepository {
         'witness_person': witnessPerson,
         'date': date,
         ...commentsByMap,
+        ...commentsIdMap,
         ...siteAttendByMap,
+        ...siteAttendIdMap,
         ...remarkMap, // spread remarks into the main map
         ...testLocationMap,
         ...roomEquipmentMap,
@@ -1008,6 +1052,7 @@ class APIRepository {
         ...employeeMap,
         ...removedRemarksMap,
         ...removedStatusMap,
+        ...serviceStatusIdMap
       });
 
       Response response = await api.dio.post("/work-report/update",
@@ -1568,30 +1613,30 @@ class APIRepository {
   }
 
   /// Admin Work Report List
-  Future<AdminWorkReportListResponse> adminWorkReportList(String token,
-      String type, String empId, String startDate, String endDate) async {
-    try {
-      var data = json.encode({
-        "type": type,
-        "emp_id": empId,
-        "start_date": startDate,
-        "end_date": endDate
-      });
-
-      Response response = await api.dio.post("/admin-report/work-report-list",
-          data: data,
-          options: Options(
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
-            },
-          ));
-      dynamic postMaps = response.data;
-      return AdminWorkReportListResponse.fromJson(postMaps);
-    } catch (ex) {
-      rethrow;
-    }
-  }
+  // Future<AdminWorkReportListResponse> adminWorkReportList(String token,
+  //     String type, String empId, String startDate, String endDate) async {
+  //   try {
+  //     var data = json.encode({
+  //       "type": type,
+  //       "emp_id": empId,
+  //       "start_date": startDate,
+  //       "end_date": endDate
+  //     });
+  //
+  //     Response response = await api.dio.post("/admin-report/work-report-list",
+  //         data: data,
+  //         options: Options(
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //             'Authorization': 'Bearer $token'
+  //           },
+  //         ));
+  //     dynamic postMaps = response.data;
+  //     return AdminWorkReportListResponse.fromJson(postMaps);
+  //   } catch (ex) {
+  //     rethrow;
+  //   }
+  // }
 
   /// Allowance List
   Future<AllowanceListResponse> allowanceList(String token) async {

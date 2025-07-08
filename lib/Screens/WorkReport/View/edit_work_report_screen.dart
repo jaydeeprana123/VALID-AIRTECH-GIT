@@ -79,189 +79,206 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      workReportController.callInstrumentList();
-      workReportController.callConveyanceList();
-      workReportController.callSiteList();
-      workReportController.callSiteAttendByList();
-      workReportController.callTestPerformerList();
-      workReportController.callServiceByNatureByList();
-      workReportController.callWorkmanList();
-    });
-
-
-    if((workReportController.selectedWorkReportData.value.date??"").isNotEmpty){
-      DateFormat format = DateFormat("dd-MM-yyyy");
-      selectedDate = format.parse(workReportController.selectedWorkReportData.value.date??"");
-
-      setState(() {
-
-      });
-    }
-
-
-    /// Site
-    if ((workReportController.selectedWorkReportData.value.siteId ?? 0) != 0) {
-      for (int i = 0; i < (workReportController.siteList).length; i++) {
-        if (workReportController.siteList[i].id ==
-            workReportController.selectedWorkReportData.value.siteId) {
-          workReportController.siteId =
-          workReportController.siteList[i];
-
-          setState(() {
-
-          });
-        }
-      }
-    }
-
-    workReportController.controllerNameOfContactPerson.value.text =
-        workReportController.selectedWorkReportData.value.contactPerson ?? "";
-    workReportController.controllerNameOfWitnessPerson.value.text =
-        workReportController.selectedWorkReportData.value.witnessPerson ?? "";
-
-    workReportController.isEdit.value = false;
-    workReportController.conveyThrough = workReportController.conveyThroughList[
-        (workReportController
-                    .selectedWorkReportData.value.convenyenceThroughStatus ??
-                0) -
-            1];
-
-    if ((workReportController.selectedWorkReportData.value.conveyanceId ?? "")
-        .isNotEmpty) {
-      for (int i = 0; i < (workReportController.conveysList).length; i++) {
-        if (workReportController.conveysList[i].id.toString() ==
-            workReportController.selectedWorkReportData.value.conveyanceId) {
-          workReportController.conveyanceData =
-              workReportController.conveysList[i];
-
-          setState(() {
-
-          });
-        }
-      }
-    }
-
-
-
-    if ((workReportController.selectedWorkReportData.value.serviceNatureId ?? "")
-        .isNotEmpty) {
-      for (int i = 0; i < (workReportController.serviceByNatureList).length; i++) {
-        if (workReportController.serviceByNatureList[i].id.toString() ==
-            workReportController.selectedWorkReportData.value.serviceNatureId) {
-          workReportController.serviceByNatureData =
-          workReportController.serviceByNatureList[i];
-
-          setState(() {
-
-          });
-        }
-      }
-    }
-
-
     workReportController.remarksList.clear();
-    if ((workReportController.selectedWorkReportData.value.remark ?? [])
-        .isNotEmpty) {
-      for (int i = 0;
-          i <
-              (workReportController.selectedWorkReportData.value.remark ?? [])
-                  .length;
-          i++) {
-        workReportController.selectedWorkReportData.value.remark?[i]
-            .remarkTextEditingController.text = workReportController
-                .selectedWorkReportData.value.remark?[i].remark ??
-            "";
-        workReportController.remarksList.add(
-            workReportController.selectedWorkReportData.value.remark?[i] ??
-                RemarkWorkReport());
-      }
-    } else {
-      workReportController.remarksList.add(RemarkWorkReport());
-    }
-
     workReportController.serviceStatusList.clear();
-    if ((workReportController.selectedWorkReportData.value.serviceStatus ?? [])
-        .isNotEmpty) {
-      for (int i = 0;
-          i <
-              (workReportController.selectedWorkReportData.value
-                          .serviceStatus ??
-                      [])
-                  .length;
-          i++) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+      await workReportController.callInstrumentList();
+      await workReportController.callConveyanceList();
+      await workReportController.callSiteList();
+      await workReportController.callSiteAttendByList();
+      await workReportController.callTestPerformerList();
+      await workReportController.callServiceByNatureByList();
+      await workReportController.callWorkmanList();
 
-
-        ServiceStatusModel serviceStatusModel = ServiceStatusModel();
-        serviceStatusModel.id = workReportController.selectedWorkReportData.value
-            .serviceStatus?[i].id.toString();
-        serviceStatusModel
-            .testLocationEditingController
-            .text = workReportController.selectedWorkReportData.value
-            .serviceStatus?[i].testLocation ??
-            "";
-
-        serviceStatusModel
-            .remarkTextEditingController
-            .text = workReportController.selectedWorkReportData.value
-                .serviceStatus?[i].remark ??
-            "";
-
-        serviceStatusModel
-            .roomEquipmentEditingController
-            .text = workReportController.selectedWorkReportData.value
-            .serviceStatus?[i].roomEquipment ??
-            "";
-
-
-        if ((workReportController.selectedWorkReportData.value.serviceStatus?[i].testPerfomedId ?? 0) != 0) {
-          for (int z = 0; z < (workReportController.testPerformerList).length; i++) {
-            if (workReportController.testPerformerList[z].id ==
-                workReportController.selectedWorkReportData.value.serviceStatus?[i].testPerfomedId) {
-              serviceStatusModel.testPerformData =
-              workReportController.testPerformerList[z];
-            }
-          }
-        }
-
-
-        if ((workReportController.selectedWorkReportData.value.serviceStatus?[i].headInstrumentId ?? 0) != 0) {
-          for (int z = 0; z < (workReportController.instrumentList).length; i++) {
-            if (workReportController.instrumentList[z].id ==
-                workReportController.selectedWorkReportData.value.serviceStatus?[i].headInstrumentId) {
-              serviceStatusModel.usedInstrument =
-              workReportController.instrumentList[z];
-            }
-          }
-        }
-
-
-        if ((workReportController.selectedWorkReportData.value.serviceStatus?[i].performUserId ?? 0) != 0) {
-          for (int z = 0; z < (workReportController.workmanList).length; i++) {
-            if (workReportController.workmanList[z].id ==
-                workReportController.selectedWorkReportData.value.serviceStatus?[i].performUserId) {
-              serviceStatusModel.workmanData =
-              workReportController.workmanList[z];
-            }
-          }
-        }
-
-
-        serviceStatusModel.dataSheetStatus = workReportController.sheetStatusList[ workReportController.selectedWorkReportData.value.serviceStatus?[i].status??0];
-        workReportController.serviceStatusList.add(serviceStatusModel);
+      if((workReportController.selectedWorkReportData.value.date??"").isNotEmpty){
+        DateFormat format = DateFormat("dd-MM-yyyy");
+        selectedDate = format.parse(workReportController.selectedWorkReportData.value.date??"");
 
         setState(() {
 
         });
-
       }
-    } else {
-      workReportController.serviceStatusList.add(ServiceStatusModel());
-    }
 
-    workReportController.controllerOther.value.text =
-        workReportController.selectedWorkReportData.value.other ?? "";
+
+      /// Site
+      if ((workReportController.selectedWorkReportData.value.siteId ?? 0) != 0) {
+
+        printData("siteId", workReportController.selectedWorkReportData.value.siteId.toString());
+
+
+        for (int i = 0; i < (workReportController.siteList).length; i++) {
+
+          printData("workReportController.siteList[i].headId", workReportController.siteList[i].headId.toString());
+
+          if (workReportController.siteList[i].headId ==
+              workReportController.selectedWorkReportData.value.siteId) {
+            workReportController.siteId =
+            workReportController.siteList[i];
+
+            selectedSite = workReportController.selectedWorkReportData.value.siteId.toString();
+
+            printData("siteIdddddd", (workReportController.siteId?.headId??0).toString());
+
+            setState(() {
+
+            });
+          }
+        }
+      }
+
+      workReportController.controllerNameOfContactPerson.value.text =
+          workReportController.selectedWorkReportData.value.contactPerson ?? "";
+      workReportController.controllerNameOfWitnessPerson.value.text =
+          workReportController.selectedWorkReportData.value.witnessPerson ?? "";
+
+      workReportController.isEdit.value = false;
+      workReportController.conveyThrough = workReportController.conveyThroughList[
+      (workReportController
+          .selectedWorkReportData.value.convenyenceThroughStatus ??
+          0) -
+          1];
+
+      if ((workReportController.selectedWorkReportData.value.conveyanceId ?? "")
+          .isNotEmpty) {
+        for (int i = 0; i < (workReportController.conveysList).length; i++) {
+          if (workReportController.conveysList[i].id.toString() ==
+              workReportController.selectedWorkReportData.value.conveyanceId) {
+            workReportController.conveyanceData =
+            workReportController.conveysList[i];
+
+            setState(() {
+
+            });
+          }
+        }
+      }
+
+
+
+      if ((workReportController.selectedWorkReportData.value.serviceNatureId ?? "")
+          .isNotEmpty) {
+        for (int i = 0; i < (workReportController.serviceByNatureList).length; i++) {
+          if (workReportController.serviceByNatureList[i].id.toString() ==
+              workReportController.selectedWorkReportData.value.serviceNatureId) {
+            workReportController.serviceByNatureData =
+            workReportController.serviceByNatureList[i];
+
+            setState(() {
+
+            });
+          }
+        }
+      }
+
+
+
+      if ((workReportController.selectedWorkReportData.value.remark ?? [])
+          .isNotEmpty) {
+        for (int i = 0;
+        i <
+            (workReportController.selectedWorkReportData.value.remark ?? [])
+                .length;
+        i++) {
+          workReportController.selectedWorkReportData.value.remark?[i]
+              .remarkTextEditingController.text = workReportController
+              .selectedWorkReportData.value.remark?[i].remark ??
+              "";
+          workReportController.remarksList.add(
+              workReportController.selectedWorkReportData.value.remark?[i] ??
+                  RemarkWorkReport());
+        }
+      } else {
+        workReportController.remarksList.add(RemarkWorkReport());
+      }
+
+
+      if ((workReportController.selectedWorkReportData.value.serviceStatus ?? [])
+          .isNotEmpty) {
+        for (int i = 0;
+        i <
+            (workReportController.selectedWorkReportData.value
+                .serviceStatus ??
+                [])
+                .length;
+        i++) {
+
+
+          ServiceStatusModel serviceStatusModel = ServiceStatusModel();
+          serviceStatusModel.id = workReportController.selectedWorkReportData.value
+              .serviceStatus?[i].id.toString();
+          serviceStatusModel
+              .testLocationEditingController
+              .text = workReportController.selectedWorkReportData.value
+              .serviceStatus?[i].testLocation ??
+              "";
+
+          serviceStatusModel
+              .remarkTextEditingController
+              .text = workReportController.selectedWorkReportData.value
+              .serviceStatus?[i].remark ??
+              "";
+
+          serviceStatusModel
+              .roomEquipmentEditingController
+              .text = workReportController.selectedWorkReportData.value
+              .serviceStatus?[i].roomEquipment ??
+              "";
+
+
+          printData("workReportController.selectedWorkReportData.value.serviceStatus?[i].testPerfomedId", (workReportController.selectedWorkReportData.value.serviceStatus?[i].testPerfomedId??0).toString());
+
+          if ((workReportController.selectedWorkReportData.value.serviceStatus?[i].testPerfomedId ?? 0) != 0) {
+            for (int z = 0; z < (workReportController.testPerformerList).length; z++) {
+              if (workReportController.selectedWorkReportData.value.serviceStatus?[i].testPerfomedId ==  workReportController.testPerformerList[z].id
+                  ) {
+                serviceStatusModel.testPerformData =
+                workReportController.testPerformerList[z];
+              }
+            }
+          }
+
+
+          if ((workReportController.selectedWorkReportData.value.serviceStatus?[i].headInstrumentId ?? 0) != 0) {
+            for (int z = 0; z < (workReportController.instrumentList).length; z++) {
+              if (workReportController.selectedWorkReportData.value.serviceStatus?[i].headInstrumentId == workReportController.instrumentList[z].id
+                  ) {
+                serviceStatusModel.usedInstrument =
+                workReportController.instrumentList[z];
+              }
+            }
+          }
+
+
+          if ((workReportController.selectedWorkReportData.value.serviceStatus?[i].performUserId ?? 0) != 0) {
+            for (int z = 0; z < (workReportController.workmanList).length; z++) {
+              if (workReportController.workmanList[z].id ==
+                  workReportController.selectedWorkReportData.value.serviceStatus?[i].performUserId) {
+                serviceStatusModel.workmanData =
+                workReportController.workmanList[z];
+              }
+            }
+          }
+
+
+          serviceStatusModel.dataSheetStatus = workReportController.sheetStatusList[ workReportController.selectedWorkReportData.value.serviceStatus?[i].status??0];
+          workReportController.serviceStatusList.add(serviceStatusModel);
+
+          setState(() {
+
+          });
+
+        }
+      } else {
+        workReportController.serviceStatusList.add(ServiceStatusModel());
+      }
+
+      workReportController.controllerOther.value.text =
+          workReportController.selectedWorkReportData.value.other ?? "";
+
+    });
+
+
+
   }
 
   @override
@@ -328,22 +345,25 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                     ),
 
                     _buildTextFieldOnlyReadableDate(
-                        TextEditingController(text: DateFormat('dd/MM/yyyy').format(selectedDate!)),
+                        TextEditingController(text: DateFormat('dd/MM/yyyy').format(selectedDate??DateTime(2025))),
                         "Work Reporting Date"),
 
                     SizedBox(
                       height: 16,
                     ),
 
-                    DropdownButton<SiteData>(
-                      value: workReportController.siteList
-                          .contains(workReportController.siteId)
-                          ? workReportController.siteId
-                          : null,
-                      // Ensure valid value
-                      hint: Text("Select Site",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                          , color: color_hint_text)) ,
 
+
+
+                    DropdownButton<SiteData>(
+                      value: workReportController.siteId,
+                      hint: Text(
+                        "Select Site",
+                        style: AppTextStyle.largeMedium.copyWith(
+                          fontSize: 16,
+                          color: color_hint_text,
+                        ),
+                      ),
                       isExpanded: true,
                       onChanged: (SiteData? newValue) {
                         setState(() {
@@ -353,11 +373,41 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                       items: workReportController.siteList.map((SiteData group) {
                         return DropdownMenuItem<SiteData>(
                           value: group,
-                          child: Text(group.headName??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                              , color: blackText),),
+                          child: Text(
+                            group.headName ?? "",
+                            style: AppTextStyle.largeMedium.copyWith(
+                              fontSize: 16,
+                              color: blackText,
+                            ),
+                          ),
                         );
                       }).toList(),
                     ),
+
+
+                    // DropdownButton<SiteData>(
+                    //   value: workReportController.siteList
+                    //       .contains(workReportController.siteId)
+                    //       ? workReportController.siteId
+                    //       : null,
+                    //   // Ensure valid value
+                    //   hint: Text("Select Site",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                    //       , color: color_hint_text)) ,
+                    //
+                    //   isExpanded: true,
+                    //   onChanged: (SiteData? newValue) {
+                    //     setState(() {
+                    //       workReportController.siteId = newValue;
+                    //     });
+                    //   },
+                    //   items: workReportController.siteList.map((SiteData group) {
+                    //     return DropdownMenuItem<SiteData>(
+                    //       value: group,
+                    //       child: Text(group.headName??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                    //           , color: blackText),),
+                    //     );
+                    //   }).toList(),
+                    // ),
                     SizedBox(height: 12,),
 
 

@@ -13,7 +13,6 @@ import 'edit_work_report_screen.dart';
 
 class WorkReportDetailsScreen extends StatefulWidget {
 
-
   WorkReportDetailsScreen({
     Key? key,
 
@@ -46,7 +45,7 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
           },
         ),
         title: Text(
-          'Work Report',
+          'Work Report Details',
           style: AppTextStyle.largeBold.copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
@@ -68,21 +67,76 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
             SizedBox(height: 8.0),
             InfoRow(label: 'Work Report Date', value: workReportController.selectedWorkReportData.value.date??""),
 
+            SizedBox(height: 8.0),
+            InfoRow(label: 'Conveyance Name', value: workReportController.selectedWorkReportData.value.conveyanceName??""),
+
+            SizedBox(height: 8.0),
+            InfoRow(label: 'Conveyance Through Name', value: workReportController.selectedWorkReportData.value.convenyenceThroughName??""),
+
+            SizedBox(height: 8.0),
+            InfoRow(label: 'Conveyance Through Other', value: workReportController.selectedWorkReportData.value.convenyenceThroughOther??""),
+
+            SizedBox(height: 8.0),
+            InfoRow(label: 'Service Nature', value: workReportController.selectedWorkReportData.value.serviceNatureName??""),
+
+
+            SizedBox(height: 8.0),
+            InfoRow(label: 'Contact Person', value: workReportController.selectedWorkReportData.value.contactPerson??""),
+
+            SizedBox(height: 8.0),
+            InfoRow(label: 'Witness Person', value: workReportController.selectedWorkReportData.value.witnessPerson??""),
+
+
+            SizedBox(height: 16.0),
             Center(child: SectionHeader(title: 'Remarks')),
             SizedBox(height: 8.0),
 
             for(int i=0; i<(workReportController.selectedWorkReportData.value.remark??[]).length;i++)
             InfoRow(label: 'Remark ${i+1}', value: workReportController.selectedWorkReportData.value.remark?[i].remark??""),
 
+
             SizedBox(height: 16.0),
-            Center(child: SectionHeader(title: 'Expense Details')),
+            Center(child: SectionHeader(title: 'Site Attend By')),
             SizedBox(height: 8.0),
-            ExpenseRow(label: 'Train', value: workReportController.selectedWorkReportData.value.train??"0"),
-            ExpenseRow(label: 'Bus', value: workReportController.selectedWorkReportData.value.bus??"0"),
-            ExpenseRow(label: 'Auto', value: workReportController.selectedWorkReportData.value.auto??"0"),
-            ExpenseRow(label: 'Fuel', value: workReportController.selectedWorkReportData.value.fuel??"0"),
-            ExpenseRow(label: 'Food Amount', value: workReportController.selectedWorkReportData.value.foodAmount??"0"),
-            ExpenseRow(label: 'Others', value:workReportController.selectedWorkReportData.value.other??"0"),
+
+            for(int i=0; i<(workReportController.selectedWorkReportData.value.siteAttendBy??[]).length;i++)
+              InfoRow(label: 'User ${i+1}', value: workReportController.selectedWorkReportData.value.siteAttendBy?[i].userName??""),
+
+            SizedBox(height: 16.0),
+            Center(child: SectionHeader(title: 'Service Status')),
+            SizedBox(height: 8.0),
+
+            for(int i=0; i<(workReportController.selectedWorkReportData.value.serviceStatus??[]).length;i++)
+              Container(
+                width: double.infinity,
+                margin: EdgeInsets.only(bottom: 12),
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                color: Colors.grey.shade300,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    InfoRow(label: 'Test Location :', value: workReportController.selectedWorkReportData.value.serviceStatus?[i].testLocation??""),
+                    InfoRow(label: 'Room Equipment :', value: workReportController.selectedWorkReportData.value.serviceStatus?[i].roomEquipment??""),
+                    InfoRow(label: 'Test Performed By :', value: workReportController.selectedWorkReportData.value.serviceStatus?[i].testPerfomedName??""),
+                    InfoRow(label: 'Head Instrument :', value: workReportController.selectedWorkReportData.value.serviceStatus?[i].headInstrumentName??""),
+                    InfoRow(label: 'Remark :', value: workReportController.selectedWorkReportData.value.serviceStatus?[i].remark??""),
+                    InfoRow(label: 'Status :', value: workReportController.selectedWorkReportData.value.serviceStatus?[i].statusType??""),
+
+                  ],
+                ),
+              ),
+
+
+
+            SizedBox(height: 16.0),
+            // Center(child: SectionHeader(title: 'Expense Details')),
+            // SizedBox(height: 8.0),
+            // ExpenseRow(label: 'Train', value: workReportController.selectedWorkReportData.value.train??"0"),
+            // ExpenseRow(label: 'Bus', value: workReportController.selectedWorkReportData.value.bus??"0"),
+            // ExpenseRow(label: 'Auto', value: workReportController.selectedWorkReportData.value.auto??"0"),
+            // ExpenseRow(label: 'Fuel', value: workReportController.selectedWorkReportData.value.fuel??"0"),
+            // ExpenseRow(label: 'Food Amount', value: workReportController.selectedWorkReportData.value.foodAmount??"0"),
+            // ExpenseRow(label: 'Others', value:workReportController.selectedWorkReportData.value.other??"0"),
             // Divider(thickness: 1, color: Colors.black),
             // ExpenseRow(label: 'Total', value: '0.00', isBold: true),
             SizedBox(height: 8.0),
@@ -90,31 +144,31 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
             SizedBox(height: 16.0),
 
 
-            GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(), // Prevent GridView from scrolling
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
-              itemCount: (workReportController.selectedWorkReportData.value.workReportExpensesBill??[]).length,
-              itemBuilder: (context, index) {
-                return Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
-
-                  Container(child: Image.network(workReportController.selectedWorkReportData.value.workReportExpensesBill?[index].photo??"", width: 160, height: 160,)),
-                  SizedBox(height: 2,),
-                  Text(workReportController.selectedWorkReportData.value.workReportExpensesBill?[index].billName??"", style: AppTextStyle.largeRegular.copyWith(fontSize: 14
-                      , color: Colors.black54)),
-
-                  SizedBox(height: 8,),
-                ],);
-              },
-            ),
-
-
-
-            SizedBox(height: 22,),
+            // GridView.builder(
+            //   shrinkWrap: true,
+            //   physics: NeverScrollableScrollPhysics(), // Prevent GridView from scrolling
+            //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            //     crossAxisCount: 2,
+            //     crossAxisSpacing: 10,
+            //     mainAxisSpacing: 10,
+            //   ),
+            //   itemCount: (workReportController.selectedWorkReportData.value.workReportExpensesBill??[]).length,
+            //   itemBuilder: (context, index) {
+            //     return Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
+            //
+            //       Container(child: Image.network(workReportController.selectedWorkReportData.value.workReportExpensesBill?[index].photo??"", width: 160, height: 160,)),
+            //       SizedBox(height: 2,),
+            //       Text(workReportController.selectedWorkReportData.value.workReportExpensesBill?[index].billName??"", style: AppTextStyle.largeRegular.copyWith(fontSize: 14
+            //           , color: Colors.black54)),
+            //
+            //       SizedBox(height: 8,),
+            //     ],);
+            //   },
+            // ),
+            //
+            //
+            //
+            // SizedBox(height: 22,),
 
 
             // Column(

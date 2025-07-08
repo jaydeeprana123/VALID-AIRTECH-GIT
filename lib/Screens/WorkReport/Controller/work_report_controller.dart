@@ -11,6 +11,9 @@ import 'package:valid_airtech/Screens/WorkReport/Model/test_by_perform_list_resp
 
 import 'package:valid_airtech/Screens/WorkReport/Model/work_report_list_response.dart';
 import 'package:intl/intl.dart';
+import 'package:valid_airtech/Screens/WorkReport/View/add_work_report_screen.dart';
+import 'package:valid_airtech/Screens/WorkReport/View/edit_work_report_screen.dart';
+import 'package:valid_airtech/Screens/WorkReport/View/work_report_details_screen.dart';
 
 import '../../../RepoDB/repositories/api_repository.dart';
 import '../../../Widget/common_widget.dart';
@@ -41,7 +44,7 @@ class WorkReportController extends GetxController {
 
   ConveyanceData? conveyanceData;
   ServiceByNatureData? serviceByNatureData;
-  RxList<AdminWorkReportData> adminWorkReportList = <AdminWorkReportData>[].obs;
+  RxList<WorkReportData> adminWorkReportList = <WorkReportData>[].obs;
   RxList<SiteAttendByData> siteAttendByList = <SiteAttendByData>[].obs;
 
   RxList<SiteAttendByData> selectedSiteAttendByList = <SiteAttendByData>[].obs;
@@ -72,6 +75,10 @@ class WorkReportController extends GetxController {
 
   RxList<ConveyanceData> conveysList = <ConveyanceData>[].obs;
 
+  Rx<TextEditingController> fromDateEditingController =
+      TextEditingController().obs;
+  Rx<TextEditingController> toDateEditingController =
+      TextEditingController().obs;
 
   final Rx<TextEditingController> controllerOther =
       TextEditingController(text: "0").obs;
@@ -93,10 +100,7 @@ class WorkReportController extends GetxController {
       TextEditingController().obs;
 
   Rx<LoginData> loginData = LoginData().obs;
-  Rx<TextEditingController> fromDateEditingController =
-      TextEditingController().obs;
-  Rx<TextEditingController> toDateEditingController =
-      TextEditingController().obs;
+
 
   Future getLoginData() async {
     loginData.value =
@@ -133,7 +137,7 @@ class WorkReportController extends GetxController {
 
 
   /// Workman list api call
-  void callWorkmanList() async {
+  Future<void> callWorkmanList() async {
     try {
       isLoading.value = true;
 
@@ -184,7 +188,7 @@ class WorkReportController extends GetxController {
   }
 
   /// Instrument list api call
-  void callInstrumentList() async {
+  Future<void> callInstrumentList() async {
     try {
       printData("callInstrumentList", "callInstrumentList");
       isLoading.value = true;
@@ -213,7 +217,7 @@ class WorkReportController extends GetxController {
   }
 
   /// site list api call
-  Future callSiteList() async {
+  Future<void> callSiteList() async {
     printData("callSiteList", "callSiteList");
     try {
       isLoading.value = true;
@@ -240,14 +244,13 @@ class WorkReportController extends GetxController {
   }
 
   /// Admin Work Report list api call
-  void callAdminWorkReportList(String empId) async {
+  Future<void> callAdminWorkReportList(String empId) async {
     try {
       isLoading.value = true;
 
-      AdminWorkReportListResponse response =
+      WorkReportListResponse response =
           await postRepository.adminWorkReportList(
               loginData.value.token ?? "",
-              "0",
               empId,
               fromDateEditingController.value.text,
               toDateEditingController.value.text);
@@ -271,21 +274,34 @@ class WorkReportController extends GetxController {
   }
 
   /// Work report list api call
-  Future<void> callWorkReportList() async {
+  Future<void> callWorkReportList(String siteId, String date) async {
     printData("callWorkReportList", "callWorkReportList");
     try {
       isLoading.value = true;
 
       WorkReportListResponse response = await postRepository.workReportList(
-          loginData.value.token ?? "", loginData.value.id.toString());
+          loginData.value.token ?? "", loginData.value.id.toString(), siteId, date);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
         workReportList.value = response.data ?? [];
+
+        printData("ahi aayo", "val");
+
+        if((response.data??[]).isEmpty){
+          Get.to(AddWorkReportScreen());
+
+        }else{
+          selectedWorkReportData.value = workReportList[0];
+          Get.to(WorkReportDetailsScreen());
+        }
+
       } else if (response.code == 401) {
         Helper().logout();
+      }else if (response.code == 404) {
+        Get.to(AddWorkReportScreen());
       }
     } catch (ex) {
       if (ex is DioException) {

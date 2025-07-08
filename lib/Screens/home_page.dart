@@ -97,12 +97,12 @@ class HomePage extends StatelessWidget {
                       Get.to(PlanningScreen());
                     },
                     child: _buildGridItem('Planning', Icons.schedule)),
-                InkWell(
-                    onTap: () {
-                      Get.to(WorkReportListScreen());
-                    },
-                    child: _buildGridItem(
-                        'Work Report', Icons.work_history_outlined)),
+                // InkWell(
+                //     onTap: () {
+                //       Get.to(AdminWorkReportListScreen(empId: empId));
+                //     },
+                //     child: _buildGridItem(
+                //         'Work Report', Icons.work_history_outlined)),
                 InkWell(
                     onTap: () {
                       Get.to(CalibrationListScreen());

@@ -21,6 +21,7 @@ import 'package:valid_airtech/Screens/Notes/Controller/notes_controller.dart';
 import 'package:valid_airtech/Screens/Service/Controller/service_controller.dart';
 import 'package:valid_airtech/Screens/Sites/Controller/site_controller.dart';
 import 'package:valid_airtech/Screens/Sites/View/add_site_screen.dart';
+import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_details_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/View/work_report_list_screen.dart';
 import 'package:valid_airtech/Widget/CommonButton.dart';
@@ -34,11 +35,14 @@ import '../Controller/attendance_controller.dart';
 
 class SiteAttendanceListForWorkReportScreen extends StatefulWidget {
   @override
-  _SiteAttendanceListForWorkReportScreenState createState() => _SiteAttendanceListForWorkReportScreenState();
+  _SiteAttendanceListForWorkReportScreenState createState() =>
+      _SiteAttendanceListForWorkReportScreenState();
 }
 
-class _SiteAttendanceListForWorkReportScreenState extends State<SiteAttendanceListForWorkReportScreen> {
+class _SiteAttendanceListForWorkReportScreenState
+    extends State<SiteAttendanceListForWorkReportScreen> {
   AttendanceController attendanceController = Get.find<AttendanceController>();
+  WorkReportController workReportController = Get.put(WorkReportController());
 
   @override
   void initState() {
@@ -105,7 +109,7 @@ class _SiteAttendanceListForWorkReportScreenState extends State<SiteAttendanceLi
                           child: ListView.builder(
                           padding: const EdgeInsets.all(10),
                           itemCount:
-                          attendanceController.siteAttendanceData.length,
+                              attendanceController.siteAttendanceData.length,
                           itemBuilder: (context, index) {
                             return Card(
                               elevation: 2,
@@ -127,7 +131,8 @@ class _SiteAttendanceListForWorkReportScreenState extends State<SiteAttendanceLi
                                                   color: color_brown_title),
                                         ),
                                         Text(
-                                          attendanceController.siteAttendanceData[index]
+                                          attendanceController
+                                                  .siteAttendanceData[index]
                                                   .dateOfAttendance ??
                                               "",
                                           style: AppTextStyle.largeRegular
@@ -135,51 +140,52 @@ class _SiteAttendanceListForWorkReportScreenState extends State<SiteAttendanceLi
                                                   fontSize: 15,
                                                   color: Colors.black),
                                         ),
-
-
-                                        SizedBox(height: 8,),
-
+                                        SizedBox(
+                                          height: 8,
+                                        ),
                                         Text(
-                                          attendanceController.siteAttendanceData[index]
-                                              .siteName ??
+                                          attendanceController
+                                                  .siteAttendanceData[index]
+                                                  .siteName ??
                                               "",
                                           style: AppTextStyle.largeMedium
                                               .copyWith(
-                                              fontSize: 15,
-                                              color: color_brown_title),
+                                                  fontSize: 15,
+                                                  color: color_brown_title),
                                         ),
                                         SizedBox(
                                           height: 8,
                                         ),
                                         Row(
                                           mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                              MainAxisAlignment.start,
                                           children: [
                                             Expanded(
                                               child: Row(
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .start,
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
                                                     'In : ',
                                                     style: AppTextStyle
                                                         .largeMedium
                                                         .copyWith(
-                                                        fontSize: 15,
-                                                        color:
-                                                        color_brown_title),
+                                                            fontSize: 15,
+                                                            color:
+                                                                color_brown_title),
                                                   ),
                                                   Text(
-                                                    attendanceController.siteAttendanceData[index]
-                                                        .inTime ??
+                                                    attendanceController
+                                                            .siteAttendanceData[
+                                                                index]
+                                                            .inTime ??
                                                         "",
                                                     style: AppTextStyle
                                                         .largeRegular
                                                         .copyWith(
-                                                        fontSize: 15,
-                                                        color: Colors
-                                                            .black),
+                                                            fontSize: 15,
+                                                            color:
+                                                                Colors.black),
                                                   ),
                                                 ],
                                               ),
@@ -188,28 +194,29 @@ class _SiteAttendanceListForWorkReportScreenState extends State<SiteAttendanceLi
                                             Expanded(
                                               child: Row(
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .start,
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
                                                     'Out : ',
                                                     style: AppTextStyle
                                                         .largeMedium
                                                         .copyWith(
-                                                        fontSize: 15,
-                                                        color:
-                                                        color_brown_title),
+                                                            fontSize: 15,
+                                                            color:
+                                                                color_brown_title),
                                                   ),
                                                   Text(
-                                                    attendanceController.siteAttendanceData[index]
-                                                        .outTime ??
+                                                    attendanceController
+                                                            .siteAttendanceData[
+                                                                index]
+                                                            .outTime ??
                                                         "",
                                                     style: AppTextStyle
                                                         .largeRegular
                                                         .copyWith(
-                                                        fontSize: 15,
-                                                        color: Colors
-                                                            .black),
+                                                            fontSize: 15,
+                                                            color:
+                                                                Colors.black),
                                                   ),
                                                 ],
                                               ),
@@ -221,28 +228,54 @@ class _SiteAttendanceListForWorkReportScreenState extends State<SiteAttendanceLi
                                         ),
                                         Container(
                                           width: 180,
-                                         height: 40,
-                                         // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                                          height: 40,
+                                          // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                                           child: CommonButton(
                                             titleText: "+ Work Report",
                                             textColor: Colors.white,
                                             onCustomButtonPressed: () async {
 
+                                              await workReportController.getLoginData();
+
+                                              if (attendanceController
+                                                      .siteAttendanceData[index]
+                                                      .headId !=
+                                                  null) {
+                                                workReportController.callWorkReportList(
+                                                    attendanceController
+                                                        .siteAttendanceData[
+                                                            index]
+                                                        .headId
+                                                        .toString(),
+                                                    attendanceController
+                                                            .siteAttendanceData[
+                                                                index]
+                                                            .dateOfAttendance ??
+                                                        "");
+                                              }else{
+                                                workReportController.callWorkReportList(
+                                                    attendanceController
+                                                        .siteAttendanceData[
+                                                    index]
+                                                        .officeId
+                                                        .toString(),
+                                                    attendanceController
+                                                        .siteAttendanceData[
+                                                    index]
+                                                        .dateOfAttendance ??
+                                                        "");
+                                              }
                                             },
                                             borderColor: color_primary,
                                             borderWidth: 0,
                                           ),
                                         ),
-
-
-
                                       ],
                                     ),
 
                                     SizedBox(
                                       height: 12,
                                     ),
-
 
                                     // InkWell(
                                     //   onTap: () {

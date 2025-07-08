@@ -329,12 +329,12 @@ class _EmpHomePageState extends State<EmpHomePage> {
                         },
                         child: _buildGridItem(
                             'Calibration Certificates', Icons.compass_calibration)),
-                    InkWell(
-                        onTap: () {
-                          Get.to(WorkReportListScreen());
-                        },
-                        child:
-                        _buildGridItem('Work Report', Icons.work_history_outlined)),
+                    // InkWell(
+                    //     onTap: () {
+                    //       Get.to(WorkReportListScreen());
+                    //     },
+                    //     child:
+                    //     _buildGridItem('Work Report', Icons.work_history_outlined)),
                     InkWell(
                         onTap: () {
                           Get.to(EmpSiteAttendanceForWorkReportCalenderScreen());
