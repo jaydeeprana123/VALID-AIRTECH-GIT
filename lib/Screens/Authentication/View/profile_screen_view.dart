@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:valid_airtech/Screens/Authentication/Model/change_password_request.dart';
 import 'package:valid_airtech/Screens/Authentication/View/change_password_screen_view.dart';
 import 'package:valid_airtech/Screens/Authentication/View/edit_profile_screen_view.dart';
+import 'package:valid_airtech/Screens/WorkmanProfile/View/edit_workman_screen.dart';
 import 'package:valid_airtech/Styles/my_colors.dart';
 import 'package:get/get.dart';
 import '../../../Styles/app_text_style.dart';
+import '../../WorkmanProfile/Controller/workman_profile_controller.dart';
 import '../Controller/login_controller.dart';
 
 
@@ -17,7 +19,8 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late LoginController loginController;
-
+  WorkmanProfileController workmanController =
+  Get.put(WorkmanProfileController());
   @override
   void initState() {
     super.initState();
@@ -58,47 +61,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
-        body:Obx(() => Column(
+        body:Obx(() => Stack(
           children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              color: color_primary,
-              child: Center(
-                child: Text(
-                  "Profile",
-                  style: AppTextStyle.largeRegular.copyWith(fontSize: 16, color: Colors.white),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.grey[300],
-              child: const Icon(Icons.person, size: 50, color: Colors.grey),
-            ),
-            const SizedBox(height: 15),
-            profileText(loginController.loginData.value.name??"", "Name"),
-            profileText(loginController.loginData.value.userName??"", "User Name"),
-            profileText(loginController.loginData.value.email??"", "Email"),
-            profileText(loginController.loginData.value.mobileNumber??"", "Mobile Number"),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Column(
               children: [
-                profileButton(Icons.edit, "Edit Profile", color_primary, true),
-                const SizedBox(width: 10),
-                profileButton(Icons.help_outline, "Change Password", color_primary, false),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  color: color_primary,
+                  child: Center(
+                    child: Text(
+                      "Profile",
+                      style: AppTextStyle.largeRegular.copyWith(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.grey[300],
+                  child: const Icon(Icons.person, size: 50, color: Colors.grey),
+                ),
+                const SizedBox(height: 15),
+                profileText(loginController.loginData.value.name??"", "Name"),
+                profileText(loginController.loginData.value.userName??"", "User Name"),
+                profileText(loginController.loginData.value.email??"", "Email"),
+                profileText(loginController.loginData.value.mobileNumber??"", "Mobile Number"),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    profileButton(loginController.loginData.value.roleId == 1?Icons.edit:Icons.remove_red_eye, loginController.loginData.value.roleId == 1?"Edit Profile":"View Profile", color_primary, true),
+                    const SizedBox(width: 10),
+                    profileButton(Icons.help_outline, "Change Password", color_primary, false),
+                  ],
+                ),
+                const Spacer(),
+                BottomNavigationBar(
+                  items: const [
+                    BottomNavigationBarItem(icon: Icon(Icons.menu), label: ""),
+                    BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
+                    BottomNavigationBarItem(icon: Icon(Icons.arrow_back), label: ""),
+                  ],
+                ),
               ],
             ),
-            const Spacer(),
-            BottomNavigationBar(
-              items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.menu), label: ""),
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
-                BottomNavigationBarItem(icon: Icon(Icons.arrow_back), label: ""),
-              ],
-            ),
+
+            if(workmanController.isLoading.value)Center(child: CircularProgressIndicator(),)
           ],
         )),
       ),
@@ -123,10 +132,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget profileButton(IconData icon, String label, Color color, bool isEdit) {
     return ElevatedButton.icon(
-      onPressed: () {
+      onPressed: () async{
 
         if(isEdit){
-          Get.to(EditProfileScreen());
+
+          if(loginController.loginData.value.roleId == 1){
+            Get.to(EditProfileScreen());
+          }else{
+
+
+            await workmanController.getLoginData();
+            workmanController.callWorkmanDetail();
+          }
+
         }else{
           Get.to(ChangePasswordScreen());
         }

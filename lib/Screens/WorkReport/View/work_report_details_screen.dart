@@ -64,6 +64,42 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(child: SectionHeader(title: 'Site Details')),
+
+            _buildSectionTitle('Site Details'),
+
+            SizedBox(height: 12,),
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Reporting Date",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                    , color: color_brown_title)),
+
+                Text(workReportController.selectedWorkReportData.value.date??"",style: AppTextStyle.largeBold.copyWith(fontSize: 16
+                    , color: Colors.black)),
+
+                SizedBox(height: 16,),
+
+
+                Text("Site Name",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                    , color: color_brown_title)),
+
+                Text(workReportController.selectedWorkReportData.value.siteName??"",style: AppTextStyle.largeBold.copyWith(fontSize: 16
+                    , color: Colors.black)),
+
+                SizedBox(height: 16,),
+
+
+                Text("Site Suffix",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                    , color: color_brown_title)),
+
+                Text(workReportController.selectedWorkReportData.value.siteSuffixName??"",style: AppTextStyle.largeBold.copyWith(fontSize: 16
+                    , color: Colors.black)),
+              ],
+            ),
+
+
+
             SizedBox(height: 8.0),
             InfoRow(label: 'Work Report Date', value: workReportController.selectedWorkReportData.value.date??""),
 
@@ -281,6 +317,15 @@ class ExpenseRow extends StatelessWidget {
   }
 }
 
+
+Widget _buildSectionTitle(String title) {
+  return Text(
+    title,
+    style:
+    AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
+  );
+}
+
 class ActionButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
@@ -299,5 +344,7 @@ class ActionButton extends StatelessWidget {
       child: Text(label, style: TextStyle(color: Colors.white),),
     );
   }
+
+
 }
 

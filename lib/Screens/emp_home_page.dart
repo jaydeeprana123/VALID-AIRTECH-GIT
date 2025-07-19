@@ -41,7 +41,7 @@ class EmpHomePage extends StatefulWidget {
 
 class _EmpHomePageState extends State<EmpHomePage> {
   String? selectedBloodGroup;
-  List<String> visitPlace = ["Office", "Site"];
+  // List<String> visitPlace = ["Office", "Site"];
 
 
   AttendanceController attendanceController =  Get.put(AttendanceController());
@@ -71,7 +71,7 @@ class _EmpHomePageState extends State<EmpHomePage> {
 
     printData("_initializeData", "_initializeData");
 
-    attendanceController.callAttendanceList();
+    attendanceController.callAttendanceList([]);
   }
 
   @override
@@ -135,28 +135,72 @@ class _EmpHomePageState extends State<EmpHomePage> {
                   children: [
                     _buildSectionTitle("Today's Attendance"),
                     SizedBox(height: 16),
-                    DropdownButton<String>(
-                      value: visitPlace.contains(attendanceController.selectedPlace)
-                          ? attendanceController.selectedPlace
-                          : null,
-                      hint: Text("Select Place"),
-                      isExpanded: true,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          attendanceController.selectedPlace = newValue;
-                          isAttendanceFilled = false;
-                          attendanceController.selectedOffice = null;
-                          attendanceController.selectedSite = null;
-                          attendanceController.statusOfAttendance = null;
-                        });
-                      },
-                      items: visitPlace.map((String group) {
-                        return DropdownMenuItem<String>(
-                          value: group,
-                          child: Text(group),
-                        );
-                      }).toList(),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ListTile(
+                            title: Text('Site'),
+                            leading: Radio<String>(
+                              value: 'Site',
+                              groupValue: attendanceController.selectedPlace,
+                              onChanged: (value) {
+                                setState(() {
+                                  attendanceController.selectedPlace = value!;
+                                  isAttendanceFilled = false;
+                                  attendanceController.selectedOffice = null;
+                                  attendanceController.selectedSite = null;
+                                  attendanceController.statusOfAttendance = null;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListTile(
+                            title: Text('Office'),
+                            leading: Radio<String>(
+                              value: 'Office',
+                              groupValue: attendanceController.selectedPlace,
+                              onChanged: (value) {
+                                setState(() {
+                                  attendanceController.selectedPlace = value!;
+                                  isAttendanceFilled = false;
+                                  attendanceController.selectedOffice = null;
+                                  attendanceController.selectedSite = null;
+                                  attendanceController.statusOfAttendance = null;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+
+                      ],
                     ),
+
+
+                    // DropdownButton<String>(
+                    //   value: visitPlace.contains(attendanceController.selectedPlace)
+                    //       ? attendanceController.selectedPlace
+                    //       : null,
+                    //   hint: Text("Select Place"),
+                    //   isExpanded: true,
+                    //   onChanged: (String? newValue) {
+                    //     setState(() {
+                    //       attendanceController.selectedPlace = newValue;
+                    //       isAttendanceFilled = false;
+                    //       attendanceController.selectedOffice = null;
+                    //       attendanceController.selectedSite = null;
+                    //       attendanceController.statusOfAttendance = null;
+                    //     });
+                    //   },
+                    //   items: visitPlace.map((String group) {
+                    //     return DropdownMenuItem<String>(
+                    //       value: group,
+                    //       child: Text(group),
+                    //     );
+                    //   }).toList(),
+                    // ),
 
 
                     SizedBox(height: 16),
@@ -316,19 +360,14 @@ class _EmpHomePageState extends State<EmpHomePage> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 20,
                   mainAxisSpacing: 20,
-                  childAspectRatio: 1.6,
+                  childAspectRatio: 2.0,
                   children: [
                     InkWell(
                         onTap: () {
                           Get.to(EmpPlanningScreen());
                         },
                         child: _buildGridItem('Planning', Icons.schedule)),
-                    InkWell(
-                        onTap: () {
-                          Get.to(EmpCalibrationListScreen());
-                        },
-                        child: _buildGridItem(
-                            'Calibration Certificates', Icons.compass_calibration)),
+
                     // InkWell(
                     //     onTap: () {
                     //       Get.to(WorkReportListScreen());
@@ -341,6 +380,13 @@ class _EmpHomePageState extends State<EmpHomePage> {
                         },
                         child:
                         _buildGridItem('Site Report', Icons.event_note)),
+
+                    InkWell(
+                        onTap: () {
+                          Get.to(EmpCalibrationListScreen());
+                        },
+                        child: _buildGridItem(
+                            'Calibration Certificates', Icons.compass_calibration)),
                     // InkWell(
                     //     onTap: () {
                     //       Get.to(EmpExpenseScreen());
@@ -378,23 +424,26 @@ class _EmpHomePageState extends State<EmpHomePage> {
   }
 
   Widget _buildGridItem(String title, IconData icon) {
-    return Container(
-      decoration: BoxDecoration(
-        color: color_primary,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color_secondary, size: 26),
-          SizedBox(height: 2),
-          Text(
-            title,
-            style: AppTextStyle.largeBold
-                .copyWith(fontSize: 14, color: color_secondary),
-            textAlign: TextAlign.center,
-          ),
-        ],
+    return SizedBox(
+      height: 80,
+      child: Container(
+        decoration: BoxDecoration(
+          color: color_primary,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color_secondary, size: 26),
+            SizedBox(height: 2),
+            Text(
+              title,
+              style: AppTextStyle.largeBold
+                  .copyWith(fontSize: 14, color: color_secondary),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

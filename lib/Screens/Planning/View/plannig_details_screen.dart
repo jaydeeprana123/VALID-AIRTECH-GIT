@@ -71,23 +71,33 @@ class _PlanningDetailsScreenState extends State<PlanningDetailsScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _sectionTitle('Planning Details'),
-            _infoColumn('Planning Date & Day', getDateWithDay(planningController.selectedPlanning.value.date??"")),
-            _infoColumn('Planning No.', (planningController.selectedPlanning.value.planning?[0].planningId??0).toString()),
+            
+            Row(
+              children: [
+                Expanded(child: _infoColumn('Date & Day', getDateWithDay(planningController.selectedPlanning.value.date??""))),
 
+                _infoColumn('Planning No.', (planningController.selectedPlanning.value.planning?[0].planningId??0).toString()),
+
+              ],
+            ),
+            
+                  
             Divider(),
             _sectionTitle('Workman Details'),
             for(int i=0; i< (planningController.selectedPlanning.value.workman??[]).length; i++)
               Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
                 _infoColumn('Workman Name', planningController.selectedPlanning.value.workman?[i].workmanName??""),
-                _infoColumn('Workman Id. No.', (planningController.selectedPlanning.value.workman?[i].workmanId??0).toString()),
+            //    _infoColumn('Workman Id. No.', (planningController.selectedPlanning.value.workman?[i].workmanId??0).toString()),
               ],),
 
 
             Divider(),
             _sectionTitle('Site Details'),
             _infoColumn('Site Name', planningController.selectedPlanning.value.headName??""),
+
+            _infoColumn('Site Suffix', planningController.selectedPlanning.value.siteSufix??""),
             _infoColumn('Site Address', planningController.selectedPlanning.value.siteHeadAddress??""),
-            _infoColumn('Suffix', planningController.selectedPlanning.value.siteSufix??""),
+
             _infoColumn('Department', planningController.selectedPlanning.value.headDepartmentName??""),
             _infoColumn('Contact Person Name', planningController.selectedPlanning.value.headContactName??""),
             _infoColumn('Email Id', planningController.selectedPlanning.value.headEmail??""),
@@ -99,9 +109,9 @@ class _PlanningDetailsScreenState extends State<PlanningDetailsScreen> {
 
             for(int i=0; i< (planningController.selectedPlanning.value.instrument??[]).length; i++)
             Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
-              _infoColumn('Instrument Name', planningController.selectedPlanning.value.instrument?[i].headName??""),
-              _infoColumn('Instrument Id. No.', (planningController.selectedPlanning.value.instrument?[i].instrumentId??0).toString()),
-              _infoColumn('Instrument Model No.', (planningController.selectedPlanning.value.instrument?[i].instrumentModelNo??0).toString()),
+              _infoColumn('Instrument Name & No', "${planningController.selectedPlanning.value.instrument?[i].headName??""} ( ${planningController.selectedPlanning.value.instrument?[i].instrumentId??0} )"),
+            //  _infoColumn('Instrument Id. No.', (planningController.selectedPlanning.value.instrument?[i].instrumentId??0).toString()),
+           //   _infoColumn('Instrument Model No.', (planningController.selectedPlanning.value.instrument?[i].instrumentModelNo??0).toString()),
 
             ],),
 
@@ -127,11 +137,8 @@ class _PlanningDetailsScreenState extends State<PlanningDetailsScreen> {
         padding: const EdgeInsets.symmetric(vertical: 12.0),
         child: Text(
           title,
-          style: TextStyle(
-            color: color_primary,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
+          style: AppTextStyle.largeBold.copyWith(fontSize: 18
+              , color: color_secondary),
         ),
       ),
     );

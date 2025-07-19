@@ -159,6 +159,7 @@ class APIRepository {
   Future<AttendanceListResponse> attendanceList(
       String token, String empId) async {
     try {
+
       Response response = await api.dio.get("/attendence/list",
           queryParameters: {'emp_id': empId}, // <-- This is the right way
           options: Options(
@@ -173,6 +174,8 @@ class APIRepository {
       rethrow;
     }
   }
+
+
 
   /// Get Attendance List
   Future<AttendanceListResponse> attendanceListByDate(
@@ -278,6 +281,30 @@ class APIRepository {
     try {
       var data = json.encode({
         "date": date,
+      });
+
+      Response response = await api.dio.post("/appointment/calender-list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return AppointmentListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Get Appointment List By Date
+  Future<AppointmentListResponse> appointmentListByMonth(
+      String token, String date, String endaData) async {
+    try {
+      var data = json.encode({
+        "date": date,
+        "end_date": endaData,
       });
 
       Response response = await api.dio.post("/appointment/calender-list",
@@ -781,6 +808,33 @@ class APIRepository {
     }
   }
 
+
+  /// Get Work report List
+  Future<WorkReportListResponse> empWorkReportList(
+      String token, String empId, String siteId, String date, String endDate) async {
+    try {
+      var data = json.encode({
+        "site_id": siteId,
+        "start_date": date,
+        "end_date": endDate
+      });
+
+      printData("dataa", data);
+
+      Response response = await api.dio.post("/employee-work-report/list",
+          data: data,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return WorkReportListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
 
   /// Get Work report List
   Future<WorkReportListResponse> adminWorkReportList(
@@ -2269,6 +2323,29 @@ class APIRepository {
     }
   }
 
+  /// Planning List
+  Future<PlanningListResponse> planningListByMonth(
+      String token, String date, String endDate) async {
+    try {
+      var user = {"date": date,"end_date": endDate};
+      var formData = FormData.fromMap(user);
+
+      Response response = await api.dio.post("/planning/calender-list",
+          data: formData,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return PlanningListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+
   /// Create Planning
   Future<BaseModel> createPlanning(
       String token, AddPlanningRequest addPlanningRequest) async {
@@ -2472,6 +2549,28 @@ class APIRepository {
   Future<WorkmanListResponse> workmanList(String token) async {
     try {
       Response response = await api.dio.get("/workman-profile/list",
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ));
+      dynamic postMaps = response.data;
+      return WorkmanListResponse.fromJson(postMaps);
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  /// Workman List
+  Future<WorkmanListResponse> workmanDetails(String token, String empId) async {
+    try {
+
+      var user = {'emp_id': empId};
+      var formData = FormData.fromMap(user);
+
+      Response response = await api.dio.get("/workman-profile/list",
+          data: formData,
           options: Options(
             headers: {
               'Content-Type': 'application/json',

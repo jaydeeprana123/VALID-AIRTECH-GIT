@@ -1,5 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
+
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
@@ -25,9 +27,18 @@ import '../../Sites/Model/employee_list_response.dart';
 
 class AddWorkReportScreen extends StatefulWidget {
 
+  final String date;
+  final String siteId;
+  final String siteName;
+
   AddWorkReportScreen({
     Key? key,
+  required this.date,
+    required this.siteId,
+    required this.siteName,
+
   }) : super(key: key);
+
 
   @override
   _AddWorkReportScreenState createState() => _AddWorkReportScreenState();
@@ -37,27 +48,12 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
 
   WorkReportController workReportController = Get.find<WorkReportController>();
 
-  DateTime? selectedDate;
   TimeOfDay? siteInTime;
   TimeOfDay? siteOutTime;
   String? attendanceStatus;
-  String? selectedSite;
   String? contactPerson;
 
 
-  void _pickDate() async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-      });
-    }
-  }
 
   void _pickTime(bool isInTime) async {
     TimeOfDay? picked = await showTimePicker(
@@ -81,8 +77,10 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+
+      workReportController.siteId = widget.siteId??"0";
+
       workReportController.callInstrumentList();
-      workReportController.callSiteList();
       workReportController.callConveyanceList();
       workReportController.callSiteAttendByList();
       workReportController.callTestPerformerList();
@@ -133,41 +131,44 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
               children: [
 
                 SizedBox(height: 12,),
 
+                _buildSectionTitle('Site Details'),
 
-                _buildDatePicker(),
+                SizedBox(height: 12,),
+
+                Column(
+                  children: [
+                    Text("Reporting Date",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                        , color: color_hint_text)),
+
+                      Text(widget.date,style: AppTextStyle.largeBold.copyWith(fontSize: 16
+                          , color: color_brown_title)),
+
+                    SizedBox(height: 16,),
+
+
+                    Text("Site Name",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                        , color: color_hint_text)),
+
+                    Text(widget.siteName,style: AppTextStyle.largeBold.copyWith(fontSize: 16
+                        , color: color_brown_title)),
+                  ],
+                ),
+
+                SizedBox(height: 16,),
+
+
+
+                // _buildDatePicker(),
 
                 // _buildTextFieldOnlyReadableDate(TextEditingController(text: widget.date), "Work Reporting Date"),
 
                 SizedBox(height: 16,),
 
-                DropdownButton<SiteData>(
-                  value: workReportController.siteList
-                      .contains(workReportController.siteId)
-                      ? workReportController.siteId
-                      : null,
-                  // Ensure valid value
-                  hint: Text("Select Site",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                      , color: color_hint_text)) ,
-
-                  isExpanded: true,
-                  onChanged: (SiteData? newValue) {
-                    setState(() {
-                      workReportController.siteId = newValue;
-                    });
-                  },
-                  items: workReportController.siteList.map((SiteData group) {
-                    return DropdownMenuItem<SiteData>(
-                      value: group,
-                      child: Text(group.headName??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                          , color: blackText),),
-                    );
-                  }).toList(),
-                ),
-                SizedBox(height: 12,),
 
                 // DropdownButton<SiteAttendByData>(
                 //   value: workReportController.siteAttendByList
@@ -197,18 +198,40 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
 
                 _buildSectionTitle('Site Attend By'),
 
-                DropDownMultiSelect<SiteAttendByData>(
-                  options: workReportController.siteAttendByList,
-                  selectedValues: workReportController.selectedSiteAttendByList,
-                  onChanged: (List<SiteAttendByData> values) {
 
-                    workReportController.selectedSiteAttendListInString = values.toString();
-                    printData("selected", values.toString());
-                  //  workReportController.updateSelectedSiteAttendByList(values.toString().split(','));
-
+                MultiSelectDialogField<SiteAttendByData>(
+                  items: workReportController.siteAttendByList
+                      .map((item) => MultiSelectItem<SiteAttendByData>(item, item.name??""))
+                      .toList(),
+                  initialValue: workReportController.selectedSiteAttendByList,
+                  onConfirm: (List<SiteAttendByData> selected) {
+                    workReportController.selectedSiteAttendByList.value = selected;
+                    workReportController.selectedSiteAttendListInString =
+                        selected.map((e) => e.name).join(', ');
                   },
-
+                  chipDisplay: MultiSelectChipDisplay<SiteAttendByData>(
+                    chipColor: Colors.blue.shade100,
+                    textStyle: TextStyle(color: Colors.black),
+                    onTap: (item) {
+                      workReportController.selectedSiteAttendByList.remove(item);
+                    },
+                  ),
+                  buttonText: Text("Select Site Attendees"),
                 ),
+
+
+                // DropDownMultiSelect<SiteAttendByData>(
+                //   options: workReportController.siteAttendByList,
+                //   selectedValues: workReportController.selectedSiteAttendByList,
+                //   onChanged: (List<SiteAttendByData> values) {
+                //
+                //     workReportController.selectedSiteAttendListInString = values.toString();
+                //     printData("selected", values.toString());
+                //   //  workReportController.updateSelectedSiteAttendByList(values.toString().split(','));
+                //
+                //   },
+                //
+                // ),
 
 
                 SizedBox(height: 8,),
@@ -296,7 +319,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                 SizedBox(height: 16,),
 
                 _buildTextField(workReportController.controllerNameOfWitnessPerson.value, "Name Of Witness Person"),
-
+                SizedBox(height: 20,),
                 _buildSectionTitle('Comments'),
 
                 SizedBox(height: 4,),
@@ -351,7 +374,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                   ),
                 ),
 
-                SizedBox(height: 16,),
+                SizedBox(height: 20,),
 
                 _buildSectionTitle('Given Service & Status'),
 
@@ -685,10 +708,6 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                     textColor: Colors.white,
                     onCustomButtonPressed: () async {
 
-                      if (selectedDate == null) {
-                        snackBar(context, "Please select date");
-                        return;
-                      }
 
                       if(workReportController.controllerNameOfContactPerson.value.text.isEmpty){
                         snackBar(context, "Please enter Contact person");
@@ -737,7 +756,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
 
                       printData("seletced", workReportController.selectedSiteAttendListInString??"");
 
-                      workReportController.callCreateWorkReportList(DateFormat('dd-MM-yyyy').format(selectedDate!), (workReportController.siteId?.id??0).toString());
+                      workReportController.callCreateWorkReportList(widget.date, widget.siteId);
 
                     },
                     borderColor: color_primary,
@@ -762,28 +781,6 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
     );
   }
 
-  Widget _buildDatePicker() {
-    return GestureDetector(
-      onTap: _pickDate,
-      child: Container(
-        padding: EdgeInsets.only(bottom: 4),
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: Colors.grey), // Bottom-only border
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(selectedDate == null ? 'Select Work Reporting Date' : DateFormat('dd/MM/yyyy').format(selectedDate!),
-                style: AppTextStyle.largeMedium.copyWith(fontSize: 15
-                    , color: selectedDate == null ?color_hint_text:Colors.black)),
-            Icon(Icons.calendar_month_sharp, color: Colors.red),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildDropdown(List<String> items, String? selectedValue, Function(String?) onChanged, String hint) {
     return DropdownButtonFormField<String>(

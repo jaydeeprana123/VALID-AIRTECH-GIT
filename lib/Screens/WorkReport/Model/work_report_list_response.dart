@@ -42,6 +42,8 @@ class WorkReportData {
   int? id;
   dynamic attendenceId;
   int? siteId;
+  String? siteName;
+  String? siteSuffixName;
   String? date;
   String? contactName;
   dynamic train;
@@ -69,6 +71,8 @@ class WorkReportData {
     this.id,
     this.attendenceId,
     this.siteId,
+    this.siteName,
+    this.siteSuffixName,
     this.date,
     this.contactName,
     this.train,
@@ -97,6 +101,8 @@ class WorkReportData {
     id: json["id"],
     attendenceId: json["attendence_id"],
     siteId: json["site_id"],
+    siteName: json["site_name"],
+    siteSuffixName: json["site_sufix_name"],
     date: json["date"],
     contactName: json["contact_name"],
     train: json["train"],
@@ -125,6 +131,8 @@ class WorkReportData {
     "id": id,
     "attendence_id": attendenceId,
     "site_id": siteId,
+    "site_name": siteName,
+    "site_sufix_name": siteSuffixName,
     "date": date,
     "contact_name": contactName,
     "train": train,

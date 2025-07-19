@@ -147,9 +147,9 @@ class _AddWorkmanScreenState extends State<AddWorkmanScreen> {
                 ),
 
 
-                _buildTextField(
+                _buildTextFieldOnlyNumber(
                     workmanController.workmanPasswordController.value,
-                    "Workman Password"
+                    "Workman Pin"
                 ),
 
 
@@ -232,7 +232,7 @@ class _AddWorkmanScreenState extends State<AddWorkmanScreen> {
                   height: 16,
                 ),
 
-                _buildTextField(
+                _buildTextFieldOnlyNumber(
                     workmanController.aadharCardNoController.value,
                     "Aadhar Card No."
                 ),
@@ -655,6 +655,30 @@ class _AddWorkmanScreenState extends State<AddWorkmanScreen> {
     );
   }
 
+  Widget _buildTextFieldOnlyNumber(TextEditingController controller, String hint) {
+    return TextField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(bottom: 0),
+        alignLabelWithHint: true,
+        labelText: hint,
+        // Display hint as title when typing
+        hintText: hint,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // Auto float when typing
+        border: UnderlineInputBorder(),
+        hintStyle: AppTextStyle.largeRegular
+            .copyWith(fontSize: 16, color: color_hint_text),
+
+        labelStyle: AppTextStyle.largeRegular
+            .copyWith(fontSize: 16, color: color_hint_text),
+      ),
+    );
+  }
+
+
   Widget _buildMultilineTextField(TextEditingController controller, String hint) {
     return TextField(
       controller: controller,
@@ -707,7 +731,7 @@ class _AddWorkmanScreenState extends State<AddWorkmanScreen> {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime(1900),
       lastDate: DateTime(2100),
     );
     if (picked != null && picked != selectedDate) {
@@ -782,19 +806,6 @@ class _AddWorkmanScreenState extends State<AddWorkmanScreen> {
       workmanController.workmanNoController.value: "Please enter workman number",
       workmanController.permanentAddressController.value: "Please enter permanent address",
       workmanController.residentAddressController.value: "Please enter resident address",
-      workmanController.aadharCardNoController.value: "Please enter Aadhar number",
-      workmanController.licenseNoController.value: "Please enter license number",
-      workmanController.epfNoController.value: "Please enter EPF number",
-      workmanController.esiNoController.value: "Please enter ESI number",
-      workmanController.bankNameController.value: "Please enter bank name",
-      workmanController.ifscCodeController.value: "Please enter IFSC code",
-      workmanController.accountNoController.value: "Please enter account number",
-      workmanController.fatherNameController.value: "Please enter father’s name",
-      workmanController.fatherAadharCardNoController.value: "Please enter father’s Aadhar number",
-      workmanController.motherNameController.value: "Please enter mother’s name",
-      workmanController.motherAadharCardNoController.value: "Please enter mother’s Aadhar number",
-      workmanController.wifeNameController.value: "Please enter wife’s name",
-      workmanController.wifeAadharCardNoController.value: "Please enter wife’s Aadhar number",
       workmanController.startTimeController.value: "Please enter start time",
       workmanController.endTimeController.value: "Please enter end time",
     };

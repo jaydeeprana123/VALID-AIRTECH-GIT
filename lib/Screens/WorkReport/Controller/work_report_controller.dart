@@ -38,7 +38,7 @@ class WorkReportController extends GetxController {
   APIRepository postRepository = APIRepository();
   RxBool isEdit = false.obs;
 
-  SiteData? siteId;
+  String? siteId;
   SiteAttendByData? siteAttendByData;
   String? conveyThrough;
 
@@ -63,8 +63,11 @@ class WorkReportController extends GetxController {
   RxList<String> removedServiceStatusIds = <String>[].obs;
 
   RxList<String> removedBillIds = <String>[].obs;
+
   // RxList<WorkReportExpensesBill> billsList = <WorkReportExpensesBill>[].obs;
   RxList<WorkReportData> workReportList = <WorkReportData>[].obs;
+  RxList<WorkReportData> workReportListByDates = <WorkReportData>[].obs;
+
   RxList<String> conveyThroughList =
       ["Bike", "Auto Rikshaw", "Car", "Bus", "Train", "Other"].obs;
   RxList<String> sheetStatusList = ["Pending", "Complete"].obs;
@@ -101,7 +104,6 @@ class WorkReportController extends GetxController {
 
   Rx<LoginData> loginData = LoginData().obs;
 
-
   Future getLoginData() async {
     loginData.value =
         await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel) ??
@@ -126,8 +128,8 @@ class WorkReportController extends GetxController {
     toDateEditingController.value.text = todayDate;
   }
 
-
-  Future<void> updateSelectedSiteAttendByList(List<String> selectedNames) async{
+  Future<void> updateSelectedSiteAttendByList(
+      List<String> selectedNames) async {
     final selected = siteAttendByList
         .where((item) => selectedNames.contains(item.name))
         .toList();
@@ -135,22 +137,22 @@ class WorkReportController extends GetxController {
     selectedSiteAttendByList.value = selected;
   }
 
-
   /// Workman list api call
   Future<void> callWorkmanList() async {
     try {
       isLoading.value = true;
 
-      WorkmanListResponse response = await postRepository.workmanList(loginData.value.token??"");
+      WorkmanListResponse response =
+          await postRepository.workmanList(loginData.value.token ?? "");
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
-        workmanList.value = (response.data??[]);
+      if (response.status ?? false) {
+        workmanList.value = (response.data ?? []);
       } else if (response.code == 401) {
         Helper().logout();
-      }else {
+      } else {
         Get.snackbar("Error", response.message ?? "Something went wrong");
       }
     } catch (ex) {
@@ -274,13 +276,16 @@ class WorkReportController extends GetxController {
   }
 
   /// Work report list api call
-  Future<void> callWorkReportList(String siteId, String date) async {
+  Future<void> callWorkReportList(String siteId, String date, String startDate, String endDate, String siteName) async {
     printData("callWorkReportList", "callWorkReportList");
     try {
       isLoading.value = true;
 
       WorkReportListResponse response = await postRepository.workReportList(
-          loginData.value.token ?? "", loginData.value.id.toString(), siteId, date);
+          loginData.value.token ?? "",
+          loginData.value.id.toString(),
+          siteId,
+          date);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
@@ -290,19 +295,51 @@ class WorkReportController extends GetxController {
 
         printData("ahi aayo", "val");
 
-        if((response.data??[]).isEmpty){
-          Get.to(AddWorkReportScreen());
-
-        }else{
+        if ((response.data ?? []).isEmpty) {
+          Get.to(AddWorkReportScreen(date: date,siteId: siteId,siteName: siteName,))?.then((value) {
+            callEmployeeWorkReportListByMonth(siteId, startDate, endDate);
+          });
+        } else {
           selectedWorkReportData.value = workReportList[0];
           Get.to(WorkReportDetailsScreen());
         }
-
       } else if (response.code == 401) {
         Helper().logout();
-      }else if (response.code == 404) {
-        Get.to(AddWorkReportScreen());
+      } else if (response.code == 404) {
+        Get.to(AddWorkReportScreen(date: date,siteId: siteId,siteName: siteName,));
       }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Employee Work report list api call
+  Future<void> callEmployeeWorkReportListByMonth(
+      String siteId, String date, String endDate) async {
+    printData("callWorkReportList", "callWorkReportList");
+    try {
+      isLoading.value = true;
+      workReportListByDates.clear();
+      WorkReportListResponse response = await postRepository.empWorkReportList(
+          loginData.value.token ?? "",
+          loginData.value.id.toString(),
+          siteId,
+          date,
+          endDate);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        workReportListByDates.value = response.data ?? [];
+      } else if (response.code == 401) {
+        Helper().logout();
+      } else if (response.code == 404) {}
     } catch (ex) {
       if (ex is DioException) {
         errorMessage.value = ex.type.toString();
@@ -375,8 +412,8 @@ class WorkReportController extends GetxController {
     try {
       isLoading.value = true;
 
-      TestByPerformanceListResponse response =
-      await postRepository.adminTestPerformList(loginData.value.token ?? "");
+      TestByPerformanceListResponse response = await postRepository
+          .adminTestPerformList(loginData.value.token ?? "");
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
@@ -402,8 +439,8 @@ class WorkReportController extends GetxController {
     try {
       isLoading.value = true;
 
-      TestByPerformanceListResponse response =
-          await postRepository.adminTestPerformList(loginData.value.token ?? "");
+      TestByPerformanceListResponse response = await postRepository
+          .adminTestPerformList(loginData.value.token ?? "");
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
@@ -479,26 +516,24 @@ class WorkReportController extends GetxController {
       isLoading.value = true;
 
       BaseModel response = await postRepository.updateWorkReport(
-        loginData.value.token ?? "",
-        id,
-        date,
-        loginData.value.id.toString(),
-        siteId,
-        selectedSiteAttendByList,
-        remarksList,
-        conveyThrough,
-        controllerOther.value.text,
-        serviceStatusList,
-        sheetStatusList,
-        conveyThroughList,
-        (conveyanceData?.id ?? 0).toString(),
-        (serviceByNatureData?.id ?? 0).toString(),
-        controllerNameOfContactPerson.value.text,
-        controllerNameOfWitnessPerson.value.text,
+          loginData.value.token ?? "",
+          id,
+          date,
+          loginData.value.id.toString(),
+          siteId,
+          selectedSiteAttendByList,
+          remarksList,
+          conveyThrough,
+          controllerOther.value.text,
+          serviceStatusList,
+          sheetStatusList,
+          conveyThroughList,
+          (conveyanceData?.id ?? 0).toString(),
+          (serviceByNatureData?.id ?? 0).toString(),
+          controllerNameOfContactPerson.value.text,
+          controllerNameOfWitnessPerson.value.text,
           removedRemarkIds,
-          removedServiceStatusIds
-
-      );
+          removedServiceStatusIds);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));

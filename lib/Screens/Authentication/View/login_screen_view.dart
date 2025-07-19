@@ -116,11 +116,13 @@ class _LoginScreenPageState extends State<LoginScreenView> {
                                       TextField(
                                         controller: loginController.passwordController.value,
                                         obscureText: true,
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                         decoration: InputDecoration(
                                           contentPadding: EdgeInsets.only(bottom: 0),
                                           alignLabelWithHint: true,
-                                          hintText: 'Password',
-                                          labelText: "Password",
+                                          hintText: 'Pin',
+                                          labelText: "Pin",
                                           border: UnderlineInputBorder(),
                                           hintStyle: AppTextStyle.largeRegular.copyWith(fontSize: 16
                                               , color: color_hint_text) ,

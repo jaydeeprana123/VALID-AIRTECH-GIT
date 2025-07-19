@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:valid_airtech/Screens/Conveyance/Model/conveyance_list_response.dart';
 
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/add_childern_model.dart';
+import 'package:valid_airtech/Screens/WorkmanProfile/View/edit_workman_screen.dart';
+import 'package:valid_airtech/Screens/WorkmanProfile/View/workman_details_screen.dart';
 
 import '../../../RepoDB/repositories/api_repository.dart';
 import '../../../Widget/common_widget.dart';
@@ -95,6 +97,39 @@ class WorkmanProfileController extends GetxController {
 
       if (response.status ?? false) {
         workmanList.value = response.data ?? [];
+      } else if (response.code == 401) {
+        Helper().logout();
+      } else {
+        Get.snackbar("Error", response.message ?? "Something went wrong");
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+  /// Workman Details api call
+  void callWorkmanDetail() async {
+    try {
+      isLoading.value = true;
+
+      WorkmanListResponse response =
+      await postRepository.workmanDetails(loginData.value.token ?? "",loginData.value.id.toString());
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status ?? false) {
+        workmanList.value = response.data ?? [];
+
+        selectedWorkman.value = response.data?[0]??WorkmanData();
+
+        Get.to(WorkmanDetailsScreen());
+
       } else if (response.code == 401) {
         Helper().logout();
       } else {

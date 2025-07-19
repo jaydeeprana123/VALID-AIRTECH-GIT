@@ -188,11 +188,11 @@ class _EmpPlanningListScreenState extends State<EmpPlanningListScreen> {
                                 style: AppTextStyle.largeMedium.copyWith(fontSize: 12
                                     , color: color_brown_title),
                               ),
-                              Text(
+                              (planningController.planningList[index].workman??[]).isNotEmpty? Text(
                                 (planningController.planningList[index].workman?[0].workmanName??"").toString(),
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
-                              ),
+                              ):SizedBox(),
 
 
                               const SizedBox(height: 12),

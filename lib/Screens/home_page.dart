@@ -84,7 +84,7 @@ class HomePage extends StatelessWidget {
               crossAxisCount: 2,
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
-              childAspectRatio: 1.6, // Adjust aspect ratio for rectangle shape
+              childAspectRatio: 2.0, // Adjust aspect ratio for rectangle shape
               children: [
 
                 InkWell(
@@ -121,17 +121,17 @@ class HomePage extends StatelessWidget {
                     },
                     child: _buildGridItem(
                         'Leave Request', Icons.note_add_outlined)),
-                InkWell(
-                    onTap: () {
-                      Get.to(NotesScreen());
-                    },
-                    child: _buildGridItem('Note', Icons.note_alt)),
+                // InkWell(
+                //     onTap: () {
+                //       Get.to(NotesScreen());
+                //     },
+                //     child: _buildGridItem('Note', Icons.note_alt)),
                 InkWell(
                     onTap: () {
                       Get.to(CircularListScreen());
                     },
                     child: _buildGridItem('Circular', Icons.newspaper)),
-                _buildGridItem('Query', Icons.contact_support),
+                // _buildGridItem('Query', Icons.contact_support),
               ],
             ),
           ),

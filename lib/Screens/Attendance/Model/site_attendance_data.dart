@@ -12,6 +12,8 @@ class SiteAttendanceData {
   String? siteName;
   String? inTime;
   String? outTime;
+  bool isWorkReportAvail = false;
+
 
   SiteAttendanceData({
     this.dateOfAttendance,

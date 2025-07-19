@@ -63,6 +63,7 @@ dev_dependencies:
   permission_handler: ^11.3.0
   path_provider: ^2.1.2
   webview_flutter_android: ^3.10.2
+  multi_select_flutter: ^4.1.3
 
 
 
@@ -99,19 +100,19 @@ flutter:
   fonts:
     - family: PublicSans SemiBold
       fonts:
-        - asset: fonts/PublicSans-SemiBold.ttf
+        - asset: fonts/TimesSemibold.otf
     - family: PublicSans Medium
       fonts:
-        - asset: fonts/PublicSans-Medium.ttf
+        - asset: fonts/TimesRegular.ttf
     - family: PublicSans Regular
       fonts:
-        - asset: fonts/PublicSans-Regular.ttf
+        - asset: fonts/TimesSemibold.otf
     - family: PublicSans Bold
       fonts:
-        - asset: fonts/PublicSans-Bold.ttf
+        - asset: fonts/TimesSemibold.otf
     - family: PublicSans Black
       fonts:
-        - asset: fonts/PublicSans-Black.ttf
+        - asset: fonts/TimesSemibold.otf
     - family: PublicSans Light
       fonts:
         - asset: fonts/PublicSans-Light.ttf

@@ -28,12 +28,12 @@ import '../../../Widget/CommonButton.dart';
 import '../../Sites/Model/add_contact_model.dart';
 import '../Model/workman_list_response.dart';
 
-class EditWorkmanScreen extends StatefulWidget {
+class WorkmanDetailsScreen extends StatefulWidget {
   @override
-  _EditWorkmanScreenState createState() => _EditWorkmanScreenState();
+  _WorkmanDetailsScreenState createState() => _WorkmanDetailsScreenState();
 }
 
-class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
+class _WorkmanDetailsScreenState extends State<WorkmanDetailsScreen> {
   WorkmanProfileController workmanController =
       Get.find<WorkmanProfileController>();
   String? selectedInstrumentName;
@@ -143,44 +143,12 @@ class _EditWorkmanScreenState extends State<EditWorkmanScreen> {
           },
         ),
         title: Text(
-          'Workman Details',
+          'My Profile',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.edit_calendar, color: color_secondary),
-            onPressed: () {
-              workmanController.isEdit.value = true;
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.delete_forever, color: color_secondary),
-            onPressed: () {
-              Get.defaultDialog(
-                  title: "DELETE",
-                  middleText:
-                      "Are you sure want to delete this Workman Profile?",
-                  barrierDismissible: false,
-                  titlePadding:
-                      const EdgeInsets.only(left: 20, right: 20, top: 10),
-                  textConfirm: "Yes",
-                  textCancel: "No",
-                  titleStyle: TextStyle(fontSize: 15),
-                  buttonColor: Colors.white,
-                  confirmTextColor: color_primary,
-                  onCancel: () {
-                    Navigator.pop(context);
-                  },
-                  onConfirm: () async {
-                    Navigator.pop(context);
-                    workmanController.callDeleteWorkman(
-                        workmanController.selectedWorkman.value.id.toString());
-                  });
-            },
-          ),
-        ],
+
       ),
       body: Obx(() => Stack(
             children: [

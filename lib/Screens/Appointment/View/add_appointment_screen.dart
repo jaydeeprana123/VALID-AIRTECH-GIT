@@ -68,7 +68,12 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
     super.initState();
 
     appointmentController.appointmentContactList.clear();
-    appointmentController.callSiteList();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      appointmentController.callSiteList();
+    });
+
+
   }
 
   @override
@@ -177,7 +182,7 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                           appointmentController.createAppointmentRequest.value.siteId = selectedSite;
                           appointmentController.createAppointmentRequest.value.headId = contactPerson;
                           appointmentController.createAppointmentRequest.value.date = DateFormat('dd-MM-yyyy').format(selectedDate!);
-                          appointmentController.callCreateAppointment();
+                          appointmentController.callCreateAppointment(context);
 
                         },
                         borderColor: color_primary,

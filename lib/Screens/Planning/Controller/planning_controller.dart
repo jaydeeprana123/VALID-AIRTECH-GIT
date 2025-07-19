@@ -101,7 +101,7 @@ class PlanningController extends GetxController {
 
 
   /// Service list api call
-  Future callServiceListList() async {
+  Future<void> callServiceListList() async {
     try {
       isLoading.value = true;
 
@@ -126,7 +126,7 @@ class PlanningController extends GetxController {
   }
 
   /// site list api call
-  Future callSiteList() async {
+  Future<void> callSiteList() async {
 
     printData("callSiteList", "callSiteList");
     try {
@@ -178,7 +178,7 @@ class PlanningController extends GetxController {
   }
 
   /// Head Instrument list api call
-  Future callHeadInstrumentList() async {
+  Future<void> callHeadInstrumentList() async {
     try {
       isLoading.value = true;
 
@@ -205,7 +205,7 @@ class PlanningController extends GetxController {
   }
 
   /// Instrument list api call
-  Future callInstrumentList() async {
+  Future<void> callInstrumentList() async {
     try {
       isLoading.value = true;
 
@@ -232,7 +232,7 @@ class PlanningController extends GetxController {
   }
 
   /// Head Conveyance list api call
-  Future callHeadConveyanceList() async {
+  Future<void> callHeadConveyanceList() async {
     try {
       isLoading.value = true;
 
@@ -257,7 +257,7 @@ class PlanningController extends GetxController {
   }
 
   /// Conveyance list api call
-  Future callConveyanceList() async {
+  Future<void> callConveyanceList() async {
     try {
       isLoading.value = true;
 
@@ -353,7 +353,7 @@ class PlanningController extends GetxController {
 
 
   /// Workman list api call
-  Future callWorkmanList() async {
+  Future<void> callWorkmanList() async {
     try {
       isLoading.value = true;
 
@@ -444,6 +444,31 @@ class PlanningController extends GetxController {
     try {
       isLoading.value = true;
       PlanningListResponse response = await postRepository.planningListByDate(loginData.value.token??"", date);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+
+      if (response.status??false) {
+        planningList.value = response.data??[];
+      }else if(response.code == 401){
+        Helper().logout();
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
+
+  /// Planning list by month api call
+  void callPlanningListByMonth(String date, String endDate) async {
+    try {
+      isLoading.value = true;
+      PlanningListResponse response = await postRepository.planningListByMonth(loginData.value.token??"", date,endDate);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));

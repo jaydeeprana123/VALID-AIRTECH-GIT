@@ -1,5 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
+
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
@@ -38,26 +40,13 @@ class EditWorkReportScreen extends StatefulWidget {
 class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
   WorkReportController workReportController = Get.find<WorkReportController>();
 
-  DateTime? selectedDate;
   TimeOfDay? siteInTime;
   TimeOfDay? siteOutTime;
   String? attendanceStatus;
   String? selectedSite;
   String? contactPerson;
 
-  void _pickDate() async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-      });
-    }
-  }
+
 
   void _pickTime(bool isInTime) async {
     TimeOfDay? picked = await showTimePicker(
@@ -84,47 +73,11 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async{
       await workReportController.callInstrumentList();
       await workReportController.callConveyanceList();
-      await workReportController.callSiteList();
       await workReportController.callSiteAttendByList();
       await workReportController.callTestPerformerList();
       await workReportController.callServiceByNatureByList();
       await workReportController.callWorkmanList();
 
-      if((workReportController.selectedWorkReportData.value.date??"").isNotEmpty){
-        DateFormat format = DateFormat("dd-MM-yyyy");
-        selectedDate = format.parse(workReportController.selectedWorkReportData.value.date??"");
-
-        setState(() {
-
-        });
-      }
-
-
-      /// Site
-      if ((workReportController.selectedWorkReportData.value.siteId ?? 0) != 0) {
-
-        printData("siteId", workReportController.selectedWorkReportData.value.siteId.toString());
-
-
-        for (int i = 0; i < (workReportController.siteList).length; i++) {
-
-          printData("workReportController.siteList[i].headId", workReportController.siteList[i].headId.toString());
-
-          if (workReportController.siteList[i].headId ==
-              workReportController.selectedWorkReportData.value.siteId) {
-            workReportController.siteId =
-            workReportController.siteList[i];
-
-            selectedSite = workReportController.selectedWorkReportData.value.siteId.toString();
-
-            printData("siteIdddddd", (workReportController.siteId?.headId??0).toString());
-
-            setState(() {
-
-            });
-          }
-        }
-      }
 
       workReportController.controllerNameOfContactPerson.value.text =
           workReportController.selectedWorkReportData.value.contactPerson ?? "";
@@ -154,7 +107,6 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
       }
 
 
-
       if ((workReportController.selectedWorkReportData.value.serviceNatureId ?? "")
           .isNotEmpty) {
         for (int i = 0; i < (workReportController.serviceByNatureList).length; i++) {
@@ -170,6 +122,22 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
         }
       }
 
+
+      workReportController.selectedSiteAttendByList.clear();
+      if ((workReportController.selectedWorkReportData.value.siteAttendBy ?? [])
+          .isNotEmpty) {
+        for (int i = 0; i < (workReportController.selectedWorkReportData.value.siteAttendBy??[]).length; i++) {
+
+          SiteAttendByData siteAttendByData = SiteAttendByData();
+          siteAttendByData.id = workReportController.selectedWorkReportData.value.siteAttendBy?[i].id;
+          siteAttendByData.name = workReportController.selectedWorkReportData.value.siteAttendBy?[i].userName;
+          siteAttendByData.isSelected = true;
+
+          workReportController.selectedSiteAttendByList.add(siteAttendByData);
+
+
+        }
+      }
 
 
       if ((workReportController.selectedWorkReportData.value.remark ?? [])
@@ -344,45 +312,40 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                       height: 12,
                     ),
 
-                    _buildTextFieldOnlyReadableDate(
-                        TextEditingController(text: DateFormat('dd/MM/yyyy').format(selectedDate??DateTime(2025))),
-                        "Work Reporting Date"),
+                    _buildSectionTitle('Site Details'),
 
-                    SizedBox(
-                      height: 16,
+                    SizedBox(height: 12,),
+
+                    Column(
+                      children: [
+                        Text("Reporting Date",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                            , color: color_hint_text)),
+
+                        Text(workReportController.selectedWorkReportData.value.date??"",style: AppTextStyle.largeBold.copyWith(fontSize: 16
+                            , color: color_brown_title)),
+
+                        SizedBox(height: 16,),
+
+
+                        Text("Site Name",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                            , color: color_hint_text)),
+
+                        Text(workReportController.selectedWorkReportData.value.siteName??"",style: AppTextStyle.largeBold.copyWith(fontSize: 16
+                            , color: color_brown_title)),
+
+                        SizedBox(height: 16,),
+
+
+                        Text("Site Suffix",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                            , color: color_hint_text)),
+
+                        Text(workReportController.selectedWorkReportData.value.siteSuffixName??"",style: AppTextStyle.largeBold.copyWith(fontSize: 16
+                            , color: color_brown_title)),
+                      ],
                     ),
 
 
 
-
-                    DropdownButton<SiteData>(
-                      value: workReportController.siteId,
-                      hint: Text(
-                        "Select Site",
-                        style: AppTextStyle.largeMedium.copyWith(
-                          fontSize: 16,
-                          color: color_hint_text,
-                        ),
-                      ),
-                      isExpanded: true,
-                      onChanged: (SiteData? newValue) {
-                        setState(() {
-                          workReportController.siteId = newValue;
-                        });
-                      },
-                      items: workReportController.siteList.map((SiteData group) {
-                        return DropdownMenuItem<SiteData>(
-                          value: group,
-                          child: Text(
-                            group.headName ?? "",
-                            style: AppTextStyle.largeMedium.copyWith(
-                              fontSize: 16,
-                              color: blackText,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
 
 
                     // DropdownButton<SiteData>(
@@ -438,17 +401,24 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
 
                     _buildSectionTitle('Site Attend By'),
 
-                    DropDownMultiSelect<SiteAttendByData>(
-                      options: workReportController.siteAttendByList,
-                      selectedValues: workReportController.selectedSiteAttendByList,
-                      onChanged: (List<SiteAttendByData> values) {
-
-                        workReportController.selectedSiteAttendListInString = values.toString();
-                        printData("selected", values.toString());
-                        //  workReportController.updateSelectedSiteAttendByList(values.toString().split(','));
-
+                    MultiSelectDialogField<SiteAttendByData>(
+                      items: workReportController.siteAttendByList
+                          .map((item) => MultiSelectItem<SiteAttendByData>(item, item.name??""))
+                          .toList(),
+                      initialValue: workReportController.selectedSiteAttendByList,
+                      onConfirm: (List<SiteAttendByData> selected) {
+                        workReportController.selectedSiteAttendByList.value = selected;
+                        workReportController.selectedSiteAttendListInString =
+                            selected.map((e) => e.name).join(', ');
                       },
-
+                      chipDisplay: MultiSelectChipDisplay<SiteAttendByData>(
+                        chipColor: Colors.blue.shade100,
+                        textStyle: TextStyle(color: Colors.black),
+                        onTap: (item) {
+                          workReportController.selectedSiteAttendByList.remove(item);
+                        },
+                      ),
+                      buttonText: Text("Select Site Attendees"),
                     ),
 
                     SizedBox(
@@ -569,7 +539,7 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                         workReportController
                             .controllerNameOfWitnessPerson.value,
                         "Name Of Witness Person"),
-
+                    SizedBox(height: 20,),
                     _buildSectionTitle('Comments'),
 
                     SizedBox(
@@ -642,7 +612,7 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                     ),
 
                     SizedBox(
-                      height: 16,
+                      height: 20,
                     ),
 
                     _buildSectionTitle('Given Service & Status'),
@@ -1072,10 +1042,6 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                         textColor: Colors.white,
                         onCustomButtonPressed: () async {
 
-                          if (selectedDate == null) {
-                            snackBar(context, "Please select date");
-                            return;
-                          }
 
                           if (workReportController.controllerNameOfContactPerson
                               .value.text.isEmpty) {
@@ -1121,7 +1087,7 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
 
 
                           workReportController.callUpdateWorkReportList(workReportController.selectedWorkReportData.value.id.toString(),
-                              DateFormat('dd-MM-yyyy').format(selectedDate!), (workReportController.siteId?.id??0).toString());
+                              workReportController.selectedWorkReportData.value.date??"" , (workReportController.selectedWorkReportData.value.siteId??0).toString());
                         },
                         borderColor: color_primary,
                         borderWidth: 0,
@@ -1147,33 +1113,6 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
     );
   }
 
-  Widget _buildDatePicker() {
-    return GestureDetector(
-      onTap: _pickDate,
-      child: Container(
-        padding: EdgeInsets.only(bottom: 4),
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: Colors.grey), // Bottom-only border
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-                selectedDate == null
-                    ? 'Select Work Reporting Date'
-                    : DateFormat('dd/MM/yyyy').format(selectedDate!),
-                style: AppTextStyle.largeMedium.copyWith(
-                    fontSize: 15,
-                    color:
-                        selectedDate == null ? color_hint_text : Colors.black)),
-            Icon(Icons.calendar_month_sharp, color: Colors.red),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildDropdown(List<String> items, String? selectedValue,
       Function(String?) onChanged, String hint) {

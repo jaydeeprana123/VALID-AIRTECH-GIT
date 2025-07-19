@@ -61,11 +61,13 @@ class LoginScreen extends StatelessWidget {
                   // Password Field
                   TextField(
                     obscureText: true,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(bottom: 0),
                       alignLabelWithHint: true,
-                      hintText: 'Password',
-                      labelText: "Password",
+                      hintText: 'Pin',
+                      labelText: "Pin",
                       border: UnderlineInputBorder(),
                       hintStyle: AppTextStyle.largeRegular.copyWith(fontSize: 16
                           , color: color_hint_text) ,

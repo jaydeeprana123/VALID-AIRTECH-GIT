@@ -90,13 +90,19 @@ class _AddPlanningScreenState extends State<AddPlanningScreen> {
     planningController.notesList.clear();
     planningController.notesList.add(NoteAddPlanning());
 
-    planningController.callSiteList();
-    planningController.callWorkmanList();
-    planningController.callHeadConveyanceList();
-    planningController.callConveyanceList();
-    planningController.callHeadInstrumentList();
-    planningController.callInstrumentList();
-    planningController.callServiceListList();
+
+    initApi();
+  }
+
+
+  Future<void> initApi()async{
+   await planningController.callSiteList();
+   await  planningController.callWorkmanList();
+   await  planningController.callHeadConveyanceList();
+   await planningController.callConveyanceList();
+   await  planningController.callHeadInstrumentList();
+   await planningController.callInstrumentList();
+   await  planningController.callServiceListList();
   }
 
   @override
@@ -112,7 +118,7 @@ class _AddPlanningScreenState extends State<AddPlanningScreen> {
           },
         ),
         title: Text(
-          'Add Appointment',
+          'Add Planning',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),

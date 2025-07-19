@@ -44,7 +44,7 @@ class AppointmentController extends GetxController {
 
 
   /// site list api call
-  Future callSiteList() async {
+  Future<void> callSiteList() async {
 
     printData("callSiteList", "callSiteList");
     try {
@@ -66,6 +66,8 @@ class AppointmentController extends GetxController {
       } else {
         errorMessage.value = ex.toString();
       }
+
+      printData("Error site", errorMessage.value);
       Get.snackbar('Error', errorMessage.value);
     }
   }
@@ -145,9 +147,34 @@ class AppointmentController extends GetxController {
     }
   }
 
+  /// Appointment list by date api call
+  void callAppointmentListByMonth(String date, String endDate) async {
+    try {
+      isLoading.value = true;
+
+      AppointmentListResponse response = await postRepository.appointmentListByMonth(loginData.value.token??"", date, endDate);
+      isLoading.value = false;
+
+      // Get.snackbar("response ",loginResponseToJson(response));
+      appointmentList.clear();
+      if (response.status??false) {
+        appointmentList.value = response.data??[];
+      }else if(response.code == 401){
+        Helper().logout();
+      }
+    } catch (ex) {
+      if (ex is DioException) {
+        errorMessage.value = ex.type.toString();
+      } else {
+        errorMessage.value = ex.toString();
+      }
+      Get.snackbar('Error', errorMessage.value);
+    }
+  }
+
 
   /// Appointment create api call
-  Future<void> callCreateAppointment() async {
+  Future<void> callCreateAppointment(BuildContext context) async {
     try {
       isLoading.value = true;
 
@@ -160,10 +187,17 @@ class AppointmentController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
-        Get.back();
-        Get.snackbar("Success", response.message??"");
-        printData("response", response.message??"");
+        // Get.back();
 
+        Navigator.pop(context);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message ?? "Success"),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
 
       } else if (response.code == 401) {
         Helper().logout();

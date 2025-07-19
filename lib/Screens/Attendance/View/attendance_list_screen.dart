@@ -51,7 +51,7 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
 
     printData("_initializeData", "_initializeData");
 
-    attendanceController.callAttendanceList();
+    attendanceController.callAttendanceList([]);
   }
 
   @override
