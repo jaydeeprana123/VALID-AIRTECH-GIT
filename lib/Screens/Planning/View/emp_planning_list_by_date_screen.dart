@@ -166,7 +166,7 @@ class _EmpPlanningListByDateScreenState extends State<EmpPlanningListByDateScree
                                             , color: color_brown_title),
                                       ),
                                       Text(
-                                        (planningController.planningList[index].planning?[0].planningId??0).toString(),
+                                        (planningController.planningList[index].workman??[]).isNotEmpty?(planningController.planningList[index].planning?[0].planningId??0).toString():"",
                                         style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                             , color: Colors.black),
                                       ),
@@ -196,7 +196,7 @@ class _EmpPlanningListByDateScreenState extends State<EmpPlanningListByDateScree
                                     , color: color_brown_title),
                               ),
                               Text(
-                                (planningController.planningList[index].workman?[0].workmanName??"").toString(),
+                                (planningController.planningList[index].workman??[]).isNotEmpty? (planningController.planningList[index].workman?[0].workmanName??"").toString():"",
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
                               ),
@@ -220,7 +220,7 @@ class _EmpPlanningListByDateScreenState extends State<EmpPlanningListByDateScree
                     );
                   },
                 ),
-              ):Expanded(child: Center(child: Text("No data found"),)),
+              ):(!planningController.isLoading.value)?Expanded(child: Center(child: Text("No data found"),)):SizedBox(),
             ],
           ),
 

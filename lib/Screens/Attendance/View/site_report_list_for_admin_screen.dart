@@ -31,38 +31,45 @@ import '../../../Styles/my_colors.dart';
 import '../../../utils/helper.dart';
 import '../../AdminLeaveRequest/View/leave_filter_dialog.dart';
 import '../../Notes/View/edit_note_screen.dart';
+import '../../WorkReport/Controller/work_report_controller.dart';
 import '../Controller/attendance_controller.dart';
 
-class AttendanceListForAdminReportScreen extends StatefulWidget {
-
+class SiteReportListForAdminScreen extends StatefulWidget {
   final String empId;
   final String empName;
-  AttendanceListForAdminReportScreen({
+
+  SiteReportListForAdminScreen({
     Key? key,
     required this.empId,
     required this.empName,
   }) : super(key: key);
 
   @override
-  _AttendanceListForAdminReportScreenState createState() => _AttendanceListForAdminReportScreenState();
+  _SiteReportListForAdminScreenState createState() =>
+      _SiteReportListForAdminScreenState();
 }
 
-class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAdminReportScreen> {
+class _SiteReportListForAdminScreenState
+    extends State<SiteReportListForAdminScreen> {
   AttendanceController attendanceController = Get.put(AttendanceController());
+  WorkReportController workReportController = Get.put(WorkReportController());
 
   @override
   void initState() {
     super.initState();
-    attendanceController.finalFilterAttendanceData.clear();
+    attendanceController.finalSiteAttendanceData.clear();
     _initializeData();
   }
 
   void _initializeData() async {
     await attendanceController.getLoginData();
-
+    await workReportController.getLoginData();
     printData("_initializeData", "AttendanceListForAdminReportScreen");
 
-    attendanceController.callAttendanceListForAdmin(widget.empId);
+    attendanceController.callEmployeeWorkReportListByMonth(
+        widget.empId,
+        attendanceController.fromDateEditingController.value.text,
+        attendanceController.toDateEditingController.value.text);
   }
 
   @override
@@ -96,7 +103,6 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
             children: [
               Column(
                 children: [
-
                   Container(
                     width: double.infinity,
                     color: color_primary,
@@ -110,8 +116,6 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
                       ),
                     ),
                   ),
-
-
                   Container(
                     margin: EdgeInsets.all(12),
                     child: Row(
@@ -121,12 +125,13 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
                             onTap: () async {
                               DateTime? dateTime = await Helper()
                                   .selectDateInYYYYMMDD(
-                                  context, SelectDateEnum.all.outputVal);
+                                      context, SelectDateEnum.all.outputVal);
 
                               setState(() {
-                                attendanceController.fromDateEditingController.value.text =
-                                    getDateFormatDDMMYYYYOnly((dateTime ?? DateTime(2023))
-                                    );
+                                attendanceController
+                                        .fromDateEditingController.value.text =
+                                    getDateFormatDDMMYYYYOnly(
+                                        (dateTime ?? DateTime(2023)));
                               });
                             },
                             child: Container(
@@ -139,13 +144,15 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
                                     width: 0.5,
                                     color: Colors.grey,
                                   )),
-                              child: Text(attendanceController
-                                  .fromDateEditingController.value.text.isNotEmpty
-                                  ? attendanceController
-                                  .fromDateEditingController.value.text
-                                  : "From",
-                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                    , color: color_brown_title),),
+                              child: Text(
+                                attendanceController.fromDateEditingController
+                                        .value.text.isNotEmpty
+                                    ? attendanceController
+                                        .fromDateEditingController.value.text
+                                    : "From",
+                                style: AppTextStyle.largeMedium.copyWith(
+                                    fontSize: 12, color: color_brown_title),
+                              ),
                             ),
                           ),
                         ),
@@ -154,13 +161,13 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
                             onTap: () async {
                               DateTime? dateTime = await Helper()
                                   .selectDateInYYYYMMDD(
-                                  context, SelectDateEnum.all.outputVal);
+                                      context, SelectDateEnum.all.outputVal);
 
                               setState(() {
                                 attendanceController
-                                    .toDateEditingController.value.text =
-                                    getDateFormatDDMMYYYYOnly((dateTime ?? DateTime(2023))
-                                    );
+                                        .toDateEditingController.value.text =
+                                    getDateFormatDDMMYYYYOnly(
+                                        (dateTime ?? DateTime(2023)));
                               });
                             },
                             child: Container(
@@ -174,21 +181,26 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
                                     width: 0.5,
                                     color: Colors.grey,
                                   )),
-                              child: Text(attendanceController
-                                  .toDateEditingController.value.text.isNotEmpty
-                                  ? attendanceController
-                                  .toDateEditingController.value.text
-                                  : "To",
-                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                    , color: color_brown_title),),
+                              child: Text(
+                                attendanceController.toDateEditingController
+                                        .value.text.isNotEmpty
+                                    ? attendanceController
+                                        .toDateEditingController.value.text
+                                    : "To",
+                                style: AppTextStyle.largeMedium.copyWith(
+                                    fontSize: 12, color: color_brown_title),
+                              ),
                             ),
                           ),
                         ),
                         InkWell(
-                          onTap: () async{
-                            attendanceController.finalFilterAttendanceData.value =  attendanceController
-                                .generateAttendanceWithAllDates(existingData: attendanceController.filterAttendanceData, fromDateStr: attendanceController.fromDateEditingController.value.text,
-                            toDateStr: attendanceController.toDateEditingController.value.text);
+                          onTap: () async {
+
+                            attendanceController.callEmployeeWorkReportListByMonth(
+                                widget.empId,
+                                attendanceController.fromDateEditingController.value.text,
+                                attendanceController.toDateEditingController.value.text);
+
                           },
                           child: Container(
                             alignment: Alignment.center,
@@ -211,63 +223,73 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
                       ],
                     ),
                   ),
-
-        attendanceController.finalFilterAttendanceData.isNotEmpty? Expanded(
+                  attendanceController.finalSiteAttendanceData.isNotEmpty?Expanded(
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                    
-                          SizedBox(height: 16,),
-                    
+                          SizedBox(
+                            height: 16,
+                          ),
+
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Column(
                               children: List.generate(
-                                attendanceController.finalFilterAttendanceData.length,
-                                    (index) {
-                                  final data = attendanceController.finalFilterAttendanceData[index];
-                    
+                                attendanceController
+                                    .finalSiteAttendanceData.length,
+                                (index) {
+                                  final data = attendanceController
+                                      .finalSiteAttendanceData[index];
+
                                   return Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12),
                                     child: Table(
-                                      border: TableBorder.all(color: Colors.grey.shade300),
-                                      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                      border: TableBorder.all(
+                                          color: Colors.grey.shade300),
+                                      defaultVerticalAlignment:
+                                          TableCellVerticalAlignment.middle,
                                       columnWidths: const {
                                         0: FixedColumnWidth(100),
-                                        1: FixedColumnWidth(100),
+                                        1: FixedColumnWidth(140),
                                         2: FixedColumnWidth(100),
-                                        3: FixedColumnWidth(100),
-                                        4: FixedColumnWidth(100),
+                                        3: FixedColumnWidth(140),
+                                        4: FixedColumnWidth(140),
                                         5: FixedColumnWidth(130),
                                         6: FixedColumnWidth(130),
                                         7: FixedColumnWidth(130),
                                       },
                                       children: [
-                    
-                                        if(index == 0)TableRow(
-                                          decoration: BoxDecoration(color: Colors.grey.shade200),
-                                          children: [
-                                            tableHeader('Date'),
-                                            tableHeader('Office In'),
-                                            tableHeader('Office Out'),
-                                            tableHeader('Site In'),
-                                            tableHeader('Site Out'),
-                                            tableHeader('Office Duration'),
-                                            tableHeader('Site Duration'),
-                                            tableHeader('Attendance Status'),
-                                          ],
-                                        ),
-                    
+                                        if (index == 0)
+                                          TableRow(
+                                            decoration: BoxDecoration(
+                                                color: Colors.grey.shade200),
+                                            children: [
+                                              tableHeader('Date'),
+                                              tableHeader('Site Name'),
+                                              tableHeader('Site Suffix'),
+                                              tableHeader('Conveyance Through'),
+                                              tableHeader('Service Nature'),
+                                              tableHeader('Site In'),
+                                              tableHeader('Site Out'),
+                                            ],
+                                          ),
                                         TableRow(
                                           children: [
-                                            tableCell(data.date ?? ''),
-                                            tableCell(data.overallOfficeInTime ?? ''),
-                                            tableCell(data.overallOfficeOutTime ?? ''),
-                                            tableCell(data.overallSiteInTime ?? ''),
-                                            tableCell(data.overallSiteOutTime ?? ''),
-                                            tableCell(data.officeDuration ?? ''),
-                                            tableCell(data.siteDuration ?? ''),
-                                            tableCell(data.attendanceStatus ?? ''),
+                                            tableCell(data.dateOfAttendance ?? ''),
+                                            tableCell(
+                                                data.siteName ?? ''),
+                                            tableCell(
+                                                data.workReportData?.siteSuffixName ??
+                                                    ''),
+                                            tableCell(
+                                                data.workReportData?.convenyenceThroughName ?? ''),
+                                            tableCell(
+                                                data.workReportData?.serviceNatureName ?? ''),
+                                            tableCell(
+                                                data.inTime ?? ''),
+                                            tableCell(data.outTime ?? ''),
+
                                           ],
                                         ),
                                       ],
@@ -277,15 +299,14 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
                               ),
                             ),
                           ),
-                    
-                    
-                          // attendanceController.finalFilterAttendanceData.isNotEmpty
+
+                          // attendanceController.finalSiteAttendanceData.isNotEmpty
                           //     ? Expanded(
                           //         child: ListView.builder(
                           //           padding: const EdgeInsets.all(10),
-                          //           itemCount: attendanceController.finalFilterAttendanceData.length,
+                          //           itemCount: attendanceController.finalSiteAttendanceData.length,
                           //           itemBuilder: (context, index) {
-                          //             final data = attendanceController.finalFilterAttendanceData[index];
+                          //             final data = attendanceController.finalSiteAttendanceData[index];
                           //
                           //             return Card(
                           //               elevation: 2,
@@ -528,9 +549,9 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
                       ),
                     ),
                   ):Expanded(
-          child: Center(
-          child: Text("No data found"),
-    )),
+                            child: Center(
+                            child: Text("No data found"),
+                          )),
                 ],
               ),
               if (attendanceController.isLoading.value)
@@ -542,14 +563,13 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
     );
   }
 
-
   Widget tableHeader(String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
       child: Text(
         text,
-        style: AppTextStyle.mediumRegular.copyWith(fontSize: 16
-    , color:  Colors.black54),
+        style: AppTextStyle.mediumRegular
+            .copyWith(fontSize: 16, color: Colors.black54),
         textAlign: TextAlign.center,
       ),
     );
@@ -557,16 +577,18 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
 
   Widget tableCell(String text) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0,vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
       child: Text(
         text,
-        style: AppTextStyle.mediumRegular.copyWith(fontSize: 14
-          , color:  text == "A"?Colors.red:text == "P"?Colors.green:Colors.black54),
-
+        style: AppTextStyle.mediumRegular.copyWith(
+            fontSize: 14,
+            color: text == "A"
+                ? Colors.red
+                : text == "P"
+                    ? Colors.green
+                    : Colors.black54),
         textAlign: TextAlign.center,
-
       ),
     );
   }
-
 }

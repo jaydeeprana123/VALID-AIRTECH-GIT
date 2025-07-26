@@ -38,11 +38,13 @@ class SiteByServiceLIstResponse {
 
 class SiteAttendByData {
   int? id;
+  int? mainId;
   String? name;
   bool isSelected = false;
 
   SiteAttendByData({
     this.id,
+    this.mainId,
     this.name,
   });
 
@@ -56,6 +58,16 @@ class SiteAttendByData {
     "name": name,
   };
 
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is SiteAttendByData &&
+              runtimeType == other.runtimeType &&
+              name == other.name;
+
+  @override
+  int get hashCode => name.hashCode;
 
   @override
   String toString() => name ?? '';

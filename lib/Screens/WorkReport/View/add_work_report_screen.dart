@@ -747,14 +747,14 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                       }
 
 
-                      String cleaned = workReportController.selectedSiteAttendListInString.toString().replaceAll('[', '').replaceAll(']', '');
+//                       String cleaned = workReportController.selectedSiteAttendListInString.toString().replaceAll('[', '').replaceAll(']', '');
+//
+// // Step 2: Split by comma and trim spaces
+//                       List<String> result = cleaned.split(',').map((e) => e.trim()).toList();
+//
+//                      await workReportController.updateSelectedSiteAttendByList(result);
 
-// Step 2: Split by comma and trim spaces
-                      List<String> result = cleaned.split(',').map((e) => e.trim()).toList();
-
-                     await workReportController.updateSelectedSiteAttendByList(result);
-
-                      printData("seletced", workReportController.selectedSiteAttendListInString??"");
+                      // printData("seletced", workReportController.selectedSiteAttendListInString??"");
 
                       workReportController.callCreateWorkReportList(widget.date, widget.siteId);
 

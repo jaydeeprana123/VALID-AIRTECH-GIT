@@ -33,12 +33,12 @@ import '../../AdminLeaveRequest/View/leave_filter_dialog.dart';
 import '../../Notes/View/edit_note_screen.dart';
 import '../Controller/attendance_controller.dart';
 
-class SiteAttendanceListForWorkReportScreen extends StatefulWidget {
+class SiteAttendanceListByDateScreen extends StatefulWidget {
 
   final String startDate;
   final String endDate;
 
-  SiteAttendanceListForWorkReportScreen({
+  SiteAttendanceListByDateScreen({
     Key? key,
     required this.startDate,
     required this.endDate,
@@ -46,12 +46,12 @@ class SiteAttendanceListForWorkReportScreen extends StatefulWidget {
 
 
   @override
-  _SiteAttendanceListForWorkReportScreenState createState() =>
-      _SiteAttendanceListForWorkReportScreenState();
+  _SiteAttendanceListByDateScreenState createState() =>
+      _SiteAttendanceListByDateScreenState();
 }
 
-class _SiteAttendanceListForWorkReportScreenState
-    extends State<SiteAttendanceListForWorkReportScreen> {
+class _SiteAttendanceListByDateScreenState
+    extends State<SiteAttendanceListByDateScreen> {
   AttendanceController attendanceController = Get.find<AttendanceController>();
   WorkReportController workReportController = Get.find<WorkReportController>();
 
@@ -68,7 +68,7 @@ class _SiteAttendanceListForWorkReportScreenState
 
     printData("_initializeData", "_initializeData");
 
-    attendanceController.callAttendanceList(workReportController.workReportListByDates);
+    attendanceController.callAttendanceListByDateForWorkReport(widget.startDate,workReportController.workReportListByDates);
   }
 
   @override
@@ -237,7 +237,8 @@ class _SiteAttendanceListForWorkReportScreenState
                                         SizedBox(
                                           height: 12,
                                         ),
-                                        Container(
+                                        if(attendanceController
+                                            .siteAttendanceData[index].headId != null) Container(
                                           width: 180,
                                           height: 40,
                                           // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -556,10 +557,7 @@ class _SiteAttendanceListForWorkReportScreenState
                           //   },
                           // ),
                           )
-                      : Expanded(
-                          child: Center(
-                          child: Text("No data found"),
-                        )),
+                      : (!attendanceController.isLoading.value && !workReportController.isLoading.value)?Expanded(child: Center(child: Text("No data found"),)):SizedBox(),
                 ],
               ),
               if (attendanceController.isLoading.value || workReportController.isLoading.value)

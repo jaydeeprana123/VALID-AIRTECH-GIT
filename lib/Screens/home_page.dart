@@ -70,7 +70,7 @@ class HomePage extends StatelessWidget {
                     height: 80,
                   ),
                 ),
-                Icon(Icons.calendar_month, color: color_secondary, size: 36),
+                // Icon(Icons.calendar_month, color: color_secondary, size: 36),
                 SizedBox(width: 16),
               ],
             ),
@@ -109,12 +109,12 @@ class HomePage extends StatelessWidget {
                     },
                     child: _buildGridItem(
                         'Calibration Certificates', Icons.compass_calibration)),
-                InkWell(
-                    onTap: () {
-                      Get.to(HomeAllowanceScreen());
-                    },
-                    child: _buildGridItem(
-                        'Allowance', Icons.monetization_on_sharp)),
+                // InkWell(
+                //     onTap: () {
+                //       Get.to(HomeAllowanceScreen());
+                //     },
+                //     child: _buildGridItem(
+                //         'Allowance', Icons.monetization_on_sharp)),
                 InkWell(
                     onTap: () {
                       Get.to(SelectWorkmanLeaveRequestScreen());
@@ -155,10 +155,10 @@ class HomePage extends StatelessWidget {
                               "AdminExpenseListScreen");
                         },
                         child: _buildFooterButton('Admin\nReport'))),
-                Expanded(
-                    child: InkWell(
-                        onTap: () {},
-                        child: _buildFooterButton('Workman\nRecord'))),
+                // Expanded(
+                //     child: InkWell(
+                //         onTap: () {},
+                //         child: _buildFooterButton('Workman\nRecord'))),
               ],
             ),
           ),

@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import '../../WorkReport/Model/work_report_list_response.dart';
+
 
 class SiteAttendanceData {
   String? dateOfAttendance;
@@ -13,6 +15,7 @@ class SiteAttendanceData {
   String? inTime;
   String? outTime;
   bool isWorkReportAvail = false;
+  WorkReportData? workReportData;
 
 
   SiteAttendanceData({
@@ -22,6 +25,7 @@ class SiteAttendanceData {
     this.siteName,
     this.inTime,
     this.outTime,
+    this.workReportData
   });
 
   // From JSON

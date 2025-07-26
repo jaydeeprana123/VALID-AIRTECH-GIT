@@ -31,12 +31,12 @@ import '../../Attendance/View/site_attendance_list_for_admin_screen.dart';
 import '../../Sites/Model/add_contact_model.dart';
 import '../../WorkmanProfile/Controller/workman_profile_controller.dart';
 
-class AdminReportScreen extends StatefulWidget {
+class EmployeeReportScreen extends StatefulWidget {
   @override
-  _AdminReportScreenState createState() => _AdminReportScreenState();
+  _EmployeeReportScreenState createState() => _EmployeeReportScreenState();
 }
 
-class _AdminReportScreenState extends State<AdminReportScreen> {
+class _EmployeeReportScreenState extends State<EmployeeReportScreen> {
   WorkmanProfileController workmanProfileController = Get.put(
       WorkmanProfileController());
   String? selectedWorkmanId;
@@ -54,7 +54,6 @@ class _AdminReportScreenState extends State<AdminReportScreen> {
 
       await workmanProfileController.getLoginData();
 
-      workmanProfileController.callWorkmanListForAdmin();
     });
   }
 
@@ -71,7 +70,7 @@ class _AdminReportScreenState extends State<AdminReportScreen> {
           },
         ),
         title: Text(
-          "Admin's Report",
+          "My Report",
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
@@ -95,38 +94,28 @@ class _AdminReportScreenState extends State<AdminReportScreen> {
                       height: 16,
                     ),
 
-
                     _buildSectionTitle("Attendance Report"),
 
-                    SizedBox(
-                      height: 4,
-                    ),
+                    // SizedBox(
+                    //   height: 4,
+                    // ),
+                    //
+                    // _buildDropdown(
+                    //     workmanProfileController.workmanList, selectedWorkmanId,
+                    //         (val) => setState(() => selectedWorkmanId = val),
+                    //     "Select Workman Name"),
 
-                    _buildDropdown(
-                        workmanProfileController.workmanList, selectedWorkmanId,
-                            (val) => setState(() => selectedWorkmanId = val),
-                        "Select Workman Name"),
-
-                    SizedBox(
-                      height: 16,
-                    ),
 
                     Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: 20, vertical: 20),
                       child: CommonButton(
-                        titleText: "Find",
+                        titleText: "Get",
                         textColor: Colors.white,
                         onCustomButtonPressed: () async {
                           String? empName = "";
-                          if(selectedWorkmanId != null || selectedWorkmanId != "0"){
-                            empName = getUserNameById(int.parse(selectedWorkmanId??"0"), workmanProfileController.workmanList);
-                          }
 
-                          Get.to(AttendanceListForAdminReportScreen(empId: (selectedWorkmanId == null ||
-                              selectedWorkmanId == "0")
-                              ? ""
-                              : selectedWorkmanId ?? "",empName: empName??"",),);
+                          Get.to(AttendanceListForAdminReportScreen(empId: (workmanProfileController.loginData.value.id??0).toString(),empName: workmanProfileController.loginData.value.name??"",));
                         },
                         borderColor: color_primary,
                         borderWidth: 0,
@@ -215,46 +204,32 @@ class _AdminReportScreenState extends State<AdminReportScreen> {
 
 
                     SizedBox(
-                      height: 24,
+                      height: 44,
                     ),
 
 
                     _buildSectionTitle("Work Report"),
 
-                    SizedBox(
-                      height: 4,
-                    ),
-
-                    _buildDropdown(workmanProfileController.workmanList,
-                        selectedWorkmanIdForWorkReport,
-                            (val) => setState(() =>
-                        selectedWorkmanIdForWorkReport = val),
-                        "Select Workman Name"),
-
-                    SizedBox(
-                      height: 16,
-                    ),
+                    // SizedBox(
+                    //   height: 4,
+                    // ),
+                    //
+                    // _buildDropdown(workmanProfileController.workmanList,
+                    //     selectedWorkmanIdForWorkReport,
+                    //         (val) => setState(() =>
+                    //     selectedWorkmanIdForWorkReport = val),
+                    //     "Select Workman Name"),
 
                     Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: 20, vertical: 20),
                       child: CommonButton(
-                        titleText: "Find",
+                        titleText: "Get",
                         textColor: Colors.white,
                         onCustomButtonPressed: () async {
 
-                          String? empName = "";
-                          if(selectedWorkmanId != null || selectedWorkmanId != "0"){
-                            empName = getUserNameById(int.parse(selectedWorkmanId??"0"), workmanProfileController.workmanList);
-                          }
 
-
-                          Get.to(SiteReportListForAdminScreen(
-                            empName: empName??"",
-                            empId: (selectedWorkmanIdForWorkReport == null ||
-                                selectedWorkmanIdForWorkReport == "0")
-                                ? ""
-                                : selectedWorkmanIdForWorkReport ?? "",), );
+                          Get.to(SiteReportListForAdminScreen(empId: (workmanProfileController.loginData.value.id??0).toString(),empName: workmanProfileController.loginData.value.name??"",));
                         },
                         borderColor: color_primary,
                         borderWidth: 0,

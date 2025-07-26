@@ -61,6 +61,7 @@ class WorkReportController extends GetxController {
 
   RxList<String> removedRemarkIds = <String>[].obs;
   RxList<String> removedServiceStatusIds = <String>[].obs;
+  RxList<String> removedSiteAttendIds = <String>[].obs;
 
   RxList<String> removedBillIds = <String>[].obs;
 
@@ -533,7 +534,7 @@ class WorkReportController extends GetxController {
           controllerNameOfContactPerson.value.text,
           controllerNameOfWitnessPerson.value.text,
           removedRemarkIds,
-          removedServiceStatusIds);
+          removedServiceStatusIds,removedSiteAttendIds);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));

@@ -318,7 +318,7 @@ class PlanningController extends GetxController {
   }
 
   /// Planning update api call
-  Future<void> callUpdatePlanning() async {
+  Future<void> callUpdatePlanning(BuildContext context) async {
     try {
       isLoading.value = true;
 
@@ -331,8 +331,8 @@ class PlanningController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
-        Get.back();
-        Get.snackbar("Success", response.message??"");
+        Navigator.pop(context);
+       snackBar(context, response.message??"");
         printData("response", response.message??"");
 
 

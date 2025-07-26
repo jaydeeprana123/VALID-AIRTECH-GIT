@@ -103,33 +103,33 @@ class _PlanningListScreenState extends State<PlanningListScreen> {
               ),
 
 
-              SizedBox(height: 12,),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: color_primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () {
-
-                  showLeaveFilterDialog();
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Filter',
-                      style:AppTextStyle.largeBold.copyWith(fontSize: 13
-                          , color: Colors.white),
-                    ),
-                    SizedBox(width: 4,),
-
-                    Icon(Icons.filter_alt_sharp, color: Colors.white,)
-
-                  ],
-                ),
-              ),
+              // SizedBox(height: 12,),
+              // ElevatedButton(
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: color_primary,
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(8),
+              //     ),
+              //   ),
+              //   onPressed: () {
+              //
+              //     showLeaveFilterDialog();
+              //   },
+              //   child: Row(
+              //     mainAxisSize: MainAxisSize.min,
+              //     children: [
+              //       Text(
+              //         'Filter',
+              //         style:AppTextStyle.largeBold.copyWith(fontSize: 13
+              //             , color: Colors.white),
+              //       ),
+              //       SizedBox(width: 4,),
+              //
+              //       Icon(Icons.filter_alt_sharp, color: Colors.white,)
+              //
+              //     ],
+              //   ),
+              // ),
 
               planningController.planningList.isNotEmpty?Expanded(
                 child: ListView.builder(
@@ -214,7 +214,7 @@ class _PlanningListScreenState extends State<PlanningListScreen> {
                                     , color: color_brown_title),
                               ),
                               Text(
-                                (planningController.planningList[index].workman?[0].workmanName??"").toString(),
+                                (planningController.planningList[index].workman??[]).isNotEmpty?(planningController.planningList[index].workman?[0].workmanName??"").toString():"",
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
                               ),
@@ -238,7 +238,7 @@ class _PlanningListScreenState extends State<PlanningListScreen> {
                     );
                   },
                 ),
-              ):Expanded(child: Center(child: Text("No data found"),)),
+              ):(!planningController.isLoading.value)?Expanded(child: Center(child: Text("No data found"),)):SizedBox(),
             ],
           ),
 

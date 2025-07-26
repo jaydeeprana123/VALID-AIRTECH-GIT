@@ -101,7 +101,12 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
     await initiate(); // make sure all lists are loaded
 
     selectedSite = planningController.selectedPlanning.value.siteId.toString();
-    contactPerson = planningController.selectedPlanning.value.headId.toString();
+
+    if(planningController.selectedPlanning.value.headId != null){
+      contactPerson = planningController.selectedPlanning.value.headId.toString();
+    }
+
+
 
     planningController
         .callContactListList(selectedSite ?? "");
@@ -996,7 +1001,7 @@ class _EditPlanningScreenState extends State<EditPlanningScreen> {
 
                           planningController.addPlanningRequest.value.note = planningController.notesList;
 
-                          planningController.callUpdatePlanning();
+                          planningController.callUpdatePlanning(context);
 
                         },
                         borderColor: color_primary,

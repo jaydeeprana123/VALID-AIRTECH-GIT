@@ -213,7 +213,7 @@ class _EmpPlanningListScreenState extends State<EmpPlanningListScreen> {
                     );
                   },
                 ),
-              ):Expanded(child: Center(child: Text("No data found"),)),
+              ):(!planningController.isLoading.value)?Expanded(child: Center(child: Text("No data found"),)):SizedBox(),
             ],
           ),
 

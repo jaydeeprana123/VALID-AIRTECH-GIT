@@ -159,8 +159,7 @@ class WorkmanProfileController extends GetxController {
 
       if (response.status ?? false) {
         workmanList.clear();
-        workmanList.add(WorkmanData(id: 0, name: "All"));
-        workmanList.addAll(response.data ?? []);
+        workmanList.value = response.data ?? [];
       } else if (response.code == 401) {
         Helper().logout();
       } else {

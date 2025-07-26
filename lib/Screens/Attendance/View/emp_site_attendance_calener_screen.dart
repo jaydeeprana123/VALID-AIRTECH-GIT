@@ -9,8 +9,8 @@ import 'package:valid_airtech/Screens/Appointment/View/add_appointment_screen.da
 import 'package:valid_airtech/Screens/Appointment/View/appointment_list_by_date_screen.dart';
 import 'package:valid_airtech/Screens/Appointment/View/appointment_list_screen.dart';
 import 'package:valid_airtech/Screens/Attendance/View/attendance_list_screen.dart';
-import 'package:valid_airtech/Screens/Attendance/View/site_attendance_by_date_for_work_report_screen.dart';
-import 'package:valid_airtech/Screens/Attendance/View/site_attendance_list_for_work_report_screen.dart';
+import 'package:valid_airtech/Screens/Attendance/View/site_attendance_list_by_date_screen.dart';
+import 'package:valid_airtech/Screens/Attendance/View/site_attendance_list_screen.dart';
 import 'package:valid_airtech/Screens/WorkReport/Controller/work_report_controller.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
@@ -20,12 +20,12 @@ import 'add_attendance_in_screen.dart';
 import 'attendance_list_by_date_screen.dart';
 
 
-class EmpSiteAttendanceForWorkReportCalenderScreen extends StatefulWidget {
+class EmpSiteAttendanceCalenderScreen extends StatefulWidget {
   @override
-  _EmpSiteAttendanceForWorkReportCalenderScreenState createState() => _EmpSiteAttendanceForWorkReportCalenderScreenState();
+  _EmpSiteAttendanceCalenderScreenState createState() => _EmpSiteAttendanceCalenderScreenState();
 }
 
-class _EmpSiteAttendanceForWorkReportCalenderScreenState extends State<EmpSiteAttendanceForWorkReportCalenderScreen> {
+class _EmpSiteAttendanceCalenderScreenState extends State<EmpSiteAttendanceCalenderScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   AttendanceController attendanceController = Get.put(AttendanceController());
@@ -123,7 +123,7 @@ class _EmpSiteAttendanceForWorkReportCalenderScreenState extends State<EmpSiteAt
                       ),
 
                       onPressed: () {
-                        Get.to(SiteAttendanceListForWorkReportScreen(startDate: startFormatted,endDate: endFormatted,))?.then((value) {
+                        Get.to(SiteAttendanceListScreen(startDate: startFormatted,endDate: endFormatted,))?.then((value) {
                           workReportController.isLoading.value = false;
                           workReportController.callEmployeeWorkReportListByMonth("",startFormatted, endFormatted);
                         });
@@ -209,7 +209,7 @@ class _EmpSiteAttendanceForWorkReportCalenderScreenState extends State<EmpSiteAt
                         printData("selected day", formattedDate);
 
 
-                        Get.to(SiteAttendanceByDateListForWorkReportScreen(startDate: formattedDate,endDate: formattedDate,))?.then((value) {
+                        Get.to(SiteAttendanceListByDateScreen(startDate: formattedDate,endDate: formattedDate,))?.then((value) {
                           workReportController.isLoading.value = false;
                           workReportController.callEmployeeWorkReportListByMonth("",startFormatted, endFormatted);
                         });

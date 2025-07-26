@@ -237,7 +237,6 @@ class _AdminAttendanceListByDateScreenState extends State<AdminAttendanceListByD
                 ),
               ),
 
-
               Expanded(
                 child: attendanceController.adminAttendanceList.isNotEmpty?ListView.builder(
                   padding: const EdgeInsets.all(10),

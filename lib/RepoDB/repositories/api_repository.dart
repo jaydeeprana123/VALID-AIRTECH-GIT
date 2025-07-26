@@ -997,7 +997,7 @@ class APIRepository {
       String serviceNatureIdId,
       String contactPerson,
       String witnessPerson,
-      List<String> removedRemarksId,List<String> removedStatusId,) async {
+      List<String> removedRemarksId,List<String> removedStatusId,List<String> removedSiteAttendId) async {
     try {
       Map<String, dynamic> serviceStatusIdMap = {};
       Map<String, dynamic> remarkMap = {};
@@ -1048,6 +1048,13 @@ class APIRepository {
       }
 
 
+      Map<String, dynamic> removedAttendSiteMap = {};
+      for (int i = 0; i < removedSiteAttendId.length; i++) {
+        removedAttendSiteMap['removed_site_attend_by[$i][id]'] =
+        removedSiteAttendId[i];
+      }
+
+
       Map<String, dynamic> commentsByMap = {};
       Map<String, dynamic> commentsIdMap = {};
       for (int i = 0; i < comments.length; i++) {
@@ -1061,8 +1068,11 @@ class APIRepository {
       Map<String, dynamic> siteAttendIdMap = {};
       for (int i = 0; i < siteAttendByList.length; i++) {
 
-        siteAttendIdMap['site_attend_by[$i][id]'] =
-            siteAttendByList[i].id.toString();
+        if(siteAttendByList[i].mainId != null){
+          siteAttendIdMap['site_attend_by[$i][id]'] =
+              siteAttendByList[i].mainId.toString();
+        }
+
         siteAttendByMap['site_attend_by[$i][user_id]'] =
             siteAttendByList[i].id.toString();
       }
@@ -1106,7 +1116,8 @@ class APIRepository {
         ...employeeMap,
         ...removedRemarksMap,
         ...removedStatusMap,
-        ...serviceStatusIdMap
+        ...serviceStatusIdMap,
+        ...removedAttendSiteMap,
       });
 
       Response response = await api.dio.post("/work-report/update",

@@ -27,11 +27,9 @@ import '../../Sites/Model/employee_list_response.dart';
 import '../../Sites/Model/site_list_response.dart';
 
 class EditWorkReportScreen extends StatefulWidget {
-
-  EditWorkReportScreen(
-      {Key? key,
-      })
-      : super(key: key);
+  EditWorkReportScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _EditWorkReportScreenState createState() => _EditWorkReportScreenState();
@@ -45,8 +43,6 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
   String? attendanceStatus;
   String? selectedSite;
   String? contactPerson;
-
-
 
   void _pickTime(bool isInTime) async {
     TimeOfDay? picked = await showTimePicker(
@@ -70,26 +66,25 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
     super.initState();
     workReportController.remarksList.clear();
     workReportController.serviceStatusList.clear();
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       await workReportController.callInstrumentList();
       await workReportController.callConveyanceList();
       await workReportController.callSiteAttendByList();
       await workReportController.callTestPerformerList();
       await workReportController.callServiceByNatureByList();
       await workReportController.callWorkmanList();
-
-
+      workReportController.selectedSiteAttendByList.clear();
       workReportController.controllerNameOfContactPerson.value.text =
           workReportController.selectedWorkReportData.value.contactPerson ?? "";
       workReportController.controllerNameOfWitnessPerson.value.text =
           workReportController.selectedWorkReportData.value.witnessPerson ?? "";
 
       workReportController.isEdit.value = false;
-      workReportController.conveyThrough = workReportController.conveyThroughList[
-      (workReportController
-          .selectedWorkReportData.value.convenyenceThroughStatus ??
-          0) -
-          1];
+      workReportController.conveyThrough =
+          workReportController.conveyThroughList[(workReportController
+                      .selectedWorkReportData.value.convenyenceThroughStatus ??
+                  0) -
+              1];
 
       if ((workReportController.selectedWorkReportData.value.conveyanceId ?? "")
           .isNotEmpty) {
@@ -97,59 +92,74 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
           if (workReportController.conveysList[i].id.toString() ==
               workReportController.selectedWorkReportData.value.conveyanceId) {
             workReportController.conveyanceData =
-            workReportController.conveysList[i];
+                workReportController.conveysList[i];
 
-            setState(() {
-
-            });
+            setState(() {});
           }
         }
       }
 
-
-      if ((workReportController.selectedWorkReportData.value.serviceNatureId ?? "")
+      if ((workReportController.selectedWorkReportData.value.serviceNatureId ??
+              "")
           .isNotEmpty) {
-        for (int i = 0; i < (workReportController.serviceByNatureList).length; i++) {
+        for (int i = 0;
+            i < (workReportController.serviceByNatureList).length;
+            i++) {
           if (workReportController.serviceByNatureList[i].id.toString() ==
-              workReportController.selectedWorkReportData.value.serviceNatureId) {
+              workReportController
+                  .selectedWorkReportData.value.serviceNatureId) {
             workReportController.serviceByNatureData =
-            workReportController.serviceByNatureList[i];
+                workReportController.serviceByNatureList[i];
 
-            setState(() {
-
-            });
+            setState(() {});
           }
         }
       }
 
 
-      workReportController.selectedSiteAttendByList.clear();
       if ((workReportController.selectedWorkReportData.value.siteAttendBy ?? [])
           .isNotEmpty) {
-        for (int i = 0; i < (workReportController.selectedWorkReportData.value.siteAttendBy??[]).length; i++) {
-
+        for (int i = 0;
+            i <
+                (workReportController
+                            .selectedWorkReportData.value.siteAttendBy ??
+                        [])
+                    .length;
+            i++) {
           SiteAttendByData siteAttendByData = SiteAttendByData();
-          siteAttendByData.id = workReportController.selectedWorkReportData.value.siteAttendBy?[i].id;
-          siteAttendByData.name = workReportController.selectedWorkReportData.value.siteAttendBy?[i].userName;
+          siteAttendByData.mainId = workReportController
+              .selectedWorkReportData.value.siteAttendBy?[i].id;
+          siteAttendByData.name = workReportController
+              .selectedWorkReportData.value.siteAttendBy?[i].userName;
+          siteAttendByData.id = workReportController
+              .selectedWorkReportData.value.siteAttendBy?[i].userId;
           siteAttendByData.isSelected = true;
 
           workReportController.selectedSiteAttendByList.add(siteAttendByData);
-
-
         }
       }
 
+      for (int i = 0;
+          i < (workReportController.selectedSiteAttendByList ?? []).length;
+          i++) {
+        printData("idsss",
+            workReportController.selectedSiteAttendByList[i].mainId.toString());
+        printData("usersidsss",
+            workReportController.selectedSiteAttendByList[i].id.toString());
+        printData("selectedSiteAttendByList",
+            workReportController.selectedSiteAttendByList[i].name ?? "");
+      }
 
       if ((workReportController.selectedWorkReportData.value.remark ?? [])
           .isNotEmpty) {
         for (int i = 0;
-        i <
-            (workReportController.selectedWorkReportData.value.remark ?? [])
-                .length;
-        i++) {
+            i <
+                (workReportController.selectedWorkReportData.value.remark ?? [])
+                    .length;
+            i++) {
           workReportController.selectedWorkReportData.value.remark?[i]
               .remarkTextEditingController.text = workReportController
-              .selectedWorkReportData.value.remark?[i].remark ??
+                  .selectedWorkReportData.value.remark?[i].remark ??
               "";
           workReportController.remarksList.add(
               workReportController.selectedWorkReportData.value.remark?[i] ??
@@ -159,82 +169,97 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
         workReportController.remarksList.add(RemarkWorkReport());
       }
 
-
-      if ((workReportController.selectedWorkReportData.value.serviceStatus ?? [])
+      if ((workReportController.selectedWorkReportData.value.serviceStatus ??
+              [])
           .isNotEmpty) {
         for (int i = 0;
-        i <
-            (workReportController.selectedWorkReportData.value
-                .serviceStatus ??
-                [])
-                .length;
-        i++) {
-
-
+            i <
+                (workReportController
+                            .selectedWorkReportData.value.serviceStatus ??
+                        [])
+                    .length;
+            i++) {
           ServiceStatusModel serviceStatusModel = ServiceStatusModel();
-          serviceStatusModel.id = workReportController.selectedWorkReportData.value
-              .serviceStatus?[i].id.toString();
-          serviceStatusModel
-              .testLocationEditingController
-              .text = workReportController.selectedWorkReportData.value
-              .serviceStatus?[i].testLocation ??
-              "";
+          serviceStatusModel.id = workReportController
+              .selectedWorkReportData.value.serviceStatus?[i].id
+              .toString();
+          serviceStatusModel.testLocationEditingController.text =
+              workReportController.selectedWorkReportData.value
+                      .serviceStatus?[i].testLocation ??
+                  "";
 
-          serviceStatusModel
-              .remarkTextEditingController
-              .text = workReportController.selectedWorkReportData.value
-              .serviceStatus?[i].remark ??
-              "";
+          serviceStatusModel.remarkTextEditingController.text =
+              workReportController
+                      .selectedWorkReportData.value.serviceStatus?[i].remark ??
+                  "";
 
-          serviceStatusModel
-              .roomEquipmentEditingController
-              .text = workReportController.selectedWorkReportData.value
-              .serviceStatus?[i].roomEquipment ??
-              "";
+          serviceStatusModel.roomEquipmentEditingController.text =
+              workReportController.selectedWorkReportData.value
+                      .serviceStatus?[i].roomEquipment ??
+                  "";
 
+          printData(
+              "workReportController.selectedWorkReportData.value.serviceStatus?[i].testPerfomedId",
+              (workReportController.selectedWorkReportData.value
+                          .serviceStatus?[i].testPerfomedId ??
+                      0)
+                  .toString());
 
-          printData("workReportController.selectedWorkReportData.value.serviceStatus?[i].testPerfomedId", (workReportController.selectedWorkReportData.value.serviceStatus?[i].testPerfomedId??0).toString());
-
-          if ((workReportController.selectedWorkReportData.value.serviceStatus?[i].testPerfomedId ?? 0) != 0) {
-            for (int z = 0; z < (workReportController.testPerformerList).length; z++) {
-              if (workReportController.selectedWorkReportData.value.serviceStatus?[i].testPerfomedId ==  workReportController.testPerformerList[z].id
-                  ) {
+          if ((workReportController.selectedWorkReportData.value
+                      .serviceStatus?[i].testPerfomedId ??
+                  0) !=
+              0) {
+            for (int z = 0;
+                z < (workReportController.testPerformerList).length;
+                z++) {
+              if (workReportController.selectedWorkReportData.value
+                      .serviceStatus?[i].testPerfomedId ==
+                  workReportController.testPerformerList[z].id) {
                 serviceStatusModel.testPerformData =
-                workReportController.testPerformerList[z];
+                    workReportController.testPerformerList[z];
               }
             }
           }
 
-
-          if ((workReportController.selectedWorkReportData.value.serviceStatus?[i].headInstrumentId ?? 0) != 0) {
-            for (int z = 0; z < (workReportController.instrumentList).length; z++) {
-              if (workReportController.selectedWorkReportData.value.serviceStatus?[i].headInstrumentId == workReportController.instrumentList[z].id
-                  ) {
+          if ((workReportController.selectedWorkReportData.value
+                      .serviceStatus?[i].headInstrumentId ??
+                  0) !=
+              0) {
+            for (int z = 0;
+                z < (workReportController.instrumentList).length;
+                z++) {
+              if (workReportController.selectedWorkReportData.value
+                      .serviceStatus?[i].headInstrumentId ==
+                  workReportController.instrumentList[z].id) {
                 serviceStatusModel.usedInstrument =
-                workReportController.instrumentList[z];
+                    workReportController.instrumentList[z];
               }
             }
           }
 
-
-          if ((workReportController.selectedWorkReportData.value.serviceStatus?[i].performUserId ?? 0) != 0) {
-            for (int z = 0; z < (workReportController.workmanList).length; z++) {
+          if ((workReportController.selectedWorkReportData.value
+                      .serviceStatus?[i].performUserId ??
+                  0) !=
+              0) {
+            for (int z = 0;
+                z < (workReportController.workmanList).length;
+                z++) {
               if (workReportController.workmanList[z].id ==
-                  workReportController.selectedWorkReportData.value.serviceStatus?[i].performUserId) {
+                  workReportController.selectedWorkReportData.value
+                      .serviceStatus?[i].performUserId) {
                 serviceStatusModel.workmanData =
-                workReportController.workmanList[z];
+                    workReportController.workmanList[z];
               }
             }
           }
 
-
-          serviceStatusModel.dataSheetStatus = workReportController.sheetStatusList[ workReportController.selectedWorkReportData.value.serviceStatus?[i].status??0];
+          serviceStatusModel.dataSheetStatus =
+              workReportController.sheetStatusList[workReportController
+                      .selectedWorkReportData.value.serviceStatus?[i].status ??
+                  0];
           workReportController.serviceStatusList.add(serviceStatusModel);
 
-          setState(() {
-
-          });
-
+          setState(() {});
         }
       } else {
         workReportController.serviceStatusList.add(ServiceStatusModel());
@@ -242,11 +267,7 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
 
       workReportController.controllerOther.value.text =
           workReportController.selectedWorkReportData.value.other ?? "";
-
     });
-
-
-
   }
 
   @override
@@ -314,39 +335,47 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
 
                     _buildSectionTitle('Site Details'),
 
-                    SizedBox(height: 12,),
+                    SizedBox(
+                      height: 12,
+                    ),
 
                     Column(
                       children: [
-                        Text("Reporting Date",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                            , color: color_hint_text)),
-
-                        Text(workReportController.selectedWorkReportData.value.date??"",style: AppTextStyle.largeBold.copyWith(fontSize: 16
-                            , color: color_brown_title)),
-
-                        SizedBox(height: 16,),
-
-
-                        Text("Site Name",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                            , color: color_hint_text)),
-
-                        Text(workReportController.selectedWorkReportData.value.siteName??"",style: AppTextStyle.largeBold.copyWith(fontSize: 16
-                            , color: color_brown_title)),
-
-                        SizedBox(height: 16,),
-
-
-                        Text("Site Suffix",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                            , color: color_hint_text)),
-
-                        Text(workReportController.selectedWorkReportData.value.siteSuffixName??"",style: AppTextStyle.largeBold.copyWith(fontSize: 16
-                            , color: color_brown_title)),
+                        Text("Reporting Date",
+                            style: AppTextStyle.largeMedium.copyWith(
+                                fontSize: 16, color: color_hint_text)),
+                        Text(
+                            workReportController
+                                    .selectedWorkReportData.value.date ??
+                                "",
+                            style: AppTextStyle.largeBold.copyWith(
+                                fontSize: 16, color: color_brown_title)),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Text("Site Name",
+                            style: AppTextStyle.largeMedium.copyWith(
+                                fontSize: 16, color: color_hint_text)),
+                        Text(
+                            workReportController
+                                    .selectedWorkReportData.value.siteName ??
+                                "",
+                            style: AppTextStyle.largeBold.copyWith(
+                                fontSize: 16, color: color_brown_title)),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Text("Site Suffix",
+                            style: AppTextStyle.largeMedium.copyWith(
+                                fontSize: 16, color: color_hint_text)),
+                        Text(
+                            workReportController.selectedWorkReportData.value
+                                    .siteSuffixName ??
+                                "",
+                            style: AppTextStyle.largeBold.copyWith(
+                                fontSize: 16, color: color_brown_title)),
                       ],
                     ),
-
-
-
-
 
                     // DropdownButton<SiteData>(
                     //   value: workReportController.siteList
@@ -371,8 +400,9 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                     //     );
                     //   }).toList(),
                     // ),
-                    SizedBox(height: 12,),
-
+                    SizedBox(
+                      height: 12,
+                    ),
 
                     // DropdownButton<SiteAttendByData>(
                     //   value: workReportController.siteAttendByList
@@ -403,11 +433,14 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
 
                     MultiSelectDialogField<SiteAttendByData>(
                       items: workReportController.siteAttendByList
-                          .map((item) => MultiSelectItem<SiteAttendByData>(item, item.name??""))
+                          .map((item) => MultiSelectItem<SiteAttendByData>(
+                              item, item.name ?? ""))
                           .toList(),
-                      initialValue: workReportController.selectedSiteAttendByList,
+                      initialValue:
+                          workReportController.selectedSiteAttendByList,
                       onConfirm: (List<SiteAttendByData> selected) {
-                        workReportController.selectedSiteAttendByList.value = selected;
+                        workReportController.selectedSiteAttendByList.value =
+                            selected;
                         workReportController.selectedSiteAttendListInString =
                             selected.map((e) => e.name).join(', ');
                       },
@@ -415,7 +448,8 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                         chipColor: Colors.blue.shade100,
                         textStyle: TextStyle(color: Colors.black),
                         onTap: (item) {
-                          workReportController.selectedSiteAttendByList.remove(item);
+                          workReportController.selectedSiteAttendByList
+                              .remove(item);
                         },
                       ),
                       buttonText: Text("Select Site Attendees"),
@@ -539,7 +573,9 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                         workReportController
                             .controllerNameOfWitnessPerson.value,
                         "Name Of Witness Person"),
-                    SizedBox(height: 20,),
+                    SizedBox(
+                      height: 20,
+                    ),
                     _buildSectionTitle('Comments'),
 
                     SizedBox(
@@ -636,7 +672,8 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                               child: Column(
                                 children: [
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
@@ -659,38 +696,41 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                                                 SizedBox(
                                                   height: 16,
                                                 ),
-                                                DropdownButton<TestByPerformData>(
+                                                DropdownButton<
+                                                    TestByPerformData>(
                                                   value: workReportController
                                                           .testPerformerList
-                                                          .contains(
-                                                              workReportController
-                                                                  .serviceStatusList[
-                                                                      i]
-                                                                  .testPerformData)
+                                                          .contains(workReportController
+                                                              .serviceStatusList[
+                                                                  i]
+                                                              .testPerformData)
                                                       ? workReportController
                                                           .serviceStatusList[i]
                                                           .testPerformData
                                                       : null,
                                                   // Ensure valid value
                                                   hint: Text("Test Performed",
-                                                      style: AppTextStyle.largeMedium
+                                                      style: AppTextStyle
+                                                          .largeMedium
                                                           .copyWith(
                                                               fontSize: 16,
                                                               color:
                                                                   color_hint_text)),
 
                                                   isExpanded: true,
-                                                  onChanged:
-                                                      (TestByPerformData? newValue) {
+                                                  onChanged: (TestByPerformData?
+                                                      newValue) {
                                                     setState(() {
                                                       workReportController
-                                                          .serviceStatusList[i]
-                                                          .testPerformData = newValue;
+                                                              .serviceStatusList[i]
+                                                              .testPerformData =
+                                                          newValue;
                                                     });
                                                   },
                                                   items: workReportController
                                                       .testPerformerList
-                                                      .map((TestByPerformData group) {
+                                                      .map((TestByPerformData
+                                                          group) {
                                                     return DropdownMenuItem<
                                                         TestByPerformData>(
                                                       value: group,
@@ -700,7 +740,8 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                                                             .largeMedium
                                                             .copyWith(
                                                                 fontSize: 16,
-                                                                color: blackText),
+                                                                color:
+                                                                    blackText),
                                                       ),
                                                     );
                                                   }).toList(),
@@ -711,35 +752,38 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                                                 DropdownButton<String>(
                                                   value: workReportController
                                                           .sheetStatusList
-                                                          .contains(
-                                                              workReportController
-                                                                  .serviceStatusList[
-                                                                      i]
-                                                                  .dataSheetStatus)
+                                                          .contains(workReportController
+                                                              .serviceStatusList[
+                                                                  i]
+                                                              .dataSheetStatus)
                                                       ? workReportController
                                                           .serviceStatusList[i]
                                                           .dataSheetStatus
                                                       : null,
                                                   // Ensure valid value
                                                   hint: Text("Sheet Status",
-                                                      style: AppTextStyle.largeMedium
+                                                      style: AppTextStyle
+                                                          .largeMedium
                                                           .copyWith(
                                                               fontSize: 16,
                                                               color:
                                                                   color_hint_text)),
 
                                                   isExpanded: true,
-                                                  onChanged: (String? newValue) {
+                                                  onChanged:
+                                                      (String? newValue) {
                                                     setState(() {
                                                       workReportController
-                                                          .serviceStatusList[i]
-                                                          .dataSheetStatus = newValue;
+                                                              .serviceStatusList[i]
+                                                              .dataSheetStatus =
+                                                          newValue;
                                                     });
                                                   },
                                                   items: workReportController
                                                       .sheetStatusList
                                                       .map((String group) {
-                                                    return DropdownMenuItem<String>(
+                                                    return DropdownMenuItem<
+                                                        String>(
                                                       value: group,
                                                       child: Text(
                                                         group,
@@ -747,7 +791,8 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                                                             .largeMedium
                                                             .copyWith(
                                                                 fontSize: 16,
-                                                                color: blackText),
+                                                                color:
+                                                                    blackText),
                                                       ),
                                                     );
                                                   }).toList(),
@@ -758,35 +803,38 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                                                 DropdownButton<InstrumentData>(
                                                   value: workReportController
                                                           .instrumentList
-                                                          .contains(
-                                                              workReportController
-                                                                  .serviceStatusList[
-                                                                      i]
-                                                                  .usedInstrument)
+                                                          .contains(workReportController
+                                                              .serviceStatusList[
+                                                                  i]
+                                                              .usedInstrument)
                                                       ? workReportController
                                                           .serviceStatusList[i]
                                                           .usedInstrument
                                                       : null,
                                                   // Ensure valid value
-                                                  hint: Text("Select Used Instrument",
-                                                      style: AppTextStyle.largeMedium
+                                                  hint: Text(
+                                                      "Select Used Instrument",
+                                                      style: AppTextStyle
+                                                          .largeMedium
                                                           .copyWith(
                                                               fontSize: 16,
                                                               color:
                                                                   color_hint_text)),
 
                                                   isExpanded: true,
-                                                  onChanged:
-                                                      (InstrumentData? newValue) {
+                                                  onChanged: (InstrumentData?
+                                                      newValue) {
                                                     setState(() {
                                                       workReportController
-                                                          .serviceStatusList[i]
-                                                          .usedInstrument = newValue;
+                                                              .serviceStatusList[i]
+                                                              .usedInstrument =
+                                                          newValue;
                                                     });
                                                   },
                                                   items: workReportController
                                                       .instrumentList
-                                                      .map((InstrumentData group) {
+                                                      .map((InstrumentData
+                                                          group) {
                                                     return DropdownMenuItem<
                                                         InstrumentData>(
                                                       value: group,
@@ -797,7 +845,8 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                                                             .largeMedium
                                                             .copyWith(
                                                                 fontSize: 16,
-                                                                color: blackText),
+                                                                color:
+                                                                    blackText),
                                                       ),
                                                     );
                                                   }).toList(),
@@ -805,34 +854,57 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                                                 SizedBox(
                                                   height: 8,
                                                 ),
-
                                                 DropdownButton<WorkmanData>(
-                                                  value: workReportController.workmanList
-                                                      .contains(workReportController.serviceStatusList[i].workmanData)
-                                                      ? workReportController.serviceStatusList[i].workmanData
+                                                  value: workReportController
+                                                          .workmanList
+                                                          .contains(
+                                                              workReportController
+                                                                  .serviceStatusList[
+                                                                      i]
+                                                                  .workmanData)
+                                                      ? workReportController
+                                                          .serviceStatusList[i]
+                                                          .workmanData
                                                       : null,
                                                   // Ensure valid value
-                                                  hint: Text("Performed By",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                                                      , color: color_hint_text)) ,
-
+                                                  hint: Text("Performed By",
+                                                      style: AppTextStyle
+                                                          .largeMedium
+                                                          .copyWith(
+                                                              fontSize: 16,
+                                                              color:
+                                                                  color_hint_text)),
 
                                                   isExpanded: true,
-                                                  onChanged: (WorkmanData? newValue) {
+                                                  onChanged:
+                                                      (WorkmanData? newValue) {
                                                     setState(() {
-                                                      workReportController.serviceStatusList[i].workmanData = newValue;
+                                                      workReportController
+                                                          .serviceStatusList[i]
+                                                          .workmanData = newValue;
                                                     });
                                                   },
-                                                  items: workReportController.workmanList.map((WorkmanData group) {
-                                                    return DropdownMenuItem<WorkmanData>(
+                                                  items: workReportController
+                                                      .workmanList
+                                                      .map((WorkmanData group) {
+                                                    return DropdownMenuItem<
+                                                        WorkmanData>(
                                                       value: group,
-                                                      child: Text(group.name??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                                                          , color: blackText),),
+                                                      child: Text(
+                                                        group.name ?? "",
+                                                        style: AppTextStyle
+                                                            .largeMedium
+                                                            .copyWith(
+                                                                fontSize: 16,
+                                                                color:
+                                                                    blackText),
+                                                      ),
                                                     );
                                                   }).toList(),
                                                 ),
-
-                                                SizedBox(height: 8,),
-
+                                                SizedBox(
+                                                  height: 8,
+                                                ),
                                                 _buildTextField(
                                                     workReportController
                                                         .serviceStatusList[i]
@@ -846,20 +918,23 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                                           ),
                                           (i ==
                                                   (workReportController
-                                                          .serviceStatusList.length -
+                                                          .serviceStatusList
+                                                          .length -
                                                       1))
                                               ? InkWell(
                                                   onTap: () {
-
                                                     workReportController
                                                         .removedServiceStatusIds
                                                         .add(workReportController
-                                                        .serviceStatusList[i].id
-                                                        .toString());
+                                                            .serviceStatusList[
+                                                                i]
+                                                            .id
+                                                            .toString());
 
                                                     workReportController
                                                         .serviceStatusList
-                                                        .add(ServiceStatusModel());
+                                                        .add(
+                                                            ServiceStatusModel());
                                                     setState(() {});
                                                   },
                                                   child: Icon(
@@ -886,24 +961,33 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                                       ),
                                     ],
                                   ),
-
-                                  SizedBox(height: 12,),
-
-                                  Container(width: double.infinity,
-                                    height: 1,color: color_primary,),
-
-                                  SizedBox(height: 2,),
-
-                                  Container(width: double.infinity,
-                                    height: 1,color: color_primary,),
-
-                                  SizedBox(height: 2,),
-
-                                  Container(width: double.infinity,
-                                    height: 1,color: color_primary,),
-
-                                  SizedBox(height: 16,),
-
+                                  SizedBox(
+                                    height: 12,
+                                  ),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 1,
+                                    color: color_primary,
+                                  ),
+                                  SizedBox(
+                                    height: 2,
+                                  ),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 1,
+                                    color: color_primary,
+                                  ),
+                                  SizedBox(
+                                    height: 2,
+                                  ),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 1,
+                                    color: color_primary,
+                                  ),
+                                  SizedBox(
+                                    height: 16,
+                                  ),
                                 ],
                               ),
                             )
@@ -1034,65 +1118,131 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                     SizedBox(height: 20),
 
                     // Login Button
-                    if(workReportController.isEdit.value) Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                      child: CommonButton(
-                        titleText: "Save",
-                        textColor: Colors.white,
-                        onCustomButtonPressed: () async {
+                    if (workReportController.isEdit.value)
+                      Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                        child: CommonButton(
+                          titleText: "Save",
+                          textColor: Colors.white,
+                          onCustomButtonPressed: () async {
+                            if (workReportController
+                                .controllerNameOfContactPerson
+                                .value
+                                .text
+                                .isEmpty) {
+                              snackBar(context, "Please enter Contact person");
+                              return;
+                            }
+
+                            if (workReportController
+                                .controllerNameOfContactPerson
+                                .value
+                                .text
+                                .isEmpty) {
+                              snackBar(context, "Please enter Witness person");
+                              return;
+                            }
+
+                            if (workReportController.conveyanceData == null) {
+                              snackBar(context, "Select Driver Name");
+                              return;
+                            }
+
+                            if (workReportController.serviceByNatureData ==
+                                null) {
+                              snackBar(context, "Select Service Nature");
+                              return;
+                            }
+
+                            if (workReportController.conveyanceData == null) {
+                              snackBar(context, "Select Driver Name");
+                              return;
+                            }
+                            workReportController.removedSiteAttendIds.value =
+                                [];
+                            for (int i = 0;
+                                i <
+                                    (workReportController.selectedWorkReportData
+                                                .value.siteAttendBy ??
+                                            [])
+                                        .length;
+                                i++) {
+                              bool isAvail = false;
+
+                              for (int j = 0;
+                                  j <
+                                      (workReportController
+                                                  .selectedSiteAttendByList ??
+                                              [])
+                                          .length;
+                                  j++) {
+                                if (workReportController.selectedWorkReportData
+                                        .value.siteAttendBy?[i].userId ==
+                                    workReportController
+                                        .selectedSiteAttendByList[j].id) {
+                                  isAvail = true;
+                                  workReportController
+                                          .selectedSiteAttendByList[j].mainId =
+                                      workReportController
+                                          .selectedWorkReportData
+                                          .value
+                                          .siteAttendBy?[i]
+                                          .id;
+
+                                  printData("main Id chhe", workReportController
+                                      .selectedSiteAttendByList[j].mainId.toString());
+                                }
+                              }
+
+                              if (!isAvail) {
+                                workReportController.removedSiteAttendIds.add(
+                                    (workReportController.selectedWorkReportData
+                                                .value.siteAttendBy?[i].id ??
+                                            0)
+                                        .toString());
 
 
-                          if (workReportController.controllerNameOfContactPerson
-                              .value.text.isEmpty) {
-                            snackBar(context, "Please enter Contact person");
-                            return;
-                          }
+                              }
+                            }
 
-                          if (workReportController.controllerNameOfContactPerson
-                              .value.text.isEmpty) {
-                            snackBar(context, "Please enter Witness person");
-                            return;
-                          }
+//                             String cleaned = workReportController
+//                                 .selectedSiteAttendListInString
+//                                 .toString()
+//                                 .replaceAll('[', '')
+//                                 .replaceAll(']', '');
+//
+// // Step 2: Split by comma and trim spaces
+//                             List<String> result = cleaned
+//                                 .split(',')
+//                                 .map((e) => e.trim())
+//                                 .toList();
+//
+//                             await workReportController
+//                                 .updateSelectedSiteAttendByList(result);
 
-                          if (workReportController.conveyanceData == null) {
-                            snackBar(context, "Select Driver Name");
-                            return;
-                          }
+                            printData(
+                                "seletced",
+                                workReportController
+                                        .selectedSiteAttendListInString ??
+                                    "");
 
-                          if (workReportController.serviceByNatureData ==
-                              null) {
-                            snackBar(context, "Select Service Nature");
-                            return;
-                          }
-
-                          if (workReportController.conveyanceData == null) {
-                            snackBar(context, "Select Driver Name");
-                            return;
-                          }
-
-                          if(workReportController.siteId == null){
-                            snackBar(context, "Select Site ");
-                            return;
-                          }
-
-                          String cleaned = workReportController.selectedSiteAttendListInString.toString().replaceAll('[', '').replaceAll(']', '');
-
-// Step 2: Split by comma and trim spaces
-                          List<String> result = cleaned.split(',').map((e) => e.trim()).toList();
-
-                          await workReportController.updateSelectedSiteAttendByList(result);
-
-                          printData("seletced", workReportController.selectedSiteAttendListInString??"");
-
-
-                          workReportController.callUpdateWorkReportList(workReportController.selectedWorkReportData.value.id.toString(),
-                              workReportController.selectedWorkReportData.value.date??"" , (workReportController.selectedWorkReportData.value.siteId??0).toString());
-                        },
-                        borderColor: color_primary,
-                        borderWidth: 0,
+                            workReportController.callUpdateWorkReportList(
+                                workReportController
+                                    .selectedWorkReportData.value.id
+                                    .toString(),
+                                workReportController
+                                        .selectedWorkReportData.value.date ??
+                                    "",
+                                (workReportController.selectedWorkReportData
+                                            .value.siteId ??
+                                        0)
+                                    .toString());
+                          },
+                          borderColor: color_primary,
+                          borderWidth: 0,
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -1112,7 +1262,6 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
           AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
     );
   }
-
 
   Widget _buildDropdown(List<String> items, String? selectedValue,
       Function(String?) onChanged, String hint) {
