@@ -58,6 +58,9 @@ class AttendanceController extends GetxController {
   RxList<FilterAttendanceData> filterAttendanceData = <FilterAttendanceData>[].obs;
   RxList<FilterAttendanceData> finalFilterAttendanceData = <FilterAttendanceData>[].obs;
 
+
+  RxList<SiteAttendanceData> filterSiteAttendanceData = <SiteAttendanceData>[].obs;
+
   RxList<SiteAttendanceData> siteAttendanceData = <SiteAttendanceData>[].obs;
   RxList<SiteAttendanceData> finalSiteAttendanceData = <SiteAttendanceData>[].obs;
 
@@ -400,6 +403,10 @@ class AttendanceController extends GetxController {
           }
         }
 
+
+
+
+
         printData("workReportList length", workReportList.length.toString());
 
         for (int i = 0; i < siteAttendanceData.length; i++){
@@ -408,6 +415,16 @@ class AttendanceController extends GetxController {
               siteAttendanceData[i].isWorkReportAvail = true;
 
             }
+          }
+        }
+
+
+        // Update filterSiteAttendanceData (same as siteAttendanceData initially)
+        filterSiteAttendanceData.clear();
+
+        for(int i=0; i< siteAttendanceData.length;i++){
+          if(siteAttendanceData[i].headId != null){
+            filterSiteAttendanceData.add(siteAttendanceData[i]);
           }
         }
 
@@ -957,6 +974,16 @@ class AttendanceController extends GetxController {
         }
 
 
+        // Update filterSiteAttendanceData (same as siteAttendanceData initially)
+        filterSiteAttendanceData.clear();
+
+        for(int i=0; i< siteAttendanceData.length;i++){
+          if(siteAttendanceData[i].headId != null){
+            filterSiteAttendanceData.add(siteAttendanceData[i]);
+          }
+        }
+
+
       }else if(response.code == 401){
         Helper().logout();
       }
@@ -1284,7 +1311,32 @@ class AttendanceController extends GetxController {
 
 
 
+  void filterAttendanceListBySite(String siteId) {
+    filterSiteAttendanceData.clear();
 
+
+    if (siteId == "0") {
+      // Show all items
+      filterSiteAttendanceData.addAll(siteAttendanceData);
+      return;
+    }
+
+
+
+    printData("selected siteId", siteId);
+
+    printData("Atendance List Length", siteAttendanceData.length.toString());
+
+    for (var item in siteAttendanceData) {
+
+      printData("head ID", "${item.siteName ?? ""} - ${item.headId}");
+
+      if (item.headId.toString() == siteId) {
+        printData("Added", "${item.siteName ?? ""} - ${item.headId}");
+        filterSiteAttendanceData.add(item);
+      }
+    }
+  }
 
 
 

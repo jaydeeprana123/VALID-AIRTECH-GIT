@@ -118,8 +118,8 @@ class Helper {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: color_primary, // <-- SEE HERE
-              onPrimary: color_primary, // <-- SEE HERE
+              primary: color_secondary, // <-- SEE HERE
+              onPrimary: Colors.white, // <-- SEE HERE
               onSurface: color_primary, // <-- SEE HERE
             ),
             textButtonTheme: TextButtonThemeData(

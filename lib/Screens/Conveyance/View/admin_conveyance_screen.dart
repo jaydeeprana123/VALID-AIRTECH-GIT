@@ -55,7 +55,7 @@ class _AdminConveyanceScreenState extends State<AdminConveyanceScreen> {
           },
         ),
         title: Text(
-          'Valid Airtech',
+          'Valid Services',
           style: AppTextStyle.largeBold.copyWith(fontSize: 18
             , color: color_secondary),
         ),

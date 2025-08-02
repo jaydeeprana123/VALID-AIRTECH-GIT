@@ -79,7 +79,7 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
       workReportController.controllerNameOfWitnessPerson.value.text =
           workReportController.selectedWorkReportData.value.witnessPerson ?? "";
 
-      workReportController.isEdit.value = false;
+      workReportController.isEdit.value = true;
       workReportController.conveyThrough =
           workReportController.conveyThroughList[(workReportController
                       .selectedWorkReportData.value.convenyenceThroughStatus ??
@@ -283,7 +283,7 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
           },
         ),
         title: Text(
-          'Edit Work Report',
+          'Edit Site Report',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
@@ -300,7 +300,7 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
             onPressed: () {
               Get.defaultDialog(
                   title: "DELETE",
-                  middleText: "Are you sure want to delete this Work Report?",
+                  middleText: "Are you sure want to delete this Site Report?",
                   barrierDismissible: false,
                   titlePadding:
                       const EdgeInsets.only(left: 20, right: 20, top: 10),
@@ -341,13 +341,13 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
 
                     Column(
                       children: [
-                        Text("Reporting Date",
+                        Text("Reporting Date & Day",
                             style: AppTextStyle.largeMedium.copyWith(
                                 fontSize: 16, color: color_hint_text)),
                         Text(
-                            workReportController
+                           getDateWithDay( workReportController
                                     .selectedWorkReportData.value.date ??
-                                "",
+                                ""),
                             style: AppTextStyle.largeBold.copyWith(
                                 fontSize: 16, color: color_brown_title)),
                         SizedBox(
@@ -1390,5 +1390,16 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
         Icon(Icons.calendar_month_sharp, color: Colors.red),
       ],
     );
+  }
+
+
+  String getDateWithDay(String dateString) {
+    try {
+      DateFormat inputFormat = DateFormat('dd-MM-yyyy');
+      DateTime date = inputFormat.parse(dateString);
+      return '${DateFormat('dd/MM/yyyy').format(date)} (${DateFormat('EEEE').format(date)})';
+    } catch (e) {
+      return 'Invalid Date';
+    }
   }
 }

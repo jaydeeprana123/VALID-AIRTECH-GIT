@@ -50,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             },
           ),
           title: Text(
-            'VALID',
+            "Valid Services",
             style: AppTextStyle.largeBold.copyWith(fontSize: 18, color: color_secondary),
           ),
           centerTitle: true,

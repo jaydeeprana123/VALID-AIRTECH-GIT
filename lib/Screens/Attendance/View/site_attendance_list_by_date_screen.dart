@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,6 +32,7 @@ import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../AdminLeaveRequest/View/leave_filter_dialog.dart';
 import '../../Notes/View/edit_note_screen.dart';
+import '../../Sites/Model/site_list_response.dart';
 import '../Controller/attendance_controller.dart';
 
 class SiteAttendanceListByDateScreen extends StatefulWidget {
@@ -54,12 +56,13 @@ class _SiteAttendanceListByDateScreenState
     extends State<SiteAttendanceListByDateScreen> {
   AttendanceController attendanceController = Get.find<AttendanceController>();
   WorkReportController workReportController = Get.find<WorkReportController>();
-
+  String? selectedSite;
   @override
   void initState() {
     super.initState();
     attendanceController.attendanceList.clear();
     attendanceController.siteAttendanceData.clear();
+    attendanceController.filterSiteAttendanceData.clear();
     _initializeData();
   }
 
@@ -69,6 +72,8 @@ class _SiteAttendanceListByDateScreenState
     printData("_initializeData", "_initializeData");
 
     attendanceController.callAttendanceListByDateForWorkReport(widget.startDate,workReportController.workReportListByDates);
+    attendanceController.callSiteList();
+
   }
 
   @override
@@ -84,7 +89,7 @@ class _SiteAttendanceListByDateScreenState
           },
         ),
         title: Text(
-          'Valid Airtech',
+          'Valid Services',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
@@ -94,6 +99,31 @@ class _SiteAttendanceListByDateScreenState
             icon: Icon(Icons.home, color: color_secondary),
             onPressed: () {
               Get.back();
+            },
+          ),
+
+          IconButton(
+            icon: Icon(Icons.filter_alt_sharp, color: color_secondary),
+            onPressed: () {
+
+              List<SiteData> modifiedSiteList = [
+                SiteData(id: 0, headName: "All"),
+                ...attendanceController.siteList,
+              ];
+
+              _showSiteSelectionDialog(
+                context,
+                modifiedSiteList,
+                selectedSite,
+                    (val) {
+                  setState(() {
+                    selectedSite = val;
+                    attendanceController.filterAttendanceListBySite(selectedSite ?? "0");
+                  });
+                },
+                'Select Site',
+              );
+
             },
           ),
         ],
@@ -108,455 +138,478 @@ class _SiteAttendanceListByDateScreenState
                     padding: const EdgeInsets.all(12),
                     child: Center(
                       child: Text(
-                        'Work Report',
+                        'Site Report',
                         style: AppTextStyle.largeBold
                             .copyWith(fontSize: 14, color: Colors.white),
                         textAlign: TextAlign.center,
                       ),
                     ),
                   ),
-                  attendanceController.siteAttendanceData.isNotEmpty
+                  attendanceController.filterSiteAttendanceData.isNotEmpty
                       ? Expanded(
-                          child: ListView.builder(
-                          padding: const EdgeInsets.all(10),
-                          itemCount:
-                              attendanceController.siteAttendanceData.length,
-                          itemBuilder: (context, index) {
-                            return Card(
-                              elevation: 2,
-                              margin: const EdgeInsets.symmetric(vertical: 8),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Date',
-                                          style: AppTextStyle.largeMedium
-                                              .copyWith(
-                                                  fontSize: 12,
-                                                  color: color_brown_title),
-                                        ),
-                                        Text(
-                                          attendanceController
-                                                  .siteAttendanceData[index]
-                                                  .dateOfAttendance ??
-                                              "",
-                                          style: AppTextStyle.largeRegular
-                                              .copyWith(
-                                                  fontSize: 15,
-                                                  color: Colors.black),
-                                        ),
-                                        SizedBox(
-                                          height: 8,
-                                        ),
-                                        Text(
-                                          attendanceController
-                                                  .siteAttendanceData[index]
-                                                  .siteName ??
-                                              "",
-                                          style: AppTextStyle.largeMedium
-                                              .copyWith(
-                                                  fontSize: 15,
-                                                  color: color_brown_title),
-                                        ),
-                                        SizedBox(
-                                          height: 8,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    'In : ',
-                                                    style: AppTextStyle
-                                                        .largeMedium
-                                                        .copyWith(
-                                                            fontSize: 15,
-                                                            color:
-                                                                color_brown_title),
-                                                  ),
-                                                  Text(
-                                                    attendanceController
-                                                            .siteAttendanceData[
-                                                                index]
-                                                            .inTime ??
-                                                        "",
-                                                    style: AppTextStyle
-                                                        .largeRegular
-                                                        .copyWith(
-                                                            fontSize: 15,
-                                                            color:
-                                                                Colors.black),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            const SizedBox(height: 12),
-                                            Expanded(
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    'Out : ',
-                                                    style: AppTextStyle
-                                                        .largeMedium
-                                                        .copyWith(
-                                                            fontSize: 15,
-                                                            color:
-                                                                color_brown_title),
-                                                  ),
-                                                  Text(
-                                                    attendanceController
-                                                            .siteAttendanceData[
-                                                                index]
-                                                            .outTime ??
-                                                        "",
-                                                    style: AppTextStyle
-                                                        .largeRegular
-                                                        .copyWith(
-                                                            fontSize: 15,
-                                                            color:
-                                                                Colors.black),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 12,
-                                        ),
-                                        if(attendanceController
-                                            .siteAttendanceData[index].headId != null) Container(
-                                          width: 180,
-                                          height: 40,
-                                          // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                                          child: CommonButton(
-                                            titleText: attendanceController
-                                                .siteAttendanceData[index].isWorkReportAvail?"View Work Report":"+ Add Work Report",
-                                            textColor: Colors.white,
-                                            onCustomButtonPressed: () async {
-
-                                              await workReportController.getLoginData();
-
-                                              if (attendanceController
-                                                      .siteAttendanceData[index]
-                                                      .headId !=
-                                                  null) {
-                                                workReportController.callWorkReportList(
-                                                    attendanceController
-                                                        .siteAttendanceData[
-                                                            index]
-                                                        .headId
-                                                        .toString(),
-                                                    attendanceController
-                                                            .siteAttendanceData[
-                                                                index]
-                                                            .dateOfAttendance ??
-                                                        "", widget.startDate, widget.endDate,attendanceController
-                                                    .siteAttendanceData[
-                                                index]
-                                                    .siteName??"");
-                                              }else{
-                                                workReportController.callWorkReportList(
-                                                    attendanceController
-                                                        .siteAttendanceData[
-                                                    index]
-                                                        .officeId
-                                                        .toString(),
-                                                    attendanceController
-                                                        .siteAttendanceData[
-                                                    index]
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(10),
+                        itemCount:
+                        attendanceController.filterSiteAttendanceData.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            elevation: 2,
+                            margin: const EdgeInsets.symmetric(vertical: 8),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Site Date & Day',
+                                                  style: AppTextStyle.largeMedium
+                                                      .copyWith(
+                                                      fontSize: 12,
+                                                      color: color_brown_title),
+                                                ),
+                                                Text(
+                                                    getDateWithDay( attendanceController
+                                                        .filterSiteAttendanceData[index]
                                                         .dateOfAttendance ??
-                                                        "", widget.startDate, widget.endDate,attendanceController
-                                                    .siteAttendanceData[
-                                                index]
-                                                    .siteName??"");
-                                              }
-                                            },
-                                            borderColor: color_primary,
-                                            borderWidth: 0,
+                                                        ""),
+
+                                                  style: AppTextStyle.largeRegular
+                                                      .copyWith(
+                                                      fontSize: 15,
+                                                      color: Colors.black),
+                                                ),
+                                                SizedBox(
+                                                  height: 8,
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
 
-                                    SizedBox(
-                                      height: 12,
-                                    ),
+                                          if(attendanceController
+                                              .filterSiteAttendanceData[index].headId != null)  Container(
+                                            width: 120,
+                                            height: 40,
+                                            // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                                            child: CommonButton(
+                                              titleText: attendanceController
+                                                  .filterSiteAttendanceData[index].isWorkReportAvail?"View":"+ Add",
+                                              textColor: Colors.white,
+                                              onCustomButtonPressed: () async {
 
-                                    // InkWell(
-                                    //   onTap: () {
-                                    //     Get.to(WorkReportListScreen(
-                                    //         siteId: (attendanceController
-                                    //             .attendanceList[index]
-                                    //             .headName??"").isNotEmpty?attendanceController
-                                    //             .attendanceList[index]
-                                    //             .headId.toString():attendanceController
-                                    //             .attendanceList[index]
-                                    //             .officeId.toString(),
-                                    //         attendanceId:
-                                    //             attendanceController
-                                    //                 .attendanceList[index]
-                                    //                 .id
-                                    //                 .toString(),
-                                    //         date: attendanceController
-                                    //                 .attendanceList[index]
-                                    //                 .date ??
-                                    //             ""));
-                                    //   },
-                                    //   child: Row(
-                                    //     children: [
-                                    //       Icon(Icons.add_circle),
-                                    //       SizedBox(
-                                    //         width: 2,
-                                    //       ),
-                                    //       Text(
-                                    //         "Work Report",
-                                    //         style: AppTextStyle.largeBold
-                                    //             .copyWith(
-                                    //                 fontSize: 15,
-                                    //                 color: Colors.black),
-                                    //       ),
-                                    //     ],
-                                    //   ),
-                                    // ),
+                                                await workReportController.getLoginData();
 
-                                    // const SizedBox(height: 12),
-                                    // attendanceController
-                                    //     .attendanceList[index].status ==
-                                    //     1? InkWell(
-                                    //   onTap: () {
-                                    //     attendanceController
-                                    //         .selectedAttendance.value =
-                                    //     attendanceController
-                                    //         .attendanceList[index];
-                                    //     Get.to(AddAttendanceOutScreen(isSite: (attendanceController
-                                    //         .attendanceList[index].headName??"").isNotEmpty?true:false,date: attendanceController
-                                    //         .attendanceList[index].date??""))
-                                    //         ?.then((value) {
-                                    //       attendanceController.isLoading.value =
-                                    //       false;
-                                    //       attendanceController.callAttendanceList();
-                                    //     });
-                                    //   },
-                                    //   child: Row(
-                                    //     children: [
-                                    //       Icon(Icons.add_circle),
-                                    //       SizedBox(
-                                    //         width: 2,
-                                    //       ),
-                                    //       Text(
-                                    //         "Sign Out",
-                                    //         style: AppTextStyle.largeBold
-                                    //             .copyWith(
-                                    //             fontSize: 15,
-                                    //             color: Colors.black),
-                                    //       ),
-                                    //     ],
-                                    //   ),
-                                    // ):SizedBox()
-                                  ],
-                                ),
+                                                if (attendanceController
+                                                    .filterSiteAttendanceData[index]
+                                                    .headId !=
+                                                    null) {
+                                                  workReportController.callWorkReportList(
+                                                      attendanceController
+                                                          .filterSiteAttendanceData[
+                                                      index]
+                                                          .headId
+                                                          .toString(),
+                                                      attendanceController
+                                                          .filterSiteAttendanceData[
+                                                      index]
+                                                          .dateOfAttendance ??
+                                                          "", widget.startDate, widget.endDate,attendanceController
+                                                      .filterSiteAttendanceData[
+                                                  index]
+                                                      .siteName??"");
+                                                }else{
+                                                  workReportController.callWorkReportList(
+                                                      attendanceController
+                                                          .filterSiteAttendanceData[
+                                                      index]
+                                                          .officeId
+                                                          .toString(),
+                                                      attendanceController
+                                                          .filterSiteAttendanceData[
+                                                      index]
+                                                          .dateOfAttendance ??
+                                                          "", widget.startDate, widget.endDate,attendanceController
+                                                      .filterSiteAttendanceData[
+                                                  index]
+                                                      .siteName??"");
+                                                }
+                                              },
+                                              borderColor: color_primary,
+                                              borderWidth: 0,
+                                            ),
+                                          ),
+
+
+                                        ],
+                                      ),
+
+
+
+                                      Text(
+                                        'Site Name',
+                                        style: AppTextStyle.largeMedium
+                                            .copyWith(
+                                            fontSize: 12,
+                                            color: color_brown_title),
+                                      ),
+
+                                      Text(
+                                        attendanceController
+                                            .filterSiteAttendanceData[index]
+                                            .siteName ??
+                                            "",
+                                        style: AppTextStyle.largeSemiBold
+                                            .copyWith(
+                                            fontSize: 16,
+                                            color: Colors.black),
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: Row(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Site In Time : ',
+                                                  style: AppTextStyle
+                                                      .largeMedium
+                                                      .copyWith(
+                                                      fontSize: 15,
+                                                      color:
+                                                      color_brown_title),
+                                                ),
+                                                Text(
+                                                  attendanceController
+                                                      .filterSiteAttendanceData[
+                                                  index]
+                                                      .inTime ??
+                                                      "",
+                                                  style: AppTextStyle
+                                                      .largeRegular
+                                                      .copyWith(
+                                                      fontSize: 15,
+                                                      color:
+                                                      Colors.black),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 12),
+                                          Expanded(
+                                            child: Row(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Site Out Time : ',
+                                                  style: AppTextStyle
+                                                      .largeMedium
+                                                      .copyWith(
+                                                      fontSize: 15,
+                                                      color:
+                                                      color_brown_title),
+                                                ),
+                                                Text(
+                                                  attendanceController
+                                                      .filterSiteAttendanceData[
+                                                  index]
+                                                      .outTime ??
+                                                      "",
+                                                  style: AppTextStyle
+                                                      .largeRegular
+                                                      .copyWith(
+                                                      fontSize: 15,
+                                                      color:
+                                                      Colors.black),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+
+                                  SizedBox(
+                                    height: 12,
+                                  ),
+
+                                  // InkWell(
+                                  //   onTap: () {
+                                  //     Get.to(WorkReportListScreen(
+                                  //         siteId: (attendanceController
+                                  //             .attendanceList[index]
+                                  //             .headName??"").isNotEmpty?attendanceController
+                                  //             .attendanceList[index]
+                                  //             .headId.toString():attendanceController
+                                  //             .attendanceList[index]
+                                  //             .officeId.toString(),
+                                  //         attendanceId:
+                                  //             attendanceController
+                                  //                 .attendanceList[index]
+                                  //                 .id
+                                  //                 .toString(),
+                                  //         date: attendanceController
+                                  //                 .attendanceList[index]
+                                  //                 .date ??
+                                  //             ""));
+                                  //   },
+                                  //   child: Row(
+                                  //     children: [
+                                  //       Icon(Icons.add_circle),
+                                  //       SizedBox(
+                                  //         width: 2,
+                                  //       ),
+                                  //       Text(
+                                  //         "Site Report",
+                                  //         style: AppTextStyle.largeBold
+                                  //             .copyWith(
+                                  //                 fontSize: 15,
+                                  //                 color: Colors.black),
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // ),
+
+                                  // const SizedBox(height: 12),
+                                  // attendanceController
+                                  //     .attendanceList[index].status ==
+                                  //     1? InkWell(
+                                  //   onTap: () {
+                                  //     attendanceController
+                                  //         .selectedAttendance.value =
+                                  //     attendanceController
+                                  //         .attendanceList[index];
+                                  //     Get.to(AddAttendanceOutScreen(isSite: (attendanceController
+                                  //         .attendanceList[index].headName??"").isNotEmpty?true:false,date: attendanceController
+                                  //         .attendanceList[index].date??""))
+                                  //         ?.then((value) {
+                                  //       attendanceController.isLoading.value =
+                                  //       false;
+                                  //       attendanceController.callAttendanceList();
+                                  //     });
+                                  //   },
+                                  //   child: Row(
+                                  //     children: [
+                                  //       Icon(Icons.add_circle),
+                                  //       SizedBox(
+                                  //         width: 2,
+                                  //       ),
+                                  //       Text(
+                                  //         "Sign Out",
+                                  //         style: AppTextStyle.largeBold
+                                  //             .copyWith(
+                                  //             fontSize: 15,
+                                  //             color: Colors.black),
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // ):SizedBox()
+                                ],
                               ),
-                            );
-                          },
-                        )
+                            ),
+                          );
+                        },
+                      )
 
-                          // ListView.builder(
-                          //   padding: const EdgeInsets.all(10),
-                          //   itemCount:
-                          //   attendanceController.attendanceList.length,
-                          //   itemBuilder: (context, index) {
-                          //     return Card(
-                          //       elevation: 2,
-                          //       margin:
-                          //       const EdgeInsets.symmetric(vertical: 8),
-                          //       child: Padding(
-                          //         padding: const EdgeInsets.all(12),
-                          //         child: Column(
-                          //           crossAxisAlignment:
-                          //           CrossAxisAlignment.start,
-                          //           children: [
-                          //             Row(
-                          //               mainAxisAlignment: MainAxisAlignment.start,
-                          //               children: [
-                          //                 Expanded(
-                          //                   child: Column(
-                          //                     crossAxisAlignment: CrossAxisAlignment.start
-                          //                     ,children: [
-                          //                     Text(
-                          //                       'Date',
-                          //                       style: AppTextStyle.largeMedium
-                          //                           .copyWith(
-                          //                           fontSize: 12,
-                          //                           color: color_brown_title),
-                          //                     ),
-                          //                     Text(
-                          //                       "${attendanceController
-                          //                           .attendanceList[index]
-                          //                           .date ??
-                          //                           ""} || ${attendanceController
-                          //                           .attendanceList[index]
-                          //                           .time ??
-                          //                           ""}",
-                          //                       style: AppTextStyle.largeRegular
-                          //                           .copyWith(
-                          //                           fontSize: 15,
-                          //                           color: Colors.black),
-                          //                     ),
-                          //                   ],
-                          //                   ),
-                          //                 ),
-                          //                 const SizedBox(height: 12),
-                          //                 Column(
-                          //                   children: [
-                          //                     Text(
-                          //                       'Status',
-                          //                       style: AppTextStyle.largeMedium
-                          //                           .copyWith(
-                          //                           fontSize: 12,
-                          //                           color: color_brown_title),
-                          //                     ),
-                          //                     Text(
-                          //                       (attendanceController
-                          //                           .attendanceList[index]
-                          //                           .statusType ??
-                          //                           "")
-                          //                           .toString(),
-                          //                       style: AppTextStyle.largeRegular
-                          //                           .copyWith(
-                          //                           fontSize: 15,
-                          //                           color: Colors.black),
-                          //                     ),
-                          //                   ],
-                          //                 ),
-                          //               ],
-                          //             ),
-                          //
-                          //
-                          //             const SizedBox(height: 12),
-                          //             Text(
-                          //               (attendanceController
-                          //                   .attendanceList[index]
-                          //                   .officeName ??
-                          //                   "").isNotEmpty?'Office Name':"Site Name",
-                          //               style: AppTextStyle.largeMedium
-                          //                   .copyWith(
-                          //                   fontSize: 12,
-                          //                   color: color_brown_title),
-                          //             ),
-                          //             Text(
-                          //               (attendanceController
-                          //                   .attendanceList[index]
-                          //                   .officeName ??
-                          //                   "").isNotEmpty?(attendanceController
-                          //                   .attendanceList[index]
-                          //                   .officeName ??
-                          //                   ""):(attendanceController
-                          //                   .attendanceList[index]
-                          //                   .headName ??
-                          //                   ""),
-                          //               style: AppTextStyle.largeRegular
-                          //                   .copyWith(
-                          //                   fontSize: 15,
-                          //                   color: Colors.black),
-                          //             ),
-                          //
-                          //             const SizedBox(height: 12),
-                          //             // InkWell(
-                          //             //   onTap: () {
-                          //             //     Get.to(WorkReportListScreen(
-                          //             //         siteId: (attendanceController
-                          //             //             .attendanceList[index]
-                          //             //             .headName??"").isNotEmpty?attendanceController
-                          //             //             .attendanceList[index]
-                          //             //             .headId.toString():attendanceController
-                          //             //             .attendanceList[index]
-                          //             //             .officeId.toString(),
-                          //             //         attendanceId:
-                          //             //             attendanceController
-                          //             //                 .attendanceList[index]
-                          //             //                 .id
-                          //             //                 .toString(),
-                          //             //         date: attendanceController
-                          //             //                 .attendanceList[index]
-                          //             //                 .date ??
-                          //             //             ""));
-                          //             //   },
-                          //             //   child: Row(
-                          //             //     children: [
-                          //             //       Icon(Icons.add_circle),
-                          //             //       SizedBox(
-                          //             //         width: 2,
-                          //             //       ),
-                          //             //       Text(
-                          //             //         "Work Report",
-                          //             //         style: AppTextStyle.largeBold
-                          //             //             .copyWith(
-                          //             //                 fontSize: 15,
-                          //             //                 color: Colors.black),
-                          //             //       ),
-                          //             //     ],
-                          //             //   ),
-                          //             // ),
-                          //
-                          //
-                          //
-                          //             // const SizedBox(height: 12),
-                          //             // attendanceController
-                          //             //     .attendanceList[index].status ==
-                          //             //     1? InkWell(
-                          //             //   onTap: () {
-                          //             //     attendanceController
-                          //             //         .selectedAttendance.value =
-                          //             //     attendanceController
-                          //             //         .attendanceList[index];
-                          //             //     Get.to(AddAttendanceOutScreen(isSite: (attendanceController
-                          //             //         .attendanceList[index].headName??"").isNotEmpty?true:false,date: attendanceController
-                          //             //         .attendanceList[index].date??""))
-                          //             //         ?.then((value) {
-                          //             //       attendanceController.isLoading.value =
-                          //             //       false;
-                          //             //       attendanceController.callAttendanceList();
-                          //             //     });
-                          //             //   },
-                          //             //   child: Row(
-                          //             //     children: [
-                          //             //       Icon(Icons.add_circle),
-                          //             //       SizedBox(
-                          //             //         width: 2,
-                          //             //       ),
-                          //             //       Text(
-                          //             //         "Sign Out",
-                          //             //         style: AppTextStyle.largeBold
-                          //             //             .copyWith(
-                          //             //             fontSize: 15,
-                          //             //             color: Colors.black),
-                          //             //       ),
-                          //             //     ],
-                          //             //   ),
-                          //             // ):SizedBox()
-                          //
-                          //
-                          //           ],
-                          //         ),
-                          //       ),
-                          //     );
-                          //   },
-                          // ),
-                          )
+                    // ListView.builder(
+                    //   padding: const EdgeInsets.all(10),
+                    //   itemCount:
+                    //   attendanceController.attendanceList.length,
+                    //   itemBuilder: (context, index) {
+                    //     return Card(
+                    //       elevation: 2,
+                    //       margin:
+                    //       const EdgeInsets.symmetric(vertical: 8),
+                    //       child: Padding(
+                    //         padding: const EdgeInsets.all(12),
+                    //         child: Column(
+                    //           crossAxisAlignment:
+                    //           CrossAxisAlignment.start,
+                    //           children: [
+                    //             Row(
+                    //               mainAxisAlignment: MainAxisAlignment.start,
+                    //               children: [
+                    //                 Expanded(
+                    //                   child: Column(
+                    //                     crossAxisAlignment: CrossAxisAlignment.start
+                    //                     ,children: [
+                    //                     Text(
+                    //                       'Date',
+                    //                       style: AppTextStyle.largeMedium
+                    //                           .copyWith(
+                    //                           fontSize: 12,
+                    //                           color: color_brown_title),
+                    //                     ),
+                    //                     Text(
+                    //                       "${attendanceController
+                    //                           .attendanceList[index]
+                    //                           .date ??
+                    //                           ""} || ${attendanceController
+                    //                           .attendanceList[index]
+                    //                           .time ??
+                    //                           ""}",
+                    //                       style: AppTextStyle.largeRegular
+                    //                           .copyWith(
+                    //                           fontSize: 15,
+                    //                           color: Colors.black),
+                    //                     ),
+                    //                   ],
+                    //                   ),
+                    //                 ),
+                    //                 const SizedBox(height: 12),
+                    //                 Column(
+                    //                   children: [
+                    //                     Text(
+                    //                       'Status',
+                    //                       style: AppTextStyle.largeMedium
+                    //                           .copyWith(
+                    //                           fontSize: 12,
+                    //                           color: color_brown_title),
+                    //                     ),
+                    //                     Text(
+                    //                       (attendanceController
+                    //                           .attendanceList[index]
+                    //                           .statusType ??
+                    //                           "")
+                    //                           .toString(),
+                    //                       style: AppTextStyle.largeRegular
+                    //                           .copyWith(
+                    //                           fontSize: 15,
+                    //                           color: Colors.black),
+                    //                     ),
+                    //                   ],
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //
+                    //
+                    //             const SizedBox(height: 12),
+                    //             Text(
+                    //               (attendanceController
+                    //                   .attendanceList[index]
+                    //                   .officeName ??
+                    //                   "").isNotEmpty?'Office Name':"Site Name",
+                    //               style: AppTextStyle.largeMedium
+                    //                   .copyWith(
+                    //                   fontSize: 12,
+                    //                   color: color_brown_title),
+                    //             ),
+                    //             Text(
+                    //               (attendanceController
+                    //                   .attendanceList[index]
+                    //                   .officeName ??
+                    //                   "").isNotEmpty?(attendanceController
+                    //                   .attendanceList[index]
+                    //                   .officeName ??
+                    //                   ""):(attendanceController
+                    //                   .attendanceList[index]
+                    //                   .headName ??
+                    //                   ""),
+                    //               style: AppTextStyle.largeRegular
+                    //                   .copyWith(
+                    //                   fontSize: 15,
+                    //                   color: Colors.black),
+                    //             ),
+                    //
+                    //             const SizedBox(height: 12),
+                    //             // InkWell(
+                    //             //   onTap: () {
+                    //             //     Get.to(WorkReportListScreen(
+                    //             //         siteId: (attendanceController
+                    //             //             .attendanceList[index]
+                    //             //             .headName??"").isNotEmpty?attendanceController
+                    //             //             .attendanceList[index]
+                    //             //             .headId.toString():attendanceController
+                    //             //             .attendanceList[index]
+                    //             //             .officeId.toString(),
+                    //             //         attendanceId:
+                    //             //             attendanceController
+                    //             //                 .attendanceList[index]
+                    //             //                 .id
+                    //             //                 .toString(),
+                    //             //         date: attendanceController
+                    //             //                 .attendanceList[index]
+                    //             //                 .date ??
+                    //             //             ""));
+                    //             //   },
+                    //             //   child: Row(
+                    //             //     children: [
+                    //             //       Icon(Icons.add_circle),
+                    //             //       SizedBox(
+                    //             //         width: 2,
+                    //             //       ),
+                    //             //       Text(
+                    //             //         "Site Report",
+                    //             //         style: AppTextStyle.largeBold
+                    //             //             .copyWith(
+                    //             //                 fontSize: 15,
+                    //             //                 color: Colors.black),
+                    //             //       ),
+                    //             //     ],
+                    //             //   ),
+                    //             // ),
+                    //
+                    //
+                    //
+                    //             // const SizedBox(height: 12),
+                    //             // attendanceController
+                    //             //     .attendanceList[index].status ==
+                    //             //     1? InkWell(
+                    //             //   onTap: () {
+                    //             //     attendanceController
+                    //             //         .selectedAttendance.value =
+                    //             //     attendanceController
+                    //             //         .attendanceList[index];
+                    //             //     Get.to(AddAttendanceOutScreen(isSite: (attendanceController
+                    //             //         .attendanceList[index].headName??"").isNotEmpty?true:false,date: attendanceController
+                    //             //         .attendanceList[index].date??""))
+                    //             //         ?.then((value) {
+                    //             //       attendanceController.isLoading.value =
+                    //             //       false;
+                    //             //       attendanceController.callAttendanceList();
+                    //             //     });
+                    //             //   },
+                    //             //   child: Row(
+                    //             //     children: [
+                    //             //       Icon(Icons.add_circle),
+                    //             //       SizedBox(
+                    //             //         width: 2,
+                    //             //       ),
+                    //             //       Text(
+                    //             //         "Sign Out",
+                    //             //         style: AppTextStyle.largeBold
+                    //             //             .copyWith(
+                    //             //             fontSize: 15,
+                    //             //             color: Colors.black),
+                    //             //       ),
+                    //             //     ],
+                    //             //   ),
+                    //             // ):SizedBox()
+                    //
+                    //
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
+                  )
                       : (!attendanceController.isLoading.value && !workReportController.isLoading.value)?Expanded(child: Center(child: Text("No data found"),)):SizedBox(),
                 ],
               ),
@@ -568,4 +621,54 @@ class _SiteAttendanceListByDateScreenState
           )),
     );
   }
+
+  // Step 1: Show the dropdown dialog on IconButton press
+  void _showSiteSelectionDialog(
+      BuildContext context,
+      List<SiteData> items,
+      String? selectedValue,
+      Function(String?) onChanged,
+      String title,
+      ) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text(title),
+          content: SizedBox(
+            height: 300,
+            width: double.maxFinite,
+            child: ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (_, index) {
+                final item = items[index];
+                return ListTile(
+                  title: Text(item.headName ?? ""),
+                  trailing: selectedValue == item.id.toString()
+                      ? Icon(Icons.check, color: Colors.green)
+                      : null,
+                  onTap: () {
+                    onChanged(item.id.toString());
+                    Navigator.pop(context); // close dialog
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
+  String getDateWithDay(String dateString) {
+    try {
+      DateFormat inputFormat = DateFormat('dd-MM-yyyy');
+      DateTime date = inputFormat.parse(dateString);
+      return '${DateFormat('dd/MM/yyyy').format(date)} (${DateFormat('EEEE').format(date)})';
+    } catch (e) {
+      return 'Invalid Date';
+    }
+  }
+
 }

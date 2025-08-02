@@ -78,7 +78,7 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
           },
         ),
         title: Text(
-          'Valid Airtech',
+          'Valid Services',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
@@ -250,9 +250,10 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
                                             tableHeader('Date'),
                                             tableHeader('Office In'),
                                             tableHeader('Office Out'),
+                                            tableHeader('Office Duration'),
                                             tableHeader('Site In'),
                                             tableHeader('Site Out'),
-                                            tableHeader('Office Duration'),
+
                                             tableHeader('Site Duration'),
                                             tableHeader('Attendance Status'),
                                           ],
@@ -263,9 +264,10 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
                                             tableCell(data.date ?? ''),
                                             tableCell(data.overallOfficeInTime ?? ''),
                                             tableCell(data.overallOfficeOutTime ?? ''),
+                                            tableCell(data.officeDuration ?? ''),
                                             tableCell(data.overallSiteInTime ?? ''),
                                             tableCell(data.overallSiteOutTime ?? ''),
-                                            tableCell(data.officeDuration ?? ''),
+
                                             tableCell(data.siteDuration ?? ''),
                                             tableCell(data.attendanceStatus ?? ''),
                                           ],
@@ -465,7 +467,7 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
                           //         //             //         width: 2,
                           //         //             //       ),
                           //         //             //       Text(
-                          //         //             //         "Work Report",
+                          //         //             //         "Site Report",
                           //         //             //         style: AppTextStyle.largeBold
                           //         //             //             .copyWith(
                           //         //             //                 fontSize: 15,

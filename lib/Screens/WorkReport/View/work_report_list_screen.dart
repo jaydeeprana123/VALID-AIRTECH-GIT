@@ -53,7 +53,7 @@
 //           },
 //         ),
 //         title: Text(
-//           'All Work Report',
+//           'All Site Report',
 //           style: AppTextStyle.largeBold.copyWith(fontSize: 18
 //               , color: color_secondary),
 //         ),
@@ -93,7 +93,7 @@
 //                       children: [
 //
 //                         Text(
-//                           'Work Report Date',
+//                           'Site Report Date',
 //                           style: AppTextStyle.largeMedium.copyWith(fontSize: 15
 //                               , color: color_brown_title),
 //                         ),

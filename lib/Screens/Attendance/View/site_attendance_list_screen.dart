@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,6 +32,7 @@ import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../AdminLeaveRequest/View/leave_filter_dialog.dart';
 import '../../Notes/View/edit_note_screen.dart';
+import '../../Sites/Model/site_list_response.dart';
 import '../Controller/attendance_controller.dart';
 
 class SiteAttendanceListScreen extends StatefulWidget {
@@ -54,12 +56,13 @@ class _SiteAttendanceListScreenState
     extends State<SiteAttendanceListScreen> {
   AttendanceController attendanceController = Get.find<AttendanceController>();
   WorkReportController workReportController = Get.find<WorkReportController>();
-
+  String? selectedSite;
   @override
   void initState() {
     super.initState();
     attendanceController.attendanceList.clear();
-    attendanceController.siteAttendanceData.clear();
+    attendanceController.filterSiteAttendanceData.clear();
+    attendanceController.filterSiteAttendanceData.clear();
     _initializeData();
   }
 
@@ -69,6 +72,7 @@ class _SiteAttendanceListScreenState
     printData("_initializeData", "_initializeData");
 
     attendanceController.callAttendanceList(workReportController.workReportListByDates);
+    attendanceController.callSiteList();
   }
 
   @override
@@ -84,7 +88,7 @@ class _SiteAttendanceListScreenState
           },
         ),
         title: Text(
-          'Valid Airtech',
+          'Valid Services',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
@@ -94,6 +98,32 @@ class _SiteAttendanceListScreenState
             icon: Icon(Icons.home, color: color_secondary),
             onPressed: () {
               Get.back();
+            },
+          ),
+
+
+          IconButton(
+            icon: Icon(Icons.filter_alt_sharp, color: color_secondary),
+            onPressed: () {
+
+              List<SiteData> modifiedSiteList = [
+                SiteData(id: 0, headName: "All"),
+                ...attendanceController.siteList,
+              ];
+
+              _showSiteSelectionDialog(
+                context,
+                modifiedSiteList,
+                selectedSite,
+                    (val) {
+                  setState(() {
+                    selectedSite = val;
+                    attendanceController.filterAttendanceListBySite(selectedSite ?? "0");
+                  });
+                },
+                'Select Site',
+              );
+
             },
           ),
         ],
@@ -108,19 +138,19 @@ class _SiteAttendanceListScreenState
                     padding: const EdgeInsets.all(12),
                     child: Center(
                       child: Text(
-                        'Work Report',
+                        'Site Report',
                         style: AppTextStyle.largeBold
                             .copyWith(fontSize: 14, color: Colors.white),
                         textAlign: TextAlign.center,
                       ),
                     ),
                   ),
-                  attendanceController.siteAttendanceData.isNotEmpty
+                  attendanceController.filterSiteAttendanceData.isNotEmpty
                       ? Expanded(
                           child: ListView.builder(
                           padding: const EdgeInsets.all(10),
                           itemCount:
-                              attendanceController.siteAttendanceData.length,
+                              attendanceController.filterSiteAttendanceData.length,
                           itemBuilder: (context, index) {
                             return Card(
                               elevation: 2,
@@ -134,35 +164,114 @@ class _SiteAttendanceListScreenState
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Site Date & Day',
+                                                    style: AppTextStyle.largeMedium
+                                                        .copyWith(
+                                                            fontSize: 12,
+                                                            color: color_brown_title),
+                                                  ),
+                                                  Text(
+
+                                                    getDateWithDay( attendanceController
+                                                        .filterSiteAttendanceData[index]
+                                                        .dateOfAttendance ??
+                                                        ""),
+
+                                                    style: AppTextStyle.largeRegular
+                                                        .copyWith(
+                                                            fontSize: 15,
+                                                            color: Colors.black),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 8,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+
+                                            if(attendanceController
+                                                .filterSiteAttendanceData[index].headId != null)  Container(
+                                              width: 120,
+                                              height: 40,
+                                              // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                                              child: CommonButton(
+                                                titleText: attendanceController
+                                                    .filterSiteAttendanceData[index].isWorkReportAvail?"View":"+ Add",
+                                                textColor: Colors.white,
+                                                onCustomButtonPressed: () async {
+
+                                                  await workReportController.getLoginData();
+
+                                                  if (attendanceController
+                                                      .filterSiteAttendanceData[index]
+                                                      .headId !=
+                                                      null) {
+                                                    workReportController.callWorkReportList(
+                                                        attendanceController
+                                                            .filterSiteAttendanceData[
+                                                        index]
+                                                            .headId
+                                                            .toString(),
+                                                        attendanceController
+                                                            .filterSiteAttendanceData[
+                                                        index]
+                                                            .dateOfAttendance ??
+                                                            "", widget.startDate, widget.endDate,attendanceController
+                                                        .filterSiteAttendanceData[
+                                                    index]
+                                                        .siteName??"");
+                                                  }else{
+                                                    workReportController.callWorkReportList(
+                                                        attendanceController
+                                                            .filterSiteAttendanceData[
+                                                        index]
+                                                            .officeId
+                                                            .toString(),
+                                                        attendanceController
+                                                            .filterSiteAttendanceData[
+                                                        index]
+                                                            .dateOfAttendance ??
+                                                            "", widget.startDate, widget.endDate,attendanceController
+                                                        .filterSiteAttendanceData[
+                                                    index]
+                                                        .siteName??"");
+                                                  }
+                                                },
+                                                borderColor: color_primary,
+                                                borderWidth: 0,
+                                              ),
+                                            ),
+
+
+                                          ],
+                                        ),
+
+
+
                                         Text(
-                                          'Date',
+                                          'Site Name',
                                           style: AppTextStyle.largeMedium
                                               .copyWith(
-                                                  fontSize: 12,
-                                                  color: color_brown_title),
+                                              fontSize: 12,
+                                              color: color_brown_title),
                                         ),
+
                                         Text(
                                           attendanceController
-                                                  .siteAttendanceData[index]
-                                                  .dateOfAttendance ??
-                                              "",
-                                          style: AppTextStyle.largeRegular
-                                              .copyWith(
-                                                  fontSize: 15,
-                                                  color: Colors.black),
-                                        ),
-                                        SizedBox(
-                                          height: 8,
-                                        ),
-                                        Text(
-                                          attendanceController
-                                                  .siteAttendanceData[index]
+                                                  .filterSiteAttendanceData[index]
                                                   .siteName ??
                                               "",
-                                          style: AppTextStyle.largeMedium
+                                          style: AppTextStyle.largeSemiBold
                                               .copyWith(
-                                                  fontSize: 15,
-                                                  color: color_brown_title),
+                                                  fontSize: 16,
+                                                  color: Colors.black),
                                         ),
                                         SizedBox(
                                           height: 8,
@@ -177,7 +286,7 @@ class _SiteAttendanceListScreenState
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    'In : ',
+                                                    'Site In Time : ',
                                                     style: AppTextStyle
                                                         .largeMedium
                                                         .copyWith(
@@ -187,7 +296,7 @@ class _SiteAttendanceListScreenState
                                                   ),
                                                   Text(
                                                     attendanceController
-                                                            .siteAttendanceData[
+                                                            .filterSiteAttendanceData[
                                                                 index]
                                                             .inTime ??
                                                         "",
@@ -208,7 +317,7 @@ class _SiteAttendanceListScreenState
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    'Out : ',
+                                                    'Site Out Time : ',
                                                     style: AppTextStyle
                                                         .largeMedium
                                                         .copyWith(
@@ -218,7 +327,7 @@ class _SiteAttendanceListScreenState
                                                   ),
                                                   Text(
                                                     attendanceController
-                                                            .siteAttendanceData[
+                                                            .filterSiteAttendanceData[
                                                                 index]
                                                             .outTime ??
                                                         "",
@@ -233,61 +342,6 @@ class _SiteAttendanceListScreenState
                                               ),
                                             ),
                                           ],
-                                        ),
-                                        SizedBox(
-                                          height: 12,
-                                        ),
-                                        if(attendanceController
-                                            .siteAttendanceData[index].headId != null)  Container(
-                                          width: 180,
-                                          height: 40,
-                                          // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                                          child: CommonButton(
-                                            titleText: attendanceController
-                                                .siteAttendanceData[index].isWorkReportAvail?"View Work Report":"+ Add Work Report",
-                                            textColor: Colors.white,
-                                            onCustomButtonPressed: () async {
-
-                                              await workReportController.getLoginData();
-
-                                              if (attendanceController
-                                                      .siteAttendanceData[index]
-                                                      .headId !=
-                                                  null) {
-                                                workReportController.callWorkReportList(
-                                                    attendanceController
-                                                        .siteAttendanceData[
-                                                            index]
-                                                        .headId
-                                                        .toString(),
-                                                    attendanceController
-                                                            .siteAttendanceData[
-                                                                index]
-                                                            .dateOfAttendance ??
-                                                        "", widget.startDate, widget.endDate,attendanceController
-                                                    .siteAttendanceData[
-                                                index]
-                                                    .siteName??"");
-                                              }else{
-                                                workReportController.callWorkReportList(
-                                                    attendanceController
-                                                        .siteAttendanceData[
-                                                    index]
-                                                        .officeId
-                                                        .toString(),
-                                                    attendanceController
-                                                        .siteAttendanceData[
-                                                    index]
-                                                        .dateOfAttendance ??
-                                                        "", widget.startDate, widget.endDate,attendanceController
-                                                    .siteAttendanceData[
-                                                index]
-                                                    .siteName??"");
-                                              }
-                                            },
-                                            borderColor: color_primary,
-                                            borderWidth: 0,
-                                          ),
                                         ),
                                       ],
                                     ),
@@ -323,7 +377,7 @@ class _SiteAttendanceListScreenState
                                     //         width: 2,
                                     //       ),
                                     //       Text(
-                                    //         "Work Report",
+                                    //         "Site Report",
                                     //         style: AppTextStyle.largeBold
                                     //             .copyWith(
                                     //                 fontSize: 15,
@@ -502,7 +556,7 @@ class _SiteAttendanceListScreenState
                           //             //         width: 2,
                           //             //       ),
                           //             //       Text(
-                          //             //         "Work Report",
+                          //             //         "Site Report",
                           //             //         style: AppTextStyle.largeBold
                           //             //             .copyWith(
                           //             //                 fontSize: 15,
@@ -567,5 +621,54 @@ class _SiteAttendanceListScreenState
             ],
           )),
     );
+  }
+
+
+  // Step 1: Show the dropdown dialog on IconButton press
+  void _showSiteSelectionDialog(
+      BuildContext context,
+      List<SiteData> items,
+      String? selectedValue,
+      Function(String?) onChanged,
+      String title,
+      ) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text(title),
+          content: SizedBox(
+            height: 300,
+            width: double.maxFinite,
+            child: ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (_, index) {
+                final item = items[index];
+                return ListTile(
+                  title: Text(item.headName ?? ""),
+                  trailing: selectedValue == item.id.toString()
+                      ? Icon(Icons.check, color: Colors.green)
+                      : null,
+                  onTap: () {
+                    onChanged(item.id.toString());
+                    Navigator.pop(context); // close dialog
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  String getDateWithDay(String dateString) {
+    try {
+      DateFormat inputFormat = DateFormat('dd-MM-yyyy');
+      DateTime date = inputFormat.parse(dateString);
+      return '${DateFormat('dd/MM/yyyy').format(date)} (${DateFormat('EEEE').format(date)})';
+    } catch (e) {
+      return 'Invalid Date';
+    }
   }
 }

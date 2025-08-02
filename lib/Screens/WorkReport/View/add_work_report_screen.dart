@@ -113,7 +113,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
           },
         ),
         title: Text(
-          'Add Work Report',
+          'Add Site Report',
           style: AppTextStyle.largeBold.copyWith(fontSize: 18
               , color: color_secondary),
         ),
@@ -165,7 +165,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
 
                 // _buildDatePicker(),
 
-                // _buildTextFieldOnlyReadableDate(TextEditingController(text: widget.date), "Work Reporting Date"),
+                // _buildTextFieldOnlyReadableDate(TextEditingController(text: widget.date), "Site Reporting Date"),
 
                 SizedBox(height: 16,),
 

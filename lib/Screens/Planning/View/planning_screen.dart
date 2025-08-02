@@ -75,7 +75,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
           },
         ),
         title: Text(
-          'Valid Airtech',
+          'Valid Services',
           style: AppTextStyle.largeBold.copyWith(fontSize: 18
             , color: color_secondary),
         ),
@@ -103,49 +103,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        Get.to(PlanningListScreen());
-                      },
-                      child: Text(
-                        'View All >',
-                        style:AppTextStyle.largeBold.copyWith(fontSize: 13
-                            , color: Colors.white),
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        Get.to(AddPlanningScreen())?.then((value) {
-                          planningController.isLoading.value = false;
-                          planningController.callPlanningListByMonth(startFormatted, endFormatted);
-                        });
-                      },
-                      child: Text(
-                        '+Add',
-                        style: AppTextStyle.largeBold.copyWith(fontSize: 13
-                            , color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
@@ -238,6 +196,51 @@ class _PlanningScreenState extends State<PlanningScreen> {
                   ),
                 ),
               ),
+
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        Get.to(PlanningListScreen());
+                      },
+                      child: Text(
+                        'View All >',
+                        style:AppTextStyle.largeBold.copyWith(fontSize: 13
+                            , color: Colors.white),
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        Get.to(AddPlanningScreen())?.then((value) {
+                          planningController.isLoading.value = false;
+                          planningController.callPlanningListByMonth(startFormatted, endFormatted);
+                        });
+                      },
+                      child: Text(
+                        '+Add',
+                        style: AppTextStyle.largeBold.copyWith(fontSize: 13
+                            , color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
             ],
           ),
 

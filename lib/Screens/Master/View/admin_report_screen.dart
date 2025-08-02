@@ -219,7 +219,7 @@ class _AdminReportScreenState extends State<AdminReportScreen> {
                     ),
 
 
-                    _buildSectionTitle("Work Report"),
+                    _buildSectionTitle("Site Report"),
 
                     SizedBox(
                       height: 4,

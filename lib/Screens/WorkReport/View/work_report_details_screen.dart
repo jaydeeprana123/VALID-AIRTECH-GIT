@@ -1,5 +1,5 @@
 import 'dart:developer';
-
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -45,7 +45,7 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
           },
         ),
         title: Text(
-          'Work Report Details',
+          'Site Report Details',
           style: AppTextStyle.largeBold.copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
@@ -72,10 +72,10 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Reporting Date",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                Text("Reporting Date & Day",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
                     , color: color_brown_title)),
 
-                Text(workReportController.selectedWorkReportData.value.date??"",style: AppTextStyle.largeBold.copyWith(fontSize: 16
+                Text(getDateWithDay(workReportController.selectedWorkReportData.value.date??""),style: AppTextStyle.largeBold.copyWith(fontSize: 16
                     , color: Colors.black)),
 
                 SizedBox(height: 16,),
@@ -101,7 +101,7 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
 
 
             SizedBox(height: 8.0),
-            InfoRow(label: 'Work Report Date', value: workReportController.selectedWorkReportData.value.date??""),
+            InfoRow(label: 'Site Report Date & Day', value: getDateWithDay(workReportController.selectedWorkReportData.value.date??"")),
 
             SizedBox(height: 8.0),
             InfoRow(label: 'Conveyance Name', value: workReportController.selectedWorkReportData.value.conveyanceName??""),
@@ -214,7 +214,7 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
             //     Padding(
             //       padding: EdgeInsets.symmetric(horizontal: 30),
             //       child: CommonButton(
-            //         titleText: "Edit Work Report",
+            //         titleText: "Edit Site Report",
             //         textColor: Colors.white,
             //         onCustomButtonPressed: () async {
             //           Get.to(EditWorkReportScreen(attendanceId: widget.attendanceId,date: widget.date, siteId: workReportController.selectedWorkReportData.value.siteId.toString(),));
@@ -226,7 +226,7 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
             //     Padding(
             //       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
             //       child: CommonButton(
-            //         titleText: "Delete Work Report",
+            //         titleText: "Delete Site Report",
             //         textColor: Colors.white,
             //         onCustomButtonPressed: () async {
             //           // TODO: handle delete
@@ -346,5 +346,17 @@ class ActionButton extends StatelessWidget {
   }
 
 
+
+
+}
+
+String getDateWithDay(String dateString) {
+  try {
+    DateFormat inputFormat = DateFormat('dd-MM-yyyy');
+    DateTime date = inputFormat.parse(dateString);
+    return '${DateFormat('dd/MM/yyyy').format(date)} (${DateFormat('EEEE').format(date)})';
+  } catch (e) {
+    return 'Invalid Date';
+  }
 }
 

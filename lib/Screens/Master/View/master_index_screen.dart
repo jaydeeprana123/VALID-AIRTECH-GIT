@@ -29,7 +29,7 @@ class MasterIndexScreen extends StatelessWidget {
         },
       ),
       title: Text(
-        'Valid Airtech',
+        'Valid Services',
         style: AppTextStyle.largeBold.copyWith(fontSize: 18
             , color: color_secondary),
       ),

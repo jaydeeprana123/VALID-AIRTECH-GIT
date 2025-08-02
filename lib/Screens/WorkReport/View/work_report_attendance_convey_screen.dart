@@ -40,7 +40,7 @@ class _WorkReportAttendanceConveyScreenState extends State<WorkReportAttendanceC
           },
         ),
         title: Text(
-          'Valid Airtech',
+          'Valid Services',
           style: AppTextStyle.largeBold.copyWith(fontSize: 18
             , color: color_secondary),
         ),
@@ -60,7 +60,7 @@ class _WorkReportAttendanceConveyScreenState extends State<WorkReportAttendanceC
             padding: EdgeInsets.symmetric(vertical: 10),
             child: Center(
               child: Text(
-                'Work Report',
+                'Site Report',
                   style: AppTextStyle.largeBold.copyWith(fontSize: 16
                       , color: Colors.white),
               ),

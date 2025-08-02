@@ -1,5 +1,5 @@
 import 'dart:developer';
-
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,6 +29,7 @@ import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../AdminLeaveRequest/View/leave_filter_dialog.dart';
 import '../../Notes/View/edit_note_screen.dart';
+import '../../Sites/Model/site_list_response.dart';
 import 'edit_plannig_screen.dart';
 
 
@@ -40,11 +41,11 @@ class EmpPlanningListScreen extends StatefulWidget {
 class _EmpPlanningListScreenState extends State<EmpPlanningListScreen> {
 
   PlanningController planningController = Get.find<PlanningController>();
-
+  String? selectedSite;
   @override
   void initState() {
     super.initState();
-    planningController.planningList.clear();
+    planningController.filterPlanningList.clear();
     _initializeData();
   }
 
@@ -54,6 +55,9 @@ class _EmpPlanningListScreenState extends State<EmpPlanningListScreen> {
     printData("_initializeData", "_initializeData");
 
     planningController.callPlanningList();
+
+    planningController.callSiteList();
+
   }
 
   @override
@@ -69,7 +73,7 @@ class _EmpPlanningListScreenState extends State<EmpPlanningListScreen> {
           },
         ),
         title: Text(
-          'Valid Airtech',
+          'Valid Services',
           style: AppTextStyle.largeBold.copyWith(fontSize: 18
               , color: color_secondary),
         ),
@@ -81,6 +85,33 @@ class _EmpPlanningListScreenState extends State<EmpPlanningListScreen> {
               Get.back();
             },
           ),
+
+          IconButton(
+            icon: Icon(Icons.filter_alt_sharp, color: color_secondary),
+            onPressed: () {
+
+              List<SiteData> modifiedSiteList = [
+                SiteData(id: 0, headName: "All"),
+                ...planningController.siteList,
+              ];
+
+              _showSiteSelectionDialog(
+                context,
+                modifiedSiteList,
+                selectedSite,
+                    (val) {
+                  setState(() {
+                    selectedSite = val;
+                    planningController.filterPlanningListBySite(selectedSite ?? "0");
+                  });
+                },
+                'Select Site',
+              );
+
+            },
+          ),
+
+
         ],
       ),
       body: Obx(() =>Stack(
@@ -106,14 +137,14 @@ class _EmpPlanningListScreenState extends State<EmpPlanningListScreen> {
 
               SizedBox(height: 12,),
 
-              planningController.planningList.isNotEmpty?Expanded(
+              planningController.filterPlanningList.isNotEmpty?Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.all(10),
-                  itemCount: planningController.planningList.length,
+                  itemCount: planningController.filterPlanningList.length,
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
-                        planningController.selectedPlanning.value = planningController.planningList[index];
+                        planningController.selectedPlanning.value = planningController.filterPlanningList[index];
                         Get.to(PlanningDetailsScreen())?.then((value) {
                           planningController.isLoading.value = false;
                           planningController.callPlanningList();
@@ -134,12 +165,12 @@ class _EmpPlanningListScreenState extends State<EmpPlanningListScreen> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'Planning Date',
+                                          'Planning Date & Day',
                                           style: AppTextStyle.largeMedium.copyWith(fontSize: 12
                                               , color: color_brown_title),
                                         ),
                                         Text(
-                                          planningController.planningList[index].date??"",
+                                          getDateWithDay(planningController.filterPlanningList[index].date??""),
                                           style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                               , color: Colors.black),
                                         ),
@@ -159,7 +190,7 @@ class _EmpPlanningListScreenState extends State<EmpPlanningListScreen> {
                                             , color: color_brown_title),
                                       ),
                                       Text(
-                                        (planningController.planningList[index].planning?[0].planningId??0).toString(),
+                                        (planningController.filterPlanningList[index].planning?[0].planningId??0).toString(),
                                         style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                             , color: Colors.black),
                                       ),
@@ -177,7 +208,7 @@ class _EmpPlanningListScreenState extends State<EmpPlanningListScreen> {
                                     , color: color_brown_title),
                               ),
                               Text(
-                                "${planningController.planningList[index].headName??""}, ${planningController.planningList[index].siteHeadAddress??""}",
+                                "${planningController.filterPlanningList[index].headName??""}, ${planningController.filterPlanningList[index].siteHeadAddress??""}",
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
                               ),
@@ -188,24 +219,24 @@ class _EmpPlanningListScreenState extends State<EmpPlanningListScreen> {
                                 style: AppTextStyle.largeMedium.copyWith(fontSize: 12
                                     , color: color_brown_title),
                               ),
-                              (planningController.planningList[index].workman??[]).isNotEmpty? Text(
-                                (planningController.planningList[index].workman?[0].workmanName??"").toString(),
+                              (planningController.filterPlanningList[index].workman??[]).isNotEmpty? Text(
+                                (planningController.filterPlanningList[index].workman?[0].workmanName??"").toString(),
                                 style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
                                     , color: Colors.black),
                               ):SizedBox(),
 
 
-                              const SizedBox(height: 12),
-                              Text(
-                                'Conveyance Name',
-                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                    , color: color_brown_title),
-                              ),
-                              Text(
-                                (planningController.planningList[index].conveyance?[0].conveyanceName??"").toString(),
-                                style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                    , color: Colors.black),
-                              ),
+                              // const SizedBox(height: 12),
+                              // Text(
+                              //   'Conveyance Name',
+                              //   style: AppTextStyle.largeMedium.copyWith(fontSize: 12
+                              //       , color: color_brown_title),
+                              // ),
+                              // Text(
+                              //   (planningController.filterPlanningList[index].conveyance?[0].conveyanceName??"").toString(),
+                              //   style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
+                              //       , color: Colors.black),
+                              // ),
                             ],
                           ),
                         ),
@@ -231,5 +262,56 @@ class _EmpPlanningListScreenState extends State<EmpPlanningListScreen> {
       backgroundColor: Colors.white,
     );
   }
+
+
+  // Step 1: Show the dropdown dialog on IconButton press
+  void _showSiteSelectionDialog(
+      BuildContext context,
+      List<SiteData> items,
+      String? selectedValue,
+      Function(String?) onChanged,
+      String title,
+      ) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text(title),
+          content: SizedBox(
+            height: 300,
+            width: double.maxFinite,
+            child: ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (_, index) {
+                final item = items[index];
+                return ListTile(
+                  title: Text(item.headName ?? ""),
+                  trailing: selectedValue == item.id.toString()
+                      ? Icon(Icons.check, color: Colors.green)
+                      : null,
+                  onTap: () {
+                    onChanged(item.id.toString());
+                    Navigator.pop(context); // close dialog
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
+  String getDateWithDay(String dateString) {
+    try {
+      DateFormat inputFormat = DateFormat('dd-MM-yyyy');
+      DateTime date = inputFormat.parse(dateString);
+      return '${DateFormat('dd/MM/yyyy').format(date)} (${DateFormat('EEEE').format(date)})';
+    } catch (e) {
+      return 'Invalid Date';
+    }
+  }
+
 }
 

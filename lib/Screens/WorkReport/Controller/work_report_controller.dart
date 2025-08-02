@@ -246,7 +246,7 @@ class WorkReportController extends GetxController {
     }
   }
 
-  /// Admin Work Report list api call
+  /// Admin Site Report list api call
   Future<void> callAdminWorkReportList(String empId) async {
     try {
       isLoading.value = true;

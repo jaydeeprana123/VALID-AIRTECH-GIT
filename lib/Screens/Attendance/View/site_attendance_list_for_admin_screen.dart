@@ -78,7 +78,7 @@ class _SiteAttendanceListForAdminScreenState extends State<SiteAttendanceListFor
           },
         ),
         title: Text(
-          'Valid Airtech',
+          'Valid Services',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
@@ -233,7 +233,7 @@ class _SiteAttendanceListForAdminScreenState extends State<SiteAttendanceListFor
                                          height: 40,
                                          // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                                           child: CommonButton(
-                                            titleText: "+ Work Report",
+                                            titleText: "+ Site Report",
                                             textColor: Colors.white,
                                             onCustomButtonPressed: () async {
 
@@ -280,7 +280,7 @@ class _SiteAttendanceListForAdminScreenState extends State<SiteAttendanceListFor
                                     //         width: 2,
                                     //       ),
                                     //       Text(
-                                    //         "Work Report",
+                                    //         "Site Report",
                                     //         style: AppTextStyle.largeBold
                                     //             .copyWith(
                                     //                 fontSize: 15,
@@ -459,7 +459,7 @@ class _SiteAttendanceListForAdminScreenState extends State<SiteAttendanceListFor
                           //             //         width: 2,
                           //             //       ),
                           //             //       Text(
-                          //             //         "Work Report",
+                          //             //         "Site Report",
                           //             //         style: AppTextStyle.largeBold
                           //             //             .copyWith(
                           //             //                 fontSize: 15,

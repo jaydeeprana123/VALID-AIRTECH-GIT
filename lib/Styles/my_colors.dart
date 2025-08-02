@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 const color_primary = Color(0xFF73C16D);
 const color_primary_dark = Color(0xFF73C16D);
 const color_secondary = Color(0xFF5A3E95);
-const color_brown_title = Color(0xFF55090D);
+
+const color_brown_title = Color(0xFF5A3E95);
+// const color_brown_title = Color(0xFF55090D);
 const color_hint_text = Color(0xFF9E9E9E);
 
 

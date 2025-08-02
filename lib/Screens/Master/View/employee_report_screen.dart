@@ -22,12 +22,16 @@ import 'package:valid_airtech/Screens/WorkReport/View/admin_work_report_list_scr
 import 'package:valid_airtech/Screens/WorkmanProfile/Model/workman_list_response.dart';
 import 'package:valid_airtech/Screens/attendance_screen.dart';
 
+import '../../../Enums/select_date_enum.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
+import '../../../Widget/common_widget.dart';
+import '../../../utils/helper.dart';
 import '../../Allowance/View/admin_expnese_list_screen.dart';
 import '../../Attendance/View/attendance_list_for_admin_report_screen.dart';
 import '../../Attendance/View/site_attendance_list_for_admin_screen.dart';
+import '../../Attendance/View/site_report_list_for_admin_screen_by_date.dart';
 import '../../Sites/Model/add_contact_model.dart';
 import '../../WorkmanProfile/Controller/workman_profile_controller.dart';
 
@@ -203,12 +207,65 @@ class _EmployeeReportScreenState extends State<EmployeeReportScreen> {
                     // ),
 
 
+
                     SizedBox(
                       height: 44,
                     ),
 
 
-                    _buildSectionTitle("Work Report"),
+                    _buildSectionTitle("Daily Site Report"),
+
+                    // SizedBox(
+                    //   height: 4,
+                    // ),
+                    //
+                    // _buildDropdown(workmanProfileController.workmanList,
+                    //     selectedWorkmanIdForWorkReport,
+                    //         (val) => setState(() =>
+                    //     selectedWorkmanIdForWorkReport = val),
+                    //     "Select Workman Name"),
+
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
+                      child: CommonButton(
+                        titleText: "Get",
+                        textColor: Colors.white,
+                        onCustomButtonPressed: () async {
+
+
+                          DateTime? dateTime = await Helper()
+                              .selectDateInYYYYMMDD(
+                              context, SelectDateEnum.all.outputVal);
+
+                          setState(() {
+
+                           String date =  getDateFormatDDMMYYYYOnly(
+                                (dateTime ?? DateTime(2023)));
+
+                            Get.to(SiteReportListForAdminScreenByDate(empId: (workmanProfileController.loginData.value.id??0).toString(),empName: workmanProfileController.loginData.value.name??"",date: date,));
+
+
+                          });
+
+
+
+
+
+                          //   Get.to(SiteReportListForAdminScreen(empId: (workmanProfileController.loginData.value.id??0).toString(),empName: workmanProfileController.loginData.value.name??"",));
+                        },
+                        borderColor: color_primary,
+                        borderWidth: 0,
+                      ),
+                    ),
+
+
+                    SizedBox(
+                      height: 44,
+                    ),
+
+
+                    _buildSectionTitle("Monthly Site Report"),
 
                     // SizedBox(
                     //   height: 4,
@@ -235,6 +292,9 @@ class _EmployeeReportScreenState extends State<EmployeeReportScreen> {
                         borderWidth: 0,
                       ),
                     ),
+
+
+
 
 
                   ],

@@ -74,7 +74,7 @@ class _PlanningDetailsScreenState extends State<PlanningDetailsScreen> {
             
             Row(
               children: [
-                Expanded(child: _infoColumn('Date & Day', getDateWithDay(planningController.selectedPlanning.value.date??""))),
+                Expanded(child: _infoColumn('Planning Date & Day', getDateWithDay(planningController.selectedPlanning.value.date??""))),
 
                 _infoColumn('Planning No.', (planningController.selectedPlanning.value.planning?[0].planningId??0).toString()),
 

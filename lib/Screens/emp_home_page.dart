@@ -133,12 +133,12 @@ class _EmpHomePageState extends State<EmpHomePage> {
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Card(
-                  color: Colors.white,
+                  color: color_primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16), // 👈 Rounded corners here
                   ),
                   child: Container(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
                         _buildSectionTitle("Today's Attendance"),
@@ -383,7 +383,7 @@ class _EmpHomePageState extends State<EmpHomePage> {
                     //       Get.to(WorkReportListScreen());
                     //     },
                     //     child:
-                    //     _buildGridItem('Work Report', Icons.work_history_outlined)),
+                    //     _buildGridItem('Site Report', Icons.work_history_outlined)),
                     InkWell(
                         onTap: () {
                           Get.to(EmpSiteAttendanceCalenderScreen())?.then((value)async{
@@ -504,7 +504,7 @@ class _EmpHomePageState extends State<EmpHomePage> {
     return Text(
       title,
       style:
-      AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
+      AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_brown_title),
     );
   }
 

@@ -40,6 +40,8 @@ class PlanningController extends GetxController {
   RxList<WorkmanData> workmanList = <WorkmanData>[].obs;
   RxList<AddWorkman> selectedWorkmanList = <AddWorkman>[].obs;
   RxList<PlanningData> planningList = <PlanningData>[].obs;
+  RxList<PlanningData> filterPlanningList = <PlanningData>[].obs;
+
   RxList<ConveyanceData> conveysList = <ConveyanceData>[].obs;
 
   // RxList<ConveyanceData> filteredConveysList = <ConveyanceData>[].obs;
@@ -425,7 +427,8 @@ class PlanningController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status??false) {
-        planningList.value = response.data??[];
+        planningList.value = [...(response.data ?? [])]; // copy of list
+        filterPlanningList.value = [...(response.data ?? [])]; // separate copy
       }else if(response.code == 401){
         Helper().logout();
       }
@@ -449,7 +452,8 @@ class PlanningController extends GetxController {
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status??false) {
-        planningList.value = response.data??[];
+        planningList.value = [...(response.data ?? [])]; // copy of list
+        filterPlanningList.value = [...(response.data ?? [])]; // separate copy
       }else if(response.code == 401){
         Helper().logout();
       }
@@ -554,4 +558,29 @@ class PlanningController extends GetxController {
 
     return addInstrumentForPlanning;
   }
+
+
+  void filterPlanningListBySite(String siteId) {
+    filterPlanningList.clear();
+
+
+    if (siteId == "0") {
+      // Show all items
+      filterPlanningList.addAll(planningList);
+      return;
+    }
+
+
+    printData("Planning List Length", planningList.length.toString());
+
+    for (var item in planningList) {
+      printData("Checking", item.headName ?? "");
+
+      if (item.siteId.toString() == siteId) {
+        printData("Added", item.headName ?? "");
+        filterPlanningList.add(item);
+      }
+    }
+  }
+
 }

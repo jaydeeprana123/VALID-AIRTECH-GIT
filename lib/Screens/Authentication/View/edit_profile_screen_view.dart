@@ -39,7 +39,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             },
           ),
           title: Text(
-            'VALID',
+            "Valid Services",
             style: AppTextStyle.largeBold.copyWith(fontSize: 18, color: color_secondary),
           ),
           centerTitle: true,

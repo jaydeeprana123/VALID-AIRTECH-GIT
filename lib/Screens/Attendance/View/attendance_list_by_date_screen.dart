@@ -75,7 +75,7 @@ class _AttendanceListByDateScreenState extends State<AttendanceListByDateScreen>
           },
         ),
         title: Text(
-          'Valid Airtech',
+          'Valid Services',
           style: AppTextStyle.largeBold
               .copyWith(fontSize: 18, color: color_secondary),
         ),
@@ -236,7 +236,7 @@ class _AttendanceListByDateScreenState extends State<AttendanceListByDateScreen>
                                       //         width: 2,
                                       //       ),
                                       //       Text(
-                                      //         "Work Report",
+                                      //         "Site Report",
                                       //         style: AppTextStyle.largeBold
                                       //             .copyWith(
                                       //                 fontSize: 15,

@@ -34,23 +34,26 @@ import '../../Notes/View/edit_note_screen.dart';
 import '../../WorkReport/Controller/work_report_controller.dart';
 import '../Controller/attendance_controller.dart';
 
-class SiteReportListForAdminScreen extends StatefulWidget {
+class SiteReportListForAdminScreenByDate extends StatefulWidget {
   final String empId;
   final String empName;
+  final String date;
 
-  SiteReportListForAdminScreen({
+
+  SiteReportListForAdminScreenByDate({
     Key? key,
     required this.empId,
     required this.empName,
+    required this.date,
   }) : super(key: key);
 
   @override
-  _SiteReportListForAdminScreenState createState() =>
-      _SiteReportListForAdminScreenState();
+  _SiteReportListForAdminScreenByDateState createState() =>
+      _SiteReportListForAdminScreenByDateState();
 }
 
-class _SiteReportListForAdminScreenState
-    extends State<SiteReportListForAdminScreen> {
+class _SiteReportListForAdminScreenByDateState
+    extends State<SiteReportListForAdminScreenByDate> {
   AttendanceController attendanceController = Get.put(AttendanceController());
   WorkReportController workReportController = Get.put(WorkReportController());
 
@@ -68,8 +71,8 @@ class _SiteReportListForAdminScreenState
 
     attendanceController.callEmployeeWorkReportListByMonth(
         widget.empId,
-        attendanceController.fromDateEditingController.value.text,
-        attendanceController.toDateEditingController.value.text);
+        widget.date,
+        widget.date);
   }
 
   @override
@@ -109,120 +112,120 @@ class _SiteReportListForAdminScreenState
                     padding: const EdgeInsets.all(12),
                     child: Center(
                       child: Text(
-                        "${widget.empName}'s Site Report",
+                        "${widget.empName}'s Site Report ( " + widget.date + " )",
                         style: AppTextStyle.largeBold
                             .copyWith(fontSize: 14, color: Colors.white),
                         textAlign: TextAlign.center,
                       ),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.all(12),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () async {
-                              DateTime? dateTime = await Helper()
-                                  .selectDateInYYYYMMDD(
-                                      context, SelectDateEnum.all.outputVal);
-
-                              setState(() {
-                                attendanceController
-                                        .fromDateEditingController.value.text =
-                                    getDateFormatDDMMYYYYOnly(
-                                        (dateTime ?? DateTime(2023)));
-                              });
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    width: 0.5,
-                                    color: Colors.grey,
-                                  )),
-                              child: Text(
-                                attendanceController.fromDateEditingController
-                                        .value.text.isNotEmpty
-                                    ? attendanceController
-                                        .fromDateEditingController.value.text
-                                    : "From",
-                                style: AppTextStyle.largeMedium.copyWith(
-                                    fontSize: 12, color: color_brown_title),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () async {
-                              DateTime? dateTime = await Helper()
-                                  .selectDateInYYYYMMDD(
-                                      context, SelectDateEnum.all.outputVal);
-
-                              setState(() {
-                                attendanceController
-                                        .toDateEditingController.value.text =
-                                    getDateFormatDDMMYYYYOnly(
-                                        (dateTime ?? DateTime(2023)));
-                              });
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.all(8),
-                              margin: EdgeInsets.only(left: 12),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    width: 0.5,
-                                    color: Colors.grey,
-                                  )),
-                              child: Text(
-                                attendanceController.toDateEditingController
-                                        .value.text.isNotEmpty
-                                    ? attendanceController
-                                        .toDateEditingController.value.text
-                                    : "To",
-                                style: AppTextStyle.largeMedium.copyWith(
-                                    fontSize: 12, color: color_brown_title),
-                              ),
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () async {
-
-                            attendanceController.callEmployeeWorkReportListByMonth(
-                                widget.empId,
-                                attendanceController.fromDateEditingController.value.text,
-                                attendanceController.toDateEditingController.value.text);
-
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.only(
-                                left: 12, right: 12, top: 4, bottom: 4),
-                            margin: EdgeInsets.only(left: 12),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: color_primary,
-                                border: Border.all(
-                                  width: 0.5,
-                                  color: Colors.grey,
-                                )),
-                            child: Text(
-                              "Submit",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
+                  // Container(
+                  //   margin: EdgeInsets.all(12),
+                  //   child: Row(
+                  //     children: [
+                  //       Expanded(
+                  //         child: InkWell(
+                  //           onTap: () async {
+                  //             DateTime? dateTime = await Helper()
+                  //                 .selectDateInYYYYMMDD(
+                  //                     context, SelectDateEnum.all.outputVal);
+                  //
+                  //             setState(() {
+                  //               attendanceController
+                  //                       .fromDateEditingController.value.text =
+                  //                   getDateFormatDDMMYYYYOnly(
+                  //                       (dateTime ?? DateTime(2023)));
+                  //             });
+                  //           },
+                  //           child: Container(
+                  //             alignment: Alignment.center,
+                  //             padding: EdgeInsets.all(8),
+                  //             decoration: BoxDecoration(
+                  //                 borderRadius: BorderRadius.circular(12),
+                  //                 color: Colors.white,
+                  //                 border: Border.all(
+                  //                   width: 0.5,
+                  //                   color: Colors.grey,
+                  //                 )),
+                  //             child: Text(
+                  //               attendanceController.fromDateEditingController
+                  //                       .value.text.isNotEmpty
+                  //                   ? attendanceController
+                  //                       .fromDateEditingController.value.text
+                  //                   : "From",
+                  //               style: AppTextStyle.largeMedium.copyWith(
+                  //                   fontSize: 12, color: color_brown_title),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       Expanded(
+                  //         child: InkWell(
+                  //           onTap: () async {
+                  //             DateTime? dateTime = await Helper()
+                  //                 .selectDateInYYYYMMDD(
+                  //                     context, SelectDateEnum.all.outputVal);
+                  //
+                  //             setState(() {
+                  //               attendanceController
+                  //                       .toDateEditingController.value.text =
+                  //                   getDateFormatDDMMYYYYOnly(
+                  //                       (dateTime ?? DateTime(2023)));
+                  //             });
+                  //           },
+                  //           child: Container(
+                  //             alignment: Alignment.center,
+                  //             padding: EdgeInsets.all(8),
+                  //             margin: EdgeInsets.only(left: 12),
+                  //             decoration: BoxDecoration(
+                  //                 borderRadius: BorderRadius.circular(12),
+                  //                 color: Colors.white,
+                  //                 border: Border.all(
+                  //                   width: 0.5,
+                  //                   color: Colors.grey,
+                  //                 )),
+                  //             child: Text(
+                  //               attendanceController.toDateEditingController
+                  //                       .value.text.isNotEmpty
+                  //                   ? attendanceController
+                  //                       .toDateEditingController.value.text
+                  //                   : "To",
+                  //               style: AppTextStyle.largeMedium.copyWith(
+                  //                   fontSize: 12, color: color_brown_title),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       InkWell(
+                  //         onTap: () async {
+                  //
+                  //           attendanceController.callEmployeeWorkReportListByMonth(
+                  //               widget.empId,
+                  //               attendanceController.fromDateEditingController.value.text,
+                  //               attendanceController.toDateEditingController.value.text);
+                  //
+                  //         },
+                  //         child: Container(
+                  //           alignment: Alignment.center,
+                  //           padding: EdgeInsets.only(
+                  //               left: 12, right: 12, top: 4, bottom: 4),
+                  //           margin: EdgeInsets.only(left: 12),
+                  //           decoration: BoxDecoration(
+                  //               borderRadius: BorderRadius.circular(12),
+                  //               color: color_primary,
+                  //               border: Border.all(
+                  //                 width: 0.5,
+                  //                 color: Colors.grey,
+                  //               )),
+                  //           child: Text(
+                  //             "Submit",
+                  //             style: TextStyle(color: Colors.white),
+                  //           ),
+                  //         ),
+                  //       )
+                  //     ],
+                  //   ),
+                  // ),
                   attendanceController.finalSiteAttendanceData.isNotEmpty?Expanded(
                     child: SingleChildScrollView(
                       child: Column(
