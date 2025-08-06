@@ -25,7 +25,6 @@ import '../../Sites/Model/site_list_response.dart';
 
 import 'package:flutter/material.dart';
 
-
 import 'package:flutter/material.dart';
 
 class PlanningDetailsScreen extends StatefulWidget {
@@ -34,7 +33,6 @@ class PlanningDetailsScreen extends StatefulWidget {
 }
 
 class _PlanningDetailsScreenState extends State<PlanningDetailsScreen> {
-
   PlanningController planningController = Get.find<PlanningController>();
 
   @override
@@ -46,15 +44,13 @@ class _PlanningDetailsScreenState extends State<PlanningDetailsScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: color_secondary),
           onPressed: () {
-
             Navigator.pop(context);
-
           },
         ),
         title: Text(
           'Planning',
-          style: AppTextStyle.largeBold.copyWith(fontSize: 18
-              , color: color_secondary),
+          style: AppTextStyle.largeBold
+              .copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
         actions: [
@@ -71,60 +67,93 @@ class _PlanningDetailsScreenState extends State<PlanningDetailsScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _sectionTitle('Planning Details'),
-            
             Row(
               children: [
-                Expanded(child: _infoColumn('Planning Date & Day', getDateWithDay(planningController.selectedPlanning.value.date??""))),
-
-                _infoColumn('Planning No.', (planningController.selectedPlanning.value.planning?[0].planningId??0).toString()),
-
+                Expanded(
+                    child: _infoColumn(
+                        'Planning Date & Day',
+                        getDateWithDay(
+                            planningController.selectedPlanning.value.date ??
+                                ""))),
+                _infoColumn(
+                    'Planning No.',
+                    (planningController.selectedPlanning.value.planning?[0]
+                                .planningId ??
+                            0)
+                        .toString()),
               ],
             ),
-            
-                  
             Divider(),
             _sectionTitle('Workman Details'),
-            for(int i=0; i< (planningController.selectedPlanning.value.workman??[]).length; i++)
-              Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
-                _infoColumn('Workman Name', planningController.selectedPlanning.value.workman?[i].workmanName??""),
-            //    _infoColumn('Workman Id. No.', (planningController.selectedPlanning.value.workman?[i].workmanId??0).toString()),
-              ],),
-
-
+            for (int i = 0;
+                i <
+                    (planningController.selectedPlanning.value.workman ?? [])
+                        .length;
+                i++)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _infoColumn(
+                      'Workman Name',
+                      planningController
+                              .selectedPlanning.value.workman?[i].workmanName ??
+                          ""),
+                  //    _infoColumn('Workman Id. No.', (planningController.selectedPlanning.value.workman?[i].workmanId??0).toString()),
+                ],
+              ),
             Divider(),
             _sectionTitle('Site Details'),
-            _infoColumn('Site Name', planningController.selectedPlanning.value.headName??""),
-
-            _infoColumn('Site Suffix', planningController.selectedPlanning.value.siteSufix??""),
-            _infoColumn('Site Address', planningController.selectedPlanning.value.siteHeadAddress??""),
-
-            _infoColumn('Department', planningController.selectedPlanning.value.headDepartmentName??""),
-            _infoColumn('Contact Person Name', planningController.selectedPlanning.value.headContactName??""),
-            _infoColumn('Email Id', planningController.selectedPlanning.value.headEmail??""),
+            _infoColumn('Site Name',
+                planningController.selectedPlanning.value.headName ?? ""),
+            _infoColumn('Site Suffix',
+                planningController.selectedPlanning.value.siteSufix ?? ""),
+            _infoColumn(
+                'Site Address',
+                planningController.selectedPlanning.value.siteHeadAddress ??
+                    ""),
+            _infoColumn(
+                'Department',
+                planningController.selectedPlanning.value.headDepartmentName ??
+                    ""),
+            _infoColumn(
+                'Contact Person Name',
+                planningController.selectedPlanning.value.headContactName ??
+                    ""),
+            _infoColumn('Email Id',
+                planningController.selectedPlanning.value.headEmail ?? ""),
             Divider(),
             _sectionTitle('Conveyance Details'),
             SizedBox(height: 10),
             Divider(),
             _sectionTitle('Instrument Details'),
-
-            for(int i=0; i< (planningController.selectedPlanning.value.instrument??[]).length; i++)
-            Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
-              _infoColumn('Instrument Name & No', "${planningController.selectedPlanning.value.instrument?[i].headName??""} ( ${planningController.selectedPlanning.value.instrument?[i].instrumentId??0} )"),
-            //  _infoColumn('Instrument Id. No.', (planningController.selectedPlanning.value.instrument?[i].instrumentId??0).toString()),
-           //   _infoColumn('Instrument Model No.', (planningController.selectedPlanning.value.instrument?[i].instrumentModelNo??0).toString()),
-
-            ],),
-
-
+            for (int i = 0;
+                i <
+                    (planningController.selectedPlanning.value.instrument ?? [])
+                        .length;
+                i++)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _infoColumn('Instrument Name & No',
+                      "${planningController.selectedPlanning.value.instrument?[i].headName ?? ""} ( ${planningController.selectedPlanning.value.instrument?[i].instrumentId ?? 0} )"),
+                  //  _infoColumn('Instrument Id. No.', (planningController.selectedPlanning.value.instrument?[i].instrumentId??0).toString()),
+                  //   _infoColumn('Instrument Model No.', (planningController.selectedPlanning.value.instrument?[i].instrumentModelNo??0).toString()),
+                ],
+              ),
             Divider(),
             _sectionTitle('Planned Services'),
             SizedBox(height: 10),
             Divider(),
             _sectionTitle('Notes'),
-
-            for(int i=0; i< (planningController.selectedPlanning.value.note??[]).length; i++)
-              _infoColumn('Note ${i+1}', planningController.selectedPlanning.value.note?[i].title??""),
-
+            for (int i = 0;
+                i <
+                    (planningController.selectedPlanning.value.note ?? [])
+                        .length;
+                i++)
+              _infoColumn(
+                  'Note ${i + 1}',
+                  planningController.selectedPlanning.value.note?[i].title ??
+                      ""),
           ],
         ),
       ),
@@ -137,8 +166,8 @@ class _PlanningDetailsScreenState extends State<PlanningDetailsScreen> {
         padding: const EdgeInsets.symmetric(vertical: 12.0),
         child: Text(
           title,
-          style: AppTextStyle.largeBold.copyWith(fontSize: 18
-              , color: color_secondary),
+          style: AppTextStyle.largeRegular
+              .copyWith(fontSize: 18, color: color_secondary),
         ),
       ),
     );
@@ -153,24 +182,22 @@ class _PlanningDetailsScreenState extends State<PlanningDetailsScreen> {
         children: [
           Text(
             label,
-            style: AppTextStyle.largeSemiBold.copyWith(fontSize: 14
-                , color: color_brown_title
-            ),
+            style: AppTextStyle.largeMedium
+                .copyWith(fontSize: 14, color: color_brown_title),
           ),
-          SizedBox(height: 1,),
-
+          SizedBox(
+            height: 1,
+          ),
           Text(
             value,
             textAlign: TextAlign.right,
-            style: AppTextStyle.largeSemiBold.copyWith(fontSize: 14
-                , color: Colors.black54
-            ),
+            style: AppTextStyle.largeSemiBold
+                .copyWith(fontSize: 16, color: Colors.black),
           ),
         ],
       ),
     );
   }
-
 
   // String getDateWithDay(String dateString) {
   //   DateTime date = DateTime.parse(dateString);  // for 'yyyy-MM-dd'
@@ -187,5 +214,3 @@ class _PlanningDetailsScreenState extends State<PlanningDetailsScreen> {
     }
   }
 }
-
-

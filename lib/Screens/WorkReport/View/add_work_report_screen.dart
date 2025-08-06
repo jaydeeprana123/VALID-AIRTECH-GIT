@@ -26,34 +26,28 @@ import '../../../Widget/CommonButton.dart';
 import '../../Sites/Model/employee_list_response.dart';
 
 class AddWorkReportScreen extends StatefulWidget {
-
   final String date;
   final String siteId;
   final String siteName;
 
   AddWorkReportScreen({
     Key? key,
-  required this.date,
+    required this.date,
     required this.siteId,
     required this.siteName,
-
   }) : super(key: key);
-
 
   @override
   _AddWorkReportScreenState createState() => _AddWorkReportScreenState();
 }
 
 class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
-
   WorkReportController workReportController = Get.find<WorkReportController>();
 
   TimeOfDay? siteInTime;
   TimeOfDay? siteOutTime;
   String? attendanceStatus;
   String? contactPerson;
-
-
 
   void _pickTime(bool isInTime) async {
     TimeOfDay? picked = await showTimePicker(
@@ -77,8 +71,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-
-      workReportController.siteId = widget.siteId??"0";
+      workReportController.siteId = widget.siteId ?? "0";
 
       workReportController.callInstrumentList();
       workReportController.callConveyanceList();
@@ -88,15 +81,11 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
       workReportController.callWorkmanList();
     });
 
-
-
-
     workReportController.serviceStatusList.clear();
     workReportController.remarksList.clear();
     workReportController.serviceStatusList.add(ServiceStatusModel());
     workReportController.remarksList.add(RemarkWorkReport());
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -107,15 +96,13 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: color_secondary),
           onPressed: () {
-
             Navigator.pop(context);
-
           },
         ),
         title: Text(
           'Add Site Report',
-          style: AppTextStyle.largeBold.copyWith(fontSize: 18
-              , color: color_secondary),
+          style: AppTextStyle.largeBold
+              .copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
         actions: [
@@ -125,627 +112,714 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
           ),
         ],
       ),
-      body: Obx(() =>Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-
-                SizedBox(height: 12,),
-
-                _buildSectionTitle('Site Details'),
-
-                SizedBox(height: 12,),
-
-                Column(
+      body: Obx(() => Stack(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    Text("Reporting Date",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                        , color: color_hint_text)),
-
-                      Text(widget.date,style: AppTextStyle.largeBold.copyWith(fontSize: 16
-                          , color: color_brown_title)),
-
-                    SizedBox(height: 16,),
-
-
-                    Text("Site Name",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                        , color: color_hint_text)),
-
-                    Text(widget.siteName,style: AppTextStyle.largeBold.copyWith(fontSize: 16
-                        , color: color_brown_title)),
-                  ],
-                ),
-
-                SizedBox(height: 16,),
-
-
-
-                // _buildDatePicker(),
-
-                // _buildTextFieldOnlyReadableDate(TextEditingController(text: widget.date), "Site Reporting Date"),
-
-                SizedBox(height: 16,),
-
-
-                // DropdownButton<SiteAttendByData>(
-                //   value: workReportController.siteAttendByList
-                //       .contains(workReportController.siteAttendByData)
-                //       ? workReportController.siteAttendByData
-                //       : null,
-                //   // Ensure valid value
-                //   hint: Text("Site Attend By",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                //       , color: color_hint_text)) ,
-                //
-                //
-                //   isExpanded: true,
-                //   onChanged: (SiteAttendByData? newValue) {
-                //     setState(() {
-                //       workReportController.siteAttendByData = newValue;
-                //     });
-                //   },
-                //   items: workReportController.siteAttendByList.map((SiteAttendByData group) {
-                //     return DropdownMenuItem<SiteAttendByData>(
-                //       value: group,
-                //       child: Text(group.name??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                //           , color: blackText),),
-                //     );
-                //   }).toList(),
-                // ),
-
-
-                _buildSectionTitle('Site Attend By'),
-
-
-                MultiSelectDialogField<SiteAttendByData>(
-                  items: workReportController.siteAttendByList
-                      .map((item) => MultiSelectItem<SiteAttendByData>(item, item.name??""))
-                      .toList(),
-                  initialValue: workReportController.selectedSiteAttendByList,
-                  onConfirm: (List<SiteAttendByData> selected) {
-                    workReportController.selectedSiteAttendByList.value = selected;
-                    workReportController.selectedSiteAttendListInString =
-                        selected.map((e) => e.name).join(', ');
-                  },
-                  chipDisplay: MultiSelectChipDisplay<SiteAttendByData>(
-                    chipColor: Colors.blue.shade100,
-                    textStyle: TextStyle(color: Colors.black),
-                    onTap: (item) {
-                      workReportController.selectedSiteAttendByList.remove(item);
-                    },
-                  ),
-                  buttonText: Text("Select Site Attendees"),
-                ),
-
-
-                // DropDownMultiSelect<SiteAttendByData>(
-                //   options: workReportController.siteAttendByList,
-                //   selectedValues: workReportController.selectedSiteAttendByList,
-                //   onChanged: (List<SiteAttendByData> values) {
-                //
-                //     workReportController.selectedSiteAttendListInString = values.toString();
-                //     printData("selected", values.toString());
-                //   //  workReportController.updateSelectedSiteAttendByList(values.toString().split(','));
-                //
-                //   },
-                //
-                // ),
-
-
-                SizedBox(height: 8,),
-
-                DropdownButton<String>(
-                  value: workReportController.conveyThroughList
-                      .contains(workReportController.conveyThrough)
-                      ? workReportController.conveyThrough
-                      : null,
-                  // Ensure valid value
-                  hint: Text("Convey Through",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                      , color: color_hint_text)) ,
-
-                  isExpanded: true,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      workReportController.conveyThrough = newValue;
-                    });
-                  },
-                  items: workReportController.conveyThroughList.map((String group) {
-                    return DropdownMenuItem<String>(
-                      value: group,
-                      child: Text(group, style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                          , color: blackText),),
-                    );
-                  }).toList(),
-                ),
-                SizedBox(height: 12,),
-
-                _buildTextField(workReportController.controllerOther.value, "Other"),
-                SizedBox(height: 16,),
-
-
-                DropdownButton<ConveyanceData>(
-                  value: workReportController.conveysList
-                      .contains(workReportController.conveyanceData)
-                      ? workReportController.conveyanceData
-                      : null,
-                  // Ensure valid value
-                  hint: Text("Driver Name",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                      , color: color_hint_text)) ,
-
-                  isExpanded: true,
-                  onChanged: (ConveyanceData? newValue) {
-                    setState(() {
-                      workReportController.conveyanceData = newValue;
-                    });
-                  },
-                  items: workReportController.conveysList.map((ConveyanceData group) {
-                    return DropdownMenuItem<ConveyanceData>(
-                      value: group,
-                      child: Text(group.name??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                          , color: blackText),),
-                    );
-                  }).toList(),
-                ),
-                SizedBox(height: 12,),
-
-                DropdownButton<ServiceByNatureData>(
-                  value: workReportController.serviceByNatureList
-                      .contains(workReportController.serviceByNatureData)
-                      ? workReportController.serviceByNatureData
-                      : null,
-                  // Ensure valid value
-                  hint: Text("Service Nature",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                      , color: color_hint_text)) ,
-
-                  isExpanded: true,
-                  onChanged: (ServiceByNatureData? newValue) {
-                    setState(() {
-                      workReportController.serviceByNatureData = newValue;
-                    });
-                  },
-                  items: workReportController.serviceByNatureList.map((ServiceByNatureData group) {
-                    return DropdownMenuItem<ServiceByNatureData>(
-                      value: group,
-                      child: Text(group.name??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                          , color: blackText),),
-                    );
-                  }).toList(),
-                ),
-                SizedBox(height: 12,),
-
-                _buildTextField(workReportController.controllerNameOfContactPerson.value, "Name Of Contact Person"),
-                SizedBox(height: 16,),
-
-                _buildTextField(workReportController.controllerNameOfWitnessPerson.value, "Name Of Witness Person"),
-                SizedBox(height: 20,),
-                _buildSectionTitle('Comments'),
-
-                SizedBox(height: 4,),
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: color_hint_text,
-                        width: 0.5
+                    SizedBox(
+                      height: 12,
                     ),
 
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Column(
-                    children: [
+                    _buildSectionTitle('Site Details'),
 
-                      for(int i=0;i<workReportController.remarksList.length; i++)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(child: _buildTextField(workReportController.remarksList[i].remarkTextEditingController, 'Comment ${i+1}')),
-
-                                SizedBox(width: 12,),
-
-                                (i == (workReportController.remarksList.length-1))?InkWell(onTap: (){
-                                  workReportController.remarksList.add(RemarkWorkReport());
-                                  setState(() {
-
-                                  });
-                                },child: Icon(Icons.add_circle,size: 30,color: color_brown_title,)):InkWell(
-                                    onTap: () {
-
-                                      workReportController.removedRemarkIds.add(workReportController.remarksList[i].id.toString());
-                                      workReportController.remarksList.removeAt(i);
-                                      setState(() {});
-                                    },
-                                    child: Icon(
-                                      Icons.remove_circle,
-                                      size: 30,
-                                      color: color_primary,
-                                    ))
-                              ],
-                            ),
-                            SizedBox(height: 12,),
-                          ],
-                        )
-
-
-                    ],
-                  ),
-                ),
-
-                SizedBox(height: 20,),
-
-                _buildSectionTitle('Given Service & Status'),
-
-                SizedBox(height: 4,),
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: color_hint_text,
-                        width: 0.5
+                    SizedBox(
+                      height: 12,
                     ),
 
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Column(
-                    children: [
-
-                      for(int i=0;i<workReportController.serviceStatusList.length; i++)
-                       Padding(
-                         padding: const EdgeInsets.only(bottom: 8.0),
-                         child: Column(
-                           children: [
-                             Column(
-                               crossAxisAlignment: CrossAxisAlignment.start,
-                               children: [
-                                 Row(
-                                   children: [
-                                     Expanded(
-                                       child: Column(
-                                         children: [
-
-                                           _buildTextField(workReportController.serviceStatusList[i].testLocationEditingController, 'Test Location ${i+1}'),
-
-                                           SizedBox(height: 8,),
-
-                                           _buildTextField(workReportController.serviceStatusList[i].roomEquipmentEditingController, 'Room/Equipment/System Identification ${i+1}'),
-                                           SizedBox(height: 16,),
-
-                                           DropdownButton<TestByPerformData>(
-                                             value: workReportController.testPerformerList
-                                                 .contains(workReportController.serviceStatusList[i].testPerformData)
-                                                 ? workReportController.serviceStatusList[i].testPerformData
-                                                 : null,
-                                             // Ensure valid value
-                                             hint: Text("Test Performed",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                                                 , color: color_hint_text)) ,
-
-
-                                             isExpanded: true,
-                                             onChanged: (TestByPerformData? newValue) {
-                                               setState(() {
-                                                 workReportController.serviceStatusList[i].testPerformData = newValue;
-                                               });
-                                             },
-                                             items: workReportController.testPerformerList.map((TestByPerformData group) {
-                                               return DropdownMenuItem<TestByPerformData>(
-                                                 value: group,
-                                                 child: Text(group.testName??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                                                     , color: blackText),),
-                                               );
-                                             }).toList(),
-                                           ),
-
-                                           SizedBox(height: 16,),
-
-                                           DropdownButton<String>(
-                                             value: workReportController.sheetStatusList
-                                                 .contains(workReportController.serviceStatusList[i].dataSheetStatus)
-                                                 ? workReportController.serviceStatusList[i].dataSheetStatus
-                                                 : null,
-                                             // Ensure valid value
-                                             hint: Text("Sheet Status",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                                                 , color: color_hint_text)) ,
-
-
-                                             isExpanded: true,
-                                             onChanged: (String? newValue) {
-                                               setState(() {
-                                                 workReportController.serviceStatusList[i].dataSheetStatus = newValue;
-                                               });
-                                             },
-                                             items: workReportController.sheetStatusList.map((String group) {
-                                               return DropdownMenuItem<String>(
-                                                 value: group,
-                                                 child: Text(group, style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                                                     , color: blackText),),
-                                               );
-                                             }).toList(),
-                                           ),
-
-                                           SizedBox(height: 16,),
-
-
-                                           DropdownButton<InstrumentData>(
-                                             value: workReportController.instrumentList
-                                                 .contains(workReportController.serviceStatusList[i].usedInstrument)
-                                                 ? workReportController.serviceStatusList[i].usedInstrument
-                                                 : null,
-                                             // Ensure valid value
-                                             hint: Text("Select Used Instrument",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                                                 , color: color_hint_text)) ,
-
-
-                                             isExpanded: true,
-                                             onChanged: (InstrumentData? newValue) {
-                                               setState(() {
-                                                 workReportController.serviceStatusList[i].usedInstrument = newValue;
-                                               });
-                                             },
-                                             items: workReportController.instrumentList.map((InstrumentData group) {
-                                               return DropdownMenuItem<InstrumentData>(
-                                                 value: group,
-                                                 child: Text(group.headInstrumentName??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                                                     , color: blackText),),
-                                               );
-                                             }).toList(),
-                                           ),
-
-                                           SizedBox(height: 8,),
-
-                                           DropdownButton<WorkmanData>(
-                                             value: workReportController.workmanList
-                                                 .contains(workReportController.serviceStatusList[i].workmanData)
-                                                 ? workReportController.serviceStatusList[i].workmanData
-                                                 : null,
-                                             // Ensure valid value
-                                             hint: Text("Performed By",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                                                 , color: color_hint_text)) ,
-
-
-                                             isExpanded: true,
-                                             onChanged: (WorkmanData? newValue) {
-                                               setState(() {
-                                                 workReportController.serviceStatusList[i].workmanData = newValue;
-                                               });
-                                             },
-                                             items: workReportController.workmanList.map((WorkmanData group) {
-                                               return DropdownMenuItem<WorkmanData>(
-                                                 value: group,
-                                                 child: Text(group.name??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                                                     , color: blackText),),
-                                               );
-                                             }).toList(),
-                                           ),
-
-                                           SizedBox(height: 8,),
-
-                                           _buildTextField(workReportController.serviceStatusList[i].remarkTextEditingController, 'Remarks ${i+1}'),
-                                         ],
-                                       ),
-                                     ),
-
-                                     SizedBox(width: 12,),
-
-                                     (i == (workReportController.serviceStatusList.length-1))?InkWell(onTap: (){
-                                       workReportController.serviceStatusList.add(ServiceStatusModel());
-                                       setState(() {
-
-                                       });
-                                     },child: Icon(Icons.add_circle,size: 30,color: color_brown_title,)):InkWell(
-                                         onTap: () {
-                                           workReportController.serviceStatusList.removeAt(i);
-                                           setState(() {});
-                                         },
-                                         child: Icon(
-                                           Icons.remove_circle,
-                                           size: 30,
-                                           color: color_primary,
-                                         ))
-                                   ],
-                                 ),
-                                 SizedBox(height: 12,),
-                               ],
-                             ),
-
-                             SizedBox(height: 12,),
-
-                             Container(width: double.infinity,
-                               height: 1,color: color_primary,),
-
-                             SizedBox(height: 2,),
-
-                             Container(width: double.infinity,
-                               height: 1,color: color_primary,),
-
-                             SizedBox(height: 2,),
-
-                             Container(width: double.infinity,
-                               height: 1,color: color_primary,),
-
-                             SizedBox(height: 16,),
-
-                           ],
-                         ),
-                       )
-
-
+                    Column(
+                      children: [
+                        Text("Reporting Date",
+                            style: AppTextStyle.largeMedium.copyWith(
+                                fontSize: 16, color: color_hint_text)),
+                        Text(widget.date,
+                            style: AppTextStyle.largeBold.copyWith(
+                                fontSize: 16, color: color_brown_title)),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Text("Site Name",
+                            style: AppTextStyle.largeMedium.copyWith(
+                                fontSize: 16, color: color_hint_text)),
+                        Text(widget.siteName,
+                            style: AppTextStyle.largeBold.copyWith(
+                                fontSize: 16, color: color_brown_title)),
                       ],
-                  ),
-                ),
+                    ),
 
-                // SizedBox(height: 28,),
-                //
-                // _buildSectionTitle('Expenses'),
-                //
-                // SizedBox(height: 4,),
-                //
-                // Container(
-                //   padding: EdgeInsets.all(12),
-                //   decoration: BoxDecoration(
-                //     border: Border.all(
-                //         color: color_hint_text,
-                //         width: 0.5
-                //     ),
-                //
-                //     borderRadius: BorderRadius.circular(6),
-                //   ),
-                //   child: Column(
-                //     children: [
-                //
-                //       _buildTextField(workReportController.controllerTrain.value, "Train"),
-                //       SizedBox(height: 12,),
-                //       _buildTextField(workReportController.controllerBus.value, "Bus"),
-                //       SizedBox(height: 12,),
-                //       _buildTextField(workReportController.controllerAuto.value, "Auto"),
-                //       SizedBox(height: 12,),
-                //       _buildTextField(workReportController.controllerFuel.value, "Fuel"),
-                //       SizedBox(height: 12,),
-                //       _buildTextField(workReportController.controllerFoodAmount.value, "Food Amount"),
-                //       SizedBox(height: 12,),
-                //       _buildTextField(workReportController.controllerOther.value, "Other"),
-                //       SizedBox(height: 12,),
-                //       _buildTextField(workReportController.controllerRemarksForOther.value, "Remarks For Others"),
-                //       SizedBox(height: 12,),
-                //
-                //     ],
-                //   ),
-                // ),
+                    SizedBox(
+                      height: 16,
+                    ),
 
+                    // _buildDatePicker(),
 
-                // SizedBox(height: 28,),
-                //
-                // _buildSectionTitle('Expenses Bills'),
-                //
-                // SizedBox(height: 4,),
-                // Container(
-                //   padding: EdgeInsets.all(12),
-                //   decoration: BoxDecoration(
-                //     border: Border.all(
-                //         color: color_hint_text,
-                //         width: 0.5
-                //     ),
-                //
-                //     borderRadius: BorderRadius.circular(6),
-                //   ),
-                //   child: Column(
-                //     children: [
-                //
-                //       for(int i=0;i<workReportController.billsList.length; i++)
-                //         Column(
-                //           crossAxisAlignment: CrossAxisAlignment.start,
-                //           children: [
-                //             Row(
-                //               children: [
-                //                 Expanded(child: InkWell(
-                //                   onTap: ()async{
-                //                    workReportController.billsList[i].path = await selectPhoto(context);
-                //                    setState(() {
-                //
-                //                    });
-                //                   },
-                //                   child: Container(height: 160
-                //                     ,child: Stack(
-                //                       children: [
-                //                         (workReportController.billsList[i].path??"").isNotEmpty?Image.file(
-                //                           File(workReportController.billsList[i].path??""),
-                //                           fit: BoxFit.cover,
-                //                           height: 160,
-                //                           width: double.infinity,
-                //                         ): Container(width: double.infinity,height: 150,color: Colors.grey.shade300,margin: EdgeInsets.only(right: 10),),
-                //                         Align(alignment: Alignment.bottomRight,child: Icon(Icons.edit,size: 30,color: color_primary,))
-                //                       ],
-                //                     ),
-                //                   ),
-                //                 )),
-                //
-                //                 SizedBox(width: 12,),
-                //
-                //                 InkWell(onTap: (){
-                //                   workReportController.billsList.removeAt(i);
-                //                   setState(() {
-                //
-                //                   });
-                //                 },child: Icon(Icons.remove_circle,size: 30,color: color_primary,))
-                //               ],
-                //             ),
-                //
-                //
-                //             Row(
-                //               children: [
-                //                 Expanded(child: _buildTextField(workReportController.billsList[i].billNameTextEditingController, 'Bill Name ${i+1}')),
-                //
-                //                 if(i == (workReportController.billsList.length-1))Container(margin: EdgeInsets.only(left: 12),
-                //                   child: InkWell(onTap: (){
-                //                     workReportController.billsList.add(WorkReportExpensesBill());
-                //                     setState(() {
-                //
-                //                     });
-                //                   },child: Icon(Icons.add_circle,size: 30,color: color_brown_title,)),
-                //                 )
-                //               ],
-                //             ),
-                //
-                //             if(i != (workReportController.billsList.length-1))SizedBox(height: 28,),
-                //           ],
-                //         )
-                //
-                //
-                //     ],
-                //   ),
-                // ),
+                    // _buildTextFieldOnlyReadableDate(TextEditingController(text: widget.date), "Site Reporting Date"),
 
-                SizedBox(height: 20),
+                    SizedBox(
+                      height: 16,
+                    ),
 
-                // Login Button
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 20),
-                  child: CommonButton(
-                    titleText: "Save",
-                    textColor: Colors.white,
-                    onCustomButtonPressed: () async {
+                    // DropdownButton<SiteAttendByData>(
+                    //   value: workReportController.siteAttendByList
+                    //       .contains(workReportController.siteAttendByData)
+                    //       ? workReportController.siteAttendByData
+                    //       : null,
+                    //   // Ensure valid value
+                    //   hint: Text("Site Attend By",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                    //       , color: color_hint_text)) ,
+                    //
+                    //
+                    //   isExpanded: true,
+                    //   onChanged: (SiteAttendByData? newValue) {
+                    //     setState(() {
+                    //       workReportController.siteAttendByData = newValue;
+                    //     });
+                    //   },
+                    //   items: workReportController.siteAttendByList.map((SiteAttendByData group) {
+                    //     return DropdownMenuItem<SiteAttendByData>(
+                    //       value: group,
+                    //       child: Text(group.name??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                    //           , color: blackText),),
+                    //     );
+                    //   }).toList(),
+                    // ),
 
+                    _buildSectionTitle('Site Attend By'),
 
-                      if(workReportController.controllerNameOfContactPerson.value.text.isEmpty){
-                        snackBar(context, "Please enter Contact person");
-                        return;
-                      }
+                    MultiSelectDialogField<SiteAttendByData>(
+                      items: workReportController.siteAttendByList
+                          .map((item) => MultiSelectItem<SiteAttendByData>(
+                              item, item.name ?? ""))
+                          .toList(),
+                      initialValue:
+                          workReportController.selectedSiteAttendByList,
+                      onConfirm: (List<SiteAttendByData> selected) {
+                        workReportController.selectedSiteAttendByList.value =
+                            selected;
+                        workReportController.selectedSiteAttendListInString =
+                            selected.map((e) => e.name).join(', ');
+                      },
+                      chipDisplay: MultiSelectChipDisplay<SiteAttendByData>(
+                        chipColor: Colors.blue.shade100,
+                        textStyle: TextStyle(color: Colors.black),
+                        onTap: (item) {
+                          workReportController.selectedSiteAttendByList
+                              .remove(item);
+                        },
+                      ),
+                      buttonText: Text("Select Site Attendees"),
+                    ),
 
-                      if(workReportController.controllerNameOfContactPerson.value.text.isEmpty){
-                        snackBar(context, "Please enter Witness person");
-                        return;
-                      }
+                    // DropDownMultiSelect<SiteAttendByData>(
+                    //   options: workReportController.siteAttendByList,
+                    //   selectedValues: workReportController.selectedSiteAttendByList,
+                    //   onChanged: (List<SiteAttendByData> values) {
+                    //
+                    //     workReportController.selectedSiteAttendListInString = values.toString();
+                    //     printData("selected", values.toString());
+                    //   //  workReportController.updateSelectedSiteAttendByList(values.toString().split(','));
+                    //
+                    //   },
+                    //
+                    // ),
 
-                      if(workReportController.conveyanceData == null){
-                        snackBar(context, "Select Driver Name");
-                        return;
-                      }
+                    SizedBox(
+                      height: 8,
+                    ),
 
-                      if(workReportController.serviceByNatureData == null){
-                        snackBar(context, "Select Service Nature");
-                        return;
-                      }
+                    DropdownButton<String>(
+                      value: workReportController.conveyThroughList
+                              .contains(workReportController.conveyThrough)
+                          ? workReportController.conveyThrough
+                          : null,
+                      // Ensure valid value
+                      hint: Text("Convey Through",
+                          style: AppTextStyle.largeMedium
+                              .copyWith(fontSize: 16, color: color_hint_text)),
 
+                      isExpanded: true,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          workReportController.conveyThrough = newValue;
+                        });
+                      },
+                      items: workReportController.conveyThroughList
+                          .map((String group) {
+                        return DropdownMenuItem<String>(
+                          value: group,
+                          child: Text(
+                            group,
+                            style: AppTextStyle.largeMedium
+                                .copyWith(fontSize: 16, color: blackText),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
 
-                      if(workReportController.conveyanceData == null){
-                        snackBar(context, "Select Driver Name");
-                        return;
-                      }
+                    _buildTextField(
+                        workReportController.controllerOther.value, "Other"),
+                    SizedBox(
+                      height: 16,
+                    ),
 
+                    DropdownButton<ConveyanceData>(
+                      value: workReportController.conveysList
+                              .contains(workReportController.conveyanceData)
+                          ? workReportController.conveyanceData
+                          : null,
+                      // Ensure valid value
+                      hint: Text("Driver Name",
+                          style: AppTextStyle.largeMedium
+                              .copyWith(fontSize: 16, color: color_hint_text)),
 
-                      if(workReportController.selectedSiteAttendListInString == null){
-                        snackBar(context, "Select Site attend by");
-                        return;
-                      }
+                      isExpanded: true,
+                      onChanged: (ConveyanceData? newValue) {
+                        setState(() {
+                          workReportController.conveyanceData = newValue;
+                        });
+                      },
+                      items: workReportController.conveysList
+                          .map((ConveyanceData group) {
+                        return DropdownMenuItem<ConveyanceData>(
+                          value: group,
+                          child: Text(
+                            group.name ?? "",
+                            style: AppTextStyle.largeMedium
+                                .copyWith(fontSize: 16, color: blackText),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
 
-                      if(workReportController.siteId == null){
-                        snackBar(context, "Select Site ");
-                        return;
-                      }
+                    DropdownButton<ServiceByNatureData>(
+                      value: workReportController.serviceByNatureList.contains(
+                              workReportController.serviceByNatureData)
+                          ? workReportController.serviceByNatureData
+                          : null,
+                      // Ensure valid value
+                      hint: Text("Service Nature",
+                          style: AppTextStyle.largeMedium
+                              .copyWith(fontSize: 16, color: color_hint_text)),
 
+                      isExpanded: true,
+                      onChanged: (ServiceByNatureData? newValue) {
+                        setState(() {
+                          workReportController.serviceByNatureData = newValue;
+                        });
+                      },
+                      items: workReportController.serviceByNatureList
+                          .map((ServiceByNatureData group) {
+                        return DropdownMenuItem<ServiceByNatureData>(
+                          value: group,
+                          child: Text(
+                            group.name ?? "",
+                            style: AppTextStyle.largeMedium
+                                .copyWith(fontSize: 16, color: blackText),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+
+                    _buildTextField(
+                        workReportController
+                            .controllerNameOfContactPerson.value,
+                        "Name Of Contact Person"),
+                    SizedBox(
+                      height: 16,
+                    ),
+
+                    _buildTextField(
+                        workReportController
+                            .controllerNameOfWitnessPerson.value,
+                        "Name Of Witness Person"),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    _buildSectionTitle('Comments'),
+
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: color_hint_text, width: 0.5),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Column(
+                        children: [
+                          for (int i = 0;
+                              i < workReportController.remarksList.length;
+                              i++)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: _buildTextField(
+                                            workReportController.remarksList[i]
+                                                .remarkTextEditingController,
+                                            'Comment ${i + 1}')),
+                                    SizedBox(
+                                      width: 12,
+                                    ),
+                                    (i ==
+                                            (workReportController
+                                                    .remarksList.length -
+                                                1))
+                                        ? InkWell(
+                                            onTap: () {
+                                              workReportController.remarksList
+                                                  .add(RemarkWorkReport());
+                                              setState(() {});
+                                            },
+                                            child: Icon(
+                                              Icons.add_circle,
+                                              size: 30,
+                                              color: color_brown_title,
+                                            ))
+                                        : InkWell(
+                                            onTap: () {
+                                              workReportController
+                                                  .removedRemarkIds
+                                                  .add(workReportController
+                                                      .remarksList[i].id
+                                                      .toString());
+                                              workReportController.remarksList
+                                                  .removeAt(i);
+                                              setState(() {});
+                                            },
+                                            child: Icon(
+                                              Icons.remove_circle,
+                                              size: 30,
+                                              color: color_primary,
+                                            ))
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 12,
+                                ),
+                              ],
+                            )
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(
+                      height: 20,
+                    ),
+
+                    Row(
+                      children: [
+                        Expanded(
+                            child:
+                                _buildSectionTitle('Given Service & Status')),
+                        IconButton(
+                          icon: Icon(
+                            Icons.add_circle,
+                            color: color_brown_title,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            _showAddDialog(context);
+                          },
+                        )
+                      ],
+                    ),
+
+                    SizedBox(
+                      height: 4,
+                    ),
+
+                    Column(
+                      children: [
+                        for (int index = 0;
+                            index <
+                                workReportController.serviceStatusList.length;
+                            index++)
+                          _buildServiceStatusCard(index),
+                      ],
+                    ),
+
+                    // Container(
+                    //   padding: EdgeInsets.all(12),
+                    //   decoration: BoxDecoration(
+                    //     border: Border.all(
+                    //         color: color_hint_text,
+                    //         width: 0.5
+                    //     ),
+                    //
+                    //     borderRadius: BorderRadius.circular(6),
+                    //   ),
+                    //   child: Column(
+                    //     children: [
+                    //
+                    //       for(int i=0;i<workReportController.serviceStatusList.length; i++)
+                    //        Padding(
+                    //          padding: const EdgeInsets.only(bottom: 8.0),
+                    //          child: Column(
+                    //            children: [
+                    //              Column(
+                    //                crossAxisAlignment: CrossAxisAlignment.start,
+                    //                children: [
+                    //                  Row(
+                    //                    children: [
+                    //                      Expanded(
+                    //                        child: Column(
+                    //                          children: [
+                    //
+                    //                            _buildTextField(workReportController.serviceStatusList[i].testLocationEditingController, 'Test Location ${i+1}'),
+                    //
+                    //                            SizedBox(height: 8,),
+                    //
+                    //                            _buildTextField(workReportController.serviceStatusList[i].roomEquipmentEditingController, 'Room/Equipment/System Identification ${i+1}'),
+                    //                            SizedBox(height: 16,),
+                    //
+                    //                            DropdownButton<TestByPerformData>(
+                    //                              value: workReportController.testPerformerList
+                    //                                  .contains(workReportController.serviceStatusList[i].testPerformData)
+                    //                                  ? workReportController.serviceStatusList[i].testPerformData
+                    //                                  : null,
+                    //                              // Ensure valid value
+                    //                              hint: Text("Test Performed",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                    //                                  , color: color_hint_text)) ,
+                    //
+                    //
+                    //                              isExpanded: true,
+                    //                              onChanged: (TestByPerformData? newValue) {
+                    //                                setState(() {
+                    //                                  workReportController.serviceStatusList[i].testPerformData = newValue;
+                    //                                });
+                    //                              },
+                    //                              items: workReportController.testPerformerList.map((TestByPerformData group) {
+                    //                                return DropdownMenuItem<TestByPerformData>(
+                    //                                  value: group,
+                    //                                  child: Text(group.testName??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                    //                                      , color: blackText),),
+                    //                                );
+                    //                              }).toList(),
+                    //                            ),
+                    //
+                    //                            SizedBox(height: 16,),
+                    //
+                    //                            DropdownButton<String>(
+                    //                              value: workReportController.sheetStatusList
+                    //                                  .contains(workReportController.serviceStatusList[i].dataSheetStatus)
+                    //                                  ? workReportController.serviceStatusList[i].dataSheetStatus
+                    //                                  : null,
+                    //                              // Ensure valid value
+                    //                              hint: Text("Sheet Status",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                    //                                  , color: color_hint_text)) ,
+                    //
+                    //
+                    //                              isExpanded: true,
+                    //                              onChanged: (String? newValue) {
+                    //                                setState(() {
+                    //                                  workReportController.serviceStatusList[i].dataSheetStatus = newValue;
+                    //                                });
+                    //                              },
+                    //                              items: workReportController.sheetStatusList.map((String group) {
+                    //                                return DropdownMenuItem<String>(
+                    //                                  value: group,
+                    //                                  child: Text(group, style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                    //                                      , color: blackText),),
+                    //                                );
+                    //                              }).toList(),
+                    //                            ),
+                    //
+                    //                            SizedBox(height: 16,),
+                    //
+                    //
+                    //                            DropdownButton<InstrumentData>(
+                    //                              value: workReportController.instrumentList
+                    //                                  .contains(workReportController.serviceStatusList[i].usedInstrument)
+                    //                                  ? workReportController.serviceStatusList[i].usedInstrument
+                    //                                  : null,
+                    //                              // Ensure valid value
+                    //                              hint: Text("Select Used Instrument",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                    //                                  , color: color_hint_text)) ,
+                    //
+                    //
+                    //                              isExpanded: true,
+                    //                              onChanged: (InstrumentData? newValue) {
+                    //                                setState(() {
+                    //                                  workReportController.serviceStatusList[i].usedInstrument = newValue;
+                    //                                });
+                    //                              },
+                    //                              items: workReportController.instrumentList.map((InstrumentData group) {
+                    //                                return DropdownMenuItem<InstrumentData>(
+                    //                                  value: group,
+                    //                                  child: Text(group.headInstrumentName??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                    //                                      , color: blackText),),
+                    //                                );
+                    //                              }).toList(),
+                    //                            ),
+                    //
+                    //                            SizedBox(height: 8,),
+                    //
+                    //                            DropdownButton<WorkmanData>(
+                    //                              value: workReportController.workmanList
+                    //                                  .contains(workReportController.serviceStatusList[i].workmanData)
+                    //                                  ? workReportController.serviceStatusList[i].workmanData
+                    //                                  : null,
+                    //                              // Ensure valid value
+                    //                              hint: Text("Performed By",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                    //                                  , color: color_hint_text)) ,
+                    //
+                    //
+                    //                              isExpanded: true,
+                    //                              onChanged: (WorkmanData? newValue) {
+                    //                                setState(() {
+                    //                                  workReportController.serviceStatusList[i].workmanData = newValue;
+                    //                                });
+                    //                              },
+                    //                              items: workReportController.workmanList.map((WorkmanData group) {
+                    //                                return DropdownMenuItem<WorkmanData>(
+                    //                                  value: group,
+                    //                                  child: Text(group.name??"", style: AppTextStyle.largeMedium.copyWith(fontSize: 16
+                    //                                      , color: blackText),),
+                    //                                );
+                    //                              }).toList(),
+                    //                            ),
+                    //
+                    //                            SizedBox(height: 8,),
+                    //
+                    //                            _buildTextField(workReportController.serviceStatusList[i].remarkTextEditingController, 'Remarks ${i+1}'),
+                    //                          ],
+                    //                        ),
+                    //                      ),
+                    //
+                    //                      SizedBox(width: 12,),
+                    //
+                    //                      (i == (workReportController.serviceStatusList.length-1))?InkWell(onTap: (){
+                    //                        workReportController.serviceStatusList.add(ServiceStatusModel());
+                    //                        setState(() {
+                    //
+                    //                        });
+                    //                      },child: Icon(Icons.add_circle,size: 30,color: color_brown_title,)):InkWell(
+                    //                          onTap: () {
+                    //                            workReportController.serviceStatusList.removeAt(i);
+                    //                            setState(() {});
+                    //                          },
+                    //                          child: Icon(
+                    //                            Icons.remove_circle,
+                    //                            size: 30,
+                    //                            color: color_primary,
+                    //                          ))
+                    //                    ],
+                    //                  ),
+                    //                  SizedBox(height: 12,),
+                    //                ],
+                    //              ),
+                    //
+                    //              SizedBox(height: 12,),
+                    //
+                    //              Container(width: double.infinity,
+                    //                height: 1,color: color_primary,),
+                    //
+                    //              SizedBox(height: 2,),
+                    //
+                    //              Container(width: double.infinity,
+                    //                height: 1,color: color_primary,),
+                    //
+                    //              SizedBox(height: 2,),
+                    //
+                    //              Container(width: double.infinity,
+                    //                height: 1,color: color_primary,),
+                    //
+                    //              SizedBox(height: 16,),
+                    //
+                    //            ],
+                    //          ),
+                    //        )
+                    //
+                    //
+                    //       ],
+                    //   ),
+                    // ),
+
+                    // SizedBox(height: 28,),
+                    //
+                    // _buildSectionTitle('Expenses'),
+                    //
+                    // SizedBox(height: 4,),
+                    //
+                    // Container(
+                    //   padding: EdgeInsets.all(12),
+                    //   decoration: BoxDecoration(
+                    //     border: Border.all(
+                    //         color: color_hint_text,
+                    //         width: 0.5
+                    //     ),
+                    //
+                    //     borderRadius: BorderRadius.circular(6),
+                    //   ),
+                    //   child: Column(
+                    //     children: [
+                    //
+                    //       _buildTextField(workReportController.controllerTrain.value, "Train"),
+                    //       SizedBox(height: 12,),
+                    //       _buildTextField(workReportController.controllerBus.value, "Bus"),
+                    //       SizedBox(height: 12,),
+                    //       _buildTextField(workReportController.controllerAuto.value, "Auto"),
+                    //       SizedBox(height: 12,),
+                    //       _buildTextField(workReportController.controllerFuel.value, "Fuel"),
+                    //       SizedBox(height: 12,),
+                    //       _buildTextField(workReportController.controllerFoodAmount.value, "Food Amount"),
+                    //       SizedBox(height: 12,),
+                    //       _buildTextField(workReportController.controllerOther.value, "Other"),
+                    //       SizedBox(height: 12,),
+                    //       _buildTextField(workReportController.controllerRemarksForOther.value, "Remarks For Others"),
+                    //       SizedBox(height: 12,),
+                    //
+                    //     ],
+                    //   ),
+                    // ),
+
+                    // SizedBox(height: 28,),
+                    //
+                    // _buildSectionTitle('Expenses Bills'),
+                    //
+                    // SizedBox(height: 4,),
+                    // Container(
+                    //   padding: EdgeInsets.all(12),
+                    //   decoration: BoxDecoration(
+                    //     border: Border.all(
+                    //         color: color_hint_text,
+                    //         width: 0.5
+                    //     ),
+                    //
+                    //     borderRadius: BorderRadius.circular(6),
+                    //   ),
+                    //   child: Column(
+                    //     children: [
+                    //
+                    //       for(int i=0;i<workReportController.billsList.length; i++)
+                    //         Column(
+                    //           crossAxisAlignment: CrossAxisAlignment.start,
+                    //           children: [
+                    //             Row(
+                    //               children: [
+                    //                 Expanded(child: InkWell(
+                    //                   onTap: ()async{
+                    //                    workReportController.billsList[i].path = await selectPhoto(context);
+                    //                    setState(() {
+                    //
+                    //                    });
+                    //                   },
+                    //                   child: Container(height: 160
+                    //                     ,child: Stack(
+                    //                       children: [
+                    //                         (workReportController.billsList[i].path??"").isNotEmpty?Image.file(
+                    //                           File(workReportController.billsList[i].path??""),
+                    //                           fit: BoxFit.cover,
+                    //                           height: 160,
+                    //                           width: double.infinity,
+                    //                         ): Container(width: double.infinity,height: 150,color: Colors.grey.shade300,margin: EdgeInsets.only(right: 10),),
+                    //                         Align(alignment: Alignment.bottomRight,child: Icon(Icons.edit,size: 30,color: color_primary,))
+                    //                       ],
+                    //                     ),
+                    //                   ),
+                    //                 )),
+                    //
+                    //                 SizedBox(width: 12,),
+                    //
+                    //                 InkWell(onTap: (){
+                    //                   workReportController.billsList.removeAt(i);
+                    //                   setState(() {
+                    //
+                    //                   });
+                    //                 },child: Icon(Icons.remove_circle,size: 30,color: color_primary,))
+                    //               ],
+                    //             ),
+                    //
+                    //
+                    //             Row(
+                    //               children: [
+                    //                 Expanded(child: _buildTextField(workReportController.billsList[i].billNameTextEditingController, 'Bill Name ${i+1}')),
+                    //
+                    //                 if(i == (workReportController.billsList.length-1))Container(margin: EdgeInsets.only(left: 12),
+                    //                   child: InkWell(onTap: (){
+                    //                     workReportController.billsList.add(WorkReportExpensesBill());
+                    //                     setState(() {
+                    //
+                    //                     });
+                    //                   },child: Icon(Icons.add_circle,size: 30,color: color_brown_title,)),
+                    //                 )
+                    //               ],
+                    //             ),
+                    //
+                    //             if(i != (workReportController.billsList.length-1))SizedBox(height: 28,),
+                    //           ],
+                    //         )
+                    //
+                    //
+                    //     ],
+                    //   ),
+                    // ),
+
+                    SizedBox(height: 20),
+
+                    // Login Button
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      child: CommonButton(
+                        titleText: "Save",
+                        textColor: Colors.white,
+                        onCustomButtonPressed: () async {
+                          if (workReportController.controllerNameOfContactPerson
+                              .value.text.isEmpty) {
+                            snackBar(context, "Please enter Contact person");
+                            return;
+                          }
+
+                          if (workReportController.controllerNameOfContactPerson
+                              .value.text.isEmpty) {
+                            snackBar(context, "Please enter Witness person");
+                            return;
+                          }
+
+                          if (workReportController.conveyanceData == null) {
+                            snackBar(context, "Select Driver Name");
+                            return;
+                          }
+
+                          if (workReportController.serviceByNatureData ==
+                              null) {
+                            snackBar(context, "Select Service Nature");
+                            return;
+                          }
+
+                          if (workReportController.conveyanceData == null) {
+                            snackBar(context, "Select Driver Name");
+                            return;
+                          }
+
+                          if (workReportController
+                                  .selectedSiteAttendListInString ==
+                              null) {
+                            snackBar(context, "Select Site attend by");
+                            return;
+                          }
+
+                          if (workReportController.siteId == null) {
+                            snackBar(context, "Select Site ");
+                            return;
+                          }
 
 //                       String cleaned = workReportController.selectedSiteAttendListInString.toString().replaceAll('[', '').replaceAll(']', '');
 //
@@ -754,47 +828,51 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
 //
 //                      await workReportController.updateSelectedSiteAttendByList(result);
 
-                      // printData("seletced", workReportController.selectedSiteAttendListInString??"");
+                          // printData("seletced", workReportController.selectedSiteAttendListInString??"");
 
-                      workReportController.callCreateWorkReportList(widget.date, widget.siteId);
-
-                    },
-                    borderColor: color_primary,
-                    borderWidth: 0,
-                  ),
+                          workReportController.callCreateWorkReportList(
+                              widget.date, widget.siteId);
+                        },
+                        borderColor: color_primary,
+                        borderWidth: 0,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-
-          if(workReportController.isLoading.value)Center(child: CircularProgressIndicator(),)
-        ],
-      )),
+              ),
+              if (workReportController.isLoading.value)
+                Center(
+                  child: CircularProgressIndicator(),
+                )
+            ],
+          )),
     );
   }
 
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: AppTextStyle.largeBold.copyWith(fontSize: 20
-          , color: color_hint_text),
+      style:
+          AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
     );
   }
 
-
-  Widget _buildDropdown(List<String> items, String? selectedValue, Function(String?) onChanged, String hint) {
+  Widget _buildDropdown(List<String> items, String? selectedValue,
+      Function(String?) onChanged, String hint) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         contentPadding: EdgeInsets.only(bottom: 10),
         alignLabelWithHint: true,
 
-        labelText: hint, // Moves up as a floating label when a value is selected
-        floatingLabelBehavior: FloatingLabelBehavior.auto, // Auto float when selecting
-        hintText:hint, // Hint text
-        hintStyle:AppTextStyle.largeMedium.copyWith(fontSize: 15
-            , color: color_hint_text), // Hint text style
-        labelStyle:AppTextStyle.largeMedium.copyWith(fontSize: 15
-            , color: color_hint_text), // Hint text style
+        labelText:
+            hint, // Moves up as a floating label when a value is selected
+        floatingLabelBehavior:
+            FloatingLabelBehavior.auto, // Auto float when selecting
+        hintText: hint, // Hint text
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text), // Hint text style
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 15, color: color_hint_text), // Hint text style
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: Colors.grey), // Bottom-only border
         ),
@@ -804,11 +882,11 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
       ),
       value: selectedValue,
       isExpanded: true, // Ensures dropdown takes full width
-      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+      items:
+          items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
       onChanged: onChanged,
     );
     ;
-
   }
 
   Widget _buildTimePicker(String title, TimeOfDay? time, VoidCallback onTap) {
@@ -826,7 +904,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
               ),
             ),
           Container(
-            padding: EdgeInsets.only(bottom: 4,  right: 10),
+            padding: EdgeInsets.only(bottom: 4, right: 10),
             decoration: const BoxDecoration(
               border: Border(
                 bottom: BorderSide(color: Colors.grey), // Bottom-only border
@@ -848,8 +926,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
           ),
         ],
       ),
-    )
-    ;
+    );
   }
 
   Widget _buildTextField(TextEditingController controller, String hint) {
@@ -860,28 +937,27 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
         alignLabelWithHint: true,
         labelText: hint, // Display hint as title when typing
         hintText: hint,
-        floatingLabelBehavior: FloatingLabelBehavior.auto, // Auto float when typing
+        floatingLabelBehavior:
+            FloatingLabelBehavior.auto, // Auto float when typing
         border: UnderlineInputBorder(),
-        hintStyle: AppTextStyle.largeMedium.copyWith(fontSize: 16
-            , color: color_hint_text) ,
+        hintStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 16, color: color_hint_text),
 
-        labelStyle: AppTextStyle.largeMedium.copyWith(fontSize: 16
-            , color: color_hint_text) ,
+        labelStyle: AppTextStyle.largeMedium
+            .copyWith(fontSize: 16, color: color_hint_text),
       ),
     );
   }
 
-
-  Widget _buildTextFieldOnlyReadableDate(TextEditingController controller, String hint) {
+  Widget _buildTextFieldOnlyReadableDate(
+      TextEditingController controller, String hint) {
     return Row(
       children: [
         Expanded(
           child: TextField(
             controller: controller,
             readOnly: true, // Makes the field non-editable
-            onTap: (){
-
-            },
+            onTap: () {},
             decoration: InputDecoration(
               contentPadding: EdgeInsets.only(bottom: 0),
               alignLabelWithHint: true,
@@ -897,7 +973,6 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
 
               labelStyle: AppTextStyle.largeRegular
                   .copyWith(fontSize: 16, color: color_hint_text),
-
             ),
           ),
         ),
@@ -905,6 +980,307 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
       ],
     );
   }
+
+  Widget _buildServiceStatusCard(int index) {
+    final item = workReportController.serviceStatusList[index];
+
+    Widget buildLabelValue(String label, String value) {
+      return Container(
+        padding: EdgeInsets.all(3),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Text(
+                "$label: ",
+                style: AppTextStyle.largeMedium
+                    .copyWith(fontSize: 15, color: color_brown_title),
+              ),
+            ),
+            Expanded(
+              child: Text(
+                "$value ",
+                style: AppTextStyle.largeSemiBold
+                    .copyWith(fontSize: 16, color: Colors.black),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildLabelValue(
+                "Test Location", item.testLocationEditingController.text),
+            buildLabelValue(
+                "Room/Equipment", item.roomEquipmentEditingController.text),
+            buildLabelValue(
+                "Test Performed", item.testPerformData?.testName ?? ""),
+            buildLabelValue("Sheet Status", item.dataSheetStatus ?? ""),
+            buildLabelValue("Used Instrument",
+                item.usedInstrument?.headInstrumentName ?? ""),
+            buildLabelValue("Performed By", item.workmanData?.name ?? ""),
+            buildLabelValue("Remarks", item.remarkTextEditingController.text),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.edit_rounded, color: color_brown_title),
+                  onPressed: () => _showEditDialog(context, index),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete_forever, color: Colors.red),
+                  onPressed: () {
+                    workReportController.serviceStatusList.removeAt(index);
+                    setState(() {}); // Refresh UI
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showEditDialog(BuildContext context, int index) async {
+    final item = workReportController.serviceStatusList[index];
+
+    final shouldRefresh = await showDialog<bool>(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text('Edit Service Status'),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildTextField(
+                        item.testLocationEditingController, 'Test Location'),
+                    _buildTextField(
+                        item.roomEquipmentEditingController, 'Room/Equipment'),
+                    DropdownButton<TestByPerformData>(
+                      value: workReportController.testPerformerList
+                              .contains(item.testPerformData)
+                          ? item.testPerformData
+                          : null,
+                      hint: Text("Test Performed"),
+                      isExpanded: true,
+                      onChanged: (val) {
+                        setState(() {
+                          item.testPerformData = val;
+                        });
+                      },
+                      items: workReportController.testPerformerList.map((val) {
+                        return DropdownMenuItem(
+                          value: val,
+                          child: Text(val.testName ?? ""),
+                        );
+                      }).toList(),
+                    ),
+                    DropdownButton<String>(
+                      value: workReportController.sheetStatusList
+                              .contains(item.dataSheetStatus)
+                          ? item.dataSheetStatus
+                          : null,
+                      hint: Text("Sheet Status"),
+                      isExpanded: true,
+                      onChanged: (val) {
+                        setState(() {
+                          item.dataSheetStatus = val;
+                        });
+                      },
+                      items: workReportController.sheetStatusList.map((val) {
+                        return DropdownMenuItem(
+                          value: val,
+                          child: Text(val),
+                        );
+                      }).toList(),
+                    ),
+                    DropdownButton<InstrumentData>(
+                      value: workReportController.instrumentList
+                              .contains(item.usedInstrument)
+                          ? item.usedInstrument
+                          : null,
+                      hint: Text("Used Instrument"),
+                      isExpanded: true,
+                      onChanged: (val) {
+                        setState(() {
+                          item.usedInstrument = val;
+                        });
+                      },
+                      items: workReportController.instrumentList.map((val) {
+                        return DropdownMenuItem(
+                          value: val,
+                          child: Text(val.headInstrumentName ?? ""),
+                        );
+                      }).toList(),
+                    ),
+                    DropdownButton<WorkmanData>(
+                      value: workReportController.workmanList
+                              .contains(item.workmanData)
+                          ? item.workmanData
+                          : null,
+                      hint: Text("Performed By"),
+                      isExpanded: true,
+                      onChanged: (val) {
+                        setState(() {
+                          item.workmanData = val;
+                        });
+                      },
+                      items: workReportController.workmanList.map((val) {
+                        return DropdownMenuItem(
+                          value: val,
+                          child: Text(val.name ?? ""),
+                        );
+                      }).toList(),
+                    ),
+                    _buildTextField(
+                        item.remarkTextEditingController, 'Remarks'),
+                  ],
+                ),
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            ElevatedButton(
+              child: Text("Submit"),
+              onPressed: () {
+                Navigator.pop(
+                    context, true); // This will notify parent to refresh
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    // Trigger UI update after dialog is closed
+    if (shouldRefresh == true) {
+      setState(() {}); // Refresh the main UI
+    }
+  }
+
+  void _showAddDialog(BuildContext context) async {
+    final newItem = ServiceStatusModel();
+
+    final shouldAdd = await showDialog<bool>(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text('Add Service Status'),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildTextField(
+                        newItem.testLocationEditingController, 'Test Location'),
+                    _buildTextField(newItem.roomEquipmentEditingController,
+                        'Room/Equipment'),
+                    DropdownButton<TestByPerformData>(
+                      value: newItem.testPerformData,
+                      hint: Text("Test Performed"),
+                      isExpanded: true,
+                      onChanged: (val) {
+                        setState(() {
+                          newItem.testPerformData = val;
+                        });
+                      },
+                      items: workReportController.testPerformerList.map((val) {
+                        return DropdownMenuItem(
+                          value: val,
+                          child: Text(val.testName ?? ""),
+                        );
+                      }).toList(),
+                    ),
+                    DropdownButton<String>(
+                      value: newItem.dataSheetStatus,
+                      hint: Text("Sheet Status"),
+                      isExpanded: true,
+                      onChanged: (val) {
+                        setState(() {
+                          newItem.dataSheetStatus = val;
+                        });
+                      },
+                      items: workReportController.sheetStatusList.map((val) {
+                        return DropdownMenuItem(
+                          value: val,
+                          child: Text(val),
+                        );
+                      }).toList(),
+                    ),
+                    DropdownButton<InstrumentData>(
+                      value: newItem.usedInstrument,
+                      hint: Text("Used Instrument"),
+                      isExpanded: true,
+                      onChanged: (val) {
+                        setState(() {
+                          newItem.usedInstrument = val;
+                        });
+                      },
+                      items: workReportController.instrumentList.map((val) {
+                        return DropdownMenuItem(
+                          value: val,
+                          child: Text(val.headInstrumentName ?? ""),
+                        );
+                      }).toList(),
+                    ),
+                    DropdownButton<WorkmanData>(
+                      value: newItem.workmanData,
+                      hint: Text("Performed By"),
+                      isExpanded: true,
+                      onChanged: (val) {
+                        setState(() {
+                          newItem.workmanData = val;
+                        });
+                      },
+                      items: workReportController.workmanList.map((val) {
+                        return DropdownMenuItem(
+                          value: val,
+                          child: Text(val.name ?? ""),
+                        );
+                      }).toList(),
+                    ),
+                    _buildTextField(
+                        newItem.remarkTextEditingController, 'Remarks'),
+                  ],
+                ),
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            ElevatedButton(
+              child: Text("Submit"),
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    // Add new item to list if submitted
+    if (shouldAdd == true) {
+      setState(() {
+        workReportController.serviceStatusList.add(newItem);
+      });
+    }
+  }
 }
-
-

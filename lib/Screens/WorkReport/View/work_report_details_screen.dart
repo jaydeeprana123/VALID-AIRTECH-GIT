@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:valid_airtech/Screens/WorkReport/View/add_work_report_screen.dart';
 import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../../Widget/CommonButton.dart';
@@ -12,14 +13,13 @@ import '../Controller/work_report_controller.dart';
 import 'edit_work_report_screen.dart';
 
 class WorkReportDetailsScreen extends StatefulWidget {
-
   WorkReportDetailsScreen({
     Key? key,
-
   }) : super(key: key);
 
   @override
-  _WorkReportDetailsScreenState createState() => _WorkReportDetailsScreenState();
+  _WorkReportDetailsScreenState createState() =>
+      _WorkReportDetailsScreenState();
 }
 
 class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
@@ -29,7 +29,6 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
   }
 
   @override
@@ -46,7 +45,8 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
         ),
         title: Text(
           'Site Report Details',
-          style: AppTextStyle.largeBold.copyWith(fontSize: 18, color: color_secondary),
+          style: AppTextStyle.largeBold
+              .copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
         actions: [
@@ -54,6 +54,8 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
             icon: Icon(Icons.edit, color: color_secondary),
             onPressed: () {
               Get.to(EditWorkReportScreen());
+
+              //  Get.to(AddWorkReportScreen(date: workReportController.selectedWorkReportData.value.date??"", siteId: workReportController.selectedWorkReportData.value.siteId.toString(), siteName: workReportController.selectedWorkReportData.value.siteName??""));
             },
           ),
         ],
@@ -65,84 +67,142 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
           children: [
             Center(child: SectionHeader(title: 'Site Details')),
 
-            _buildSectionTitle('Site Details'),
-
-            SizedBox(height: 12,),
+            SizedBox(
+              height: 12,
+            ),
 
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Reporting Date & Day",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                    , color: color_brown_title)),
-
-                Text(getDateWithDay(workReportController.selectedWorkReportData.value.date??""),style: AppTextStyle.largeBold.copyWith(fontSize: 16
-                    , color: Colors.black)),
-
-                SizedBox(height: 16,),
-
-
-                Text("Site Name",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                    , color: color_brown_title)),
-
-                Text(workReportController.selectedWorkReportData.value.siteName??"",style: AppTextStyle.largeBold.copyWith(fontSize: 16
-                    , color: Colors.black)),
-
-                SizedBox(height: 16,),
-
-
-                Text("Site Suffix",style: AppTextStyle.largeMedium.copyWith(fontSize: 16
-                    , color: color_brown_title)),
-
-                Text(workReportController.selectedWorkReportData.value.siteSuffixName??"",style: AppTextStyle.largeBold.copyWith(fontSize: 16
-                    , color: Colors.black)),
+                Text("Reporting Date & Day",
+                    style: AppTextStyle.largeMedium
+                        .copyWith(fontSize: 15, color: color_brown_title)),
+                Text(
+                    getDateWithDay(workReportController
+                            .selectedWorkReportData.value.date ??
+                        ""),
+                    style: AppTextStyle.largeBold
+                        .copyWith(fontSize: 16, color: Colors.black)),
+                SizedBox(
+                  height: 16,
+                ),
+                Text("Site Name",
+                    style: AppTextStyle.largeMedium
+                        .copyWith(fontSize: 16, color: color_brown_title)),
+                Text(
+                    workReportController
+                            .selectedWorkReportData.value.siteName ??
+                        "",
+                    style: AppTextStyle.largeBold
+                        .copyWith(fontSize: 16, color: Colors.black)),
+                SizedBox(
+                  height: 16,
+                ),
+                Text("Site Suffix",
+                    style: AppTextStyle.largeMedium
+                        .copyWith(fontSize: 16, color: color_brown_title)),
+                Text(
+                    workReportController
+                            .selectedWorkReportData.value.siteSuffixName ??
+                        "",
+                    style: AppTextStyle.largeBold
+                        .copyWith(fontSize: 16, color: Colors.black)),
               ],
             ),
 
-
+            SizedBox(height: 8.0),
+            InfoRow(
+                label: 'Site Report Date & Day',
+                value: getDateWithDay(
+                    workReportController.selectedWorkReportData.value.date ??
+                        "")),
 
             SizedBox(height: 8.0),
-            InfoRow(label: 'Site Report Date & Day', value: getDateWithDay(workReportController.selectedWorkReportData.value.date??"")),
+            InfoRow(
+                label: 'Conveyance Name',
+                value: workReportController
+                        .selectedWorkReportData.value.conveyanceName ??
+                    ""),
 
             SizedBox(height: 8.0),
-            InfoRow(label: 'Conveyance Name', value: workReportController.selectedWorkReportData.value.conveyanceName??""),
+            InfoRow(
+                label: 'Conveyance Through Name',
+                value: workReportController
+                        .selectedWorkReportData.value.convenyenceThroughName ??
+                    ""),
 
             SizedBox(height: 8.0),
-            InfoRow(label: 'Conveyance Through Name', value: workReportController.selectedWorkReportData.value.convenyenceThroughName??""),
+            InfoRow(
+                label: 'Conveyance Through Other',
+                value: workReportController
+                        .selectedWorkReportData.value.convenyenceThroughOther ??
+                    ""),
 
             SizedBox(height: 8.0),
-            InfoRow(label: 'Conveyance Through Other', value: workReportController.selectedWorkReportData.value.convenyenceThroughOther??""),
+            InfoRow(
+                label: 'Service Nature',
+                value: workReportController
+                        .selectedWorkReportData.value.serviceNatureName ??
+                    ""),
 
             SizedBox(height: 8.0),
-            InfoRow(label: 'Service Nature', value: workReportController.selectedWorkReportData.value.serviceNatureName??""),
-
+            InfoRow(
+                label: 'Contact Person',
+                value: workReportController
+                        .selectedWorkReportData.value.contactPerson ??
+                    ""),
 
             SizedBox(height: 8.0),
-            InfoRow(label: 'Contact Person', value: workReportController.selectedWorkReportData.value.contactPerson??""),
-
-            SizedBox(height: 8.0),
-            InfoRow(label: 'Witness Person', value: workReportController.selectedWorkReportData.value.witnessPerson??""),
-
+            InfoRow(
+                label: 'Witness Person',
+                value: workReportController
+                        .selectedWorkReportData.value.witnessPerson ??
+                    ""),
 
             SizedBox(height: 16.0),
             Center(child: SectionHeader(title: 'Remarks')),
             SizedBox(height: 8.0),
 
-            for(int i=0; i<(workReportController.selectedWorkReportData.value.remark??[]).length;i++)
-            InfoRow(label: 'Remark ${i+1}', value: workReportController.selectedWorkReportData.value.remark?[i].remark??""),
-
+            for (int i = 0;
+                i <
+                    (workReportController.selectedWorkReportData.value.remark ??
+                            [])
+                        .length;
+                i++)
+              InfoRow(
+                  label: 'Remark ${i + 1}',
+                  value: workReportController
+                          .selectedWorkReportData.value.remark?[i].remark ??
+                      ""),
 
             SizedBox(height: 16.0),
             Center(child: SectionHeader(title: 'Site Attend By')),
             SizedBox(height: 8.0),
 
-            for(int i=0; i<(workReportController.selectedWorkReportData.value.siteAttendBy??[]).length;i++)
-              InfoRow(label: 'User ${i+1}', value: workReportController.selectedWorkReportData.value.siteAttendBy?[i].userName??""),
+            for (int i = 0;
+                i <
+                    (workReportController
+                                .selectedWorkReportData.value.siteAttendBy ??
+                            [])
+                        .length;
+                i++)
+              InfoRow(
+                  label: 'User ${i + 1}',
+                  value: workReportController.selectedWorkReportData.value
+                          .siteAttendBy?[i].userName ??
+                      ""),
 
             SizedBox(height: 16.0),
             Center(child: SectionHeader(title: 'Service Status')),
             SizedBox(height: 8.0),
 
-            for(int i=0; i<(workReportController.selectedWorkReportData.value.serviceStatus??[]).length;i++)
+            for (int i = 0;
+                i <
+                    (workReportController
+                                .selectedWorkReportData.value.serviceStatus ??
+                            [])
+                        .length;
+                i++)
               Container(
                 width: double.infinity,
                 margin: EdgeInsets.only(bottom: 12),
@@ -151,18 +211,39 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    InfoRow(label: 'Test Location :', value: workReportController.selectedWorkReportData.value.serviceStatus?[i].testLocation??""),
-                    InfoRow(label: 'Room Equipment :', value: workReportController.selectedWorkReportData.value.serviceStatus?[i].roomEquipment??""),
-                    InfoRow(label: 'Test Performed By :', value: workReportController.selectedWorkReportData.value.serviceStatus?[i].testPerfomedName??""),
-                    InfoRow(label: 'Head Instrument :', value: workReportController.selectedWorkReportData.value.serviceStatus?[i].headInstrumentName??""),
-                    InfoRow(label: 'Remark :', value: workReportController.selectedWorkReportData.value.serviceStatus?[i].remark??""),
-                    InfoRow(label: 'Status :', value: workReportController.selectedWorkReportData.value.serviceStatus?[i].statusType??""),
-
+                    InfoRow(
+                        label: 'Test Location :',
+                        value: workReportController.selectedWorkReportData.value
+                                .serviceStatus?[i].testLocation ??
+                            ""),
+                    InfoRow(
+                        label: 'Room Equipment :',
+                        value: workReportController.selectedWorkReportData.value
+                                .serviceStatus?[i].roomEquipment ??
+                            ""),
+                    InfoRow(
+                        label: 'Test Performed By :',
+                        value: workReportController.selectedWorkReportData.value
+                                .serviceStatus?[i].testPerfomedName ??
+                            ""),
+                    InfoRow(
+                        label: 'Head Instrument :',
+                        value: workReportController.selectedWorkReportData.value
+                                .serviceStatus?[i].headInstrumentName ??
+                            ""),
+                    InfoRow(
+                        label: 'Remark :',
+                        value: workReportController.selectedWorkReportData.value
+                                .serviceStatus?[i].remark ??
+                            ""),
+                    InfoRow(
+                        label: 'Status :',
+                        value: workReportController.selectedWorkReportData.value
+                                .serviceStatus?[i].statusType ??
+                            ""),
                   ],
                 ),
               ),
-
-
 
             SizedBox(height: 16.0),
             // Center(child: SectionHeader(title: 'Expense Details')),
@@ -178,7 +259,6 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
             SizedBox(height: 8.0),
             InfoRow(label: 'Remark For Others', value: 'NA'),
             SizedBox(height: 16.0),
-
 
             // GridView.builder(
             //   shrinkWrap: true,
@@ -205,7 +285,6 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
             //
             //
             // SizedBox(height: 22,),
-
 
             // Column(
             //   mainAxisAlignment: MainAxisAlignment.center,
@@ -245,7 +324,6 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
   }
 }
 
-
 class SectionHeader extends StatelessWidget {
   final String title;
 
@@ -256,8 +334,8 @@ class SectionHeader extends StatelessWidget {
     return Text(
       title,
       textAlign: TextAlign.center,
-      style: AppTextStyle.largeBold.copyWith(fontSize: 18
-          , color: color_primary),
+      style: AppTextStyle.largeBold
+          .copyWith(fontSize: 18, color: color_brown_title),
     );
   }
 }
@@ -273,15 +351,15 @@ class InfoRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Column(
-
-
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: AppTextStyle.largeBold.copyWith(fontSize: 14
-              , color: color_brown_title)),
-          Text(value, style: AppTextStyle.largeRegular.copyWith(fontSize: 14
-              , color: Colors.black54)),
+          Text(label,
+              style: AppTextStyle.largeMedium
+                  .copyWith(fontSize: 15, color: color_brown_title)),
+          Text(value,
+              style: AppTextStyle.largeSemiBold
+                  .copyWith(fontSize: 16, color: Colors.black)),
         ],
       ),
     );
@@ -302,27 +380,29 @@ class ExpenseRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: isBold?AppTextStyle.largeBold.copyWith(fontSize: 14
-          , color: Colors.black):AppTextStyle.largeRegular.copyWith(fontSize: 14
-          , color: Colors.black)),
-          Text(
-            value,
-            style: isBold?AppTextStyle.largeBold.copyWith(fontSize: 14
-                , color: Colors.black54):AppTextStyle.largeRegular.copyWith(fontSize: 14
-                , color: Colors.black54)
-          ),
+          Text(label,
+              style: isBold
+                  ? AppTextStyle.largeBold
+                      .copyWith(fontSize: 14, color: Colors.black)
+                  : AppTextStyle.largeRegular
+                      .copyWith(fontSize: 14, color: Colors.black)),
+          Text(value,
+              style: isBold
+                  ? AppTextStyle.largeBold
+                      .copyWith(fontSize: 14, color: Colors.black54)
+                  : AppTextStyle.largeRegular
+                      .copyWith(fontSize: 14, color: Colors.black54)),
         ],
       ),
     );
   }
 }
 
-
 Widget _buildSectionTitle(String title) {
   return Text(
     title,
     style:
-    AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
+        AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
   );
 }
 
@@ -331,7 +411,8 @@ class ActionButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Color color;
 
-  ActionButton({required this.label, required this.onPressed, required this.color});
+  ActionButton(
+      {required this.label, required this.onPressed, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -341,13 +422,12 @@ class ActionButton extends StatelessWidget {
         backgroundColor: color,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       ),
-      child: Text(label, style: TextStyle(color: Colors.white),),
+      child: Text(
+        label,
+        style: TextStyle(color: Colors.white),
+      ),
     );
   }
-
-
-
-
 }
 
 String getDateWithDay(String dateString) {
@@ -359,4 +439,3 @@ String getDateWithDay(String dateString) {
     return 'Invalid Date';
   }
 }
-

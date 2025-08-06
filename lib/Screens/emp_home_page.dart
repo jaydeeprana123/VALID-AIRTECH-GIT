@@ -44,11 +44,9 @@ class _EmpHomePageState extends State<EmpHomePage> {
   String? selectedBloodGroup;
   // List<String> visitPlace = ["Office", "Site"];
 
-
-  AttendanceController attendanceController =  Get.put(AttendanceController());
+  AttendanceController attendanceController = Get.put(AttendanceController());
 
   bool isAttendanceFilled = false;
-
 
   @override
   void initState() {
@@ -56,16 +54,12 @@ class _EmpHomePageState extends State<EmpHomePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await attendanceController.getLoginData();
-      await attendanceController.callAttendanceListByDate(DateFormat('dd-MM-yyyy').format(DateTime.now()));
+      await attendanceController.callAttendanceListByDate(
+          DateFormat('dd-MM-yyyy').format(DateTime.now()));
       await attendanceController.callSiteList();
       await attendanceController.callOfficeList();
-
-
     });
-
-
   }
-
 
   void _initializeData() async {
     await attendanceController.getLoginData();
@@ -108,369 +102,486 @@ class _EmpHomePageState extends State<EmpHomePage> {
           // },),
         ],
       ),
-      body:  Obx(() => Stack(
-        children: [
-          Column(
+      body: Obx(() => Stack(
             children: [
-              // SizedBox(height: 10),
-              // Center(
-              //   child: Row(
-              //     children: [
-              //       SizedBox(width: 52),
-              //       Expanded(
-              //         child: Image.asset(
-              //           iconLogo,
-              //           height: 80,
-              //         ),
-              //       ),
-              //       Icon(Icons.calendar_month, color: color_secondary, size: 36),
-              //       SizedBox(width: 16),
-              //     ],
-              //   ),
-              // ),
-              SizedBox(height: 4),
+              Column(
+                children: [
+                  // SizedBox(height: 10),
+                  // Center(
+                  //   child: Row(
+                  //     children: [
+                  //       SizedBox(width: 52),
+                  //       Expanded(
+                  //         child: Image.asset(
+                  //           iconLogo,
+                  //           height: 80,
+                  //         ),
+                  //       ),
+                  //       Icon(Icons.calendar_month, color: color_secondary, size: 36),
+                  //       SizedBox(width: 16),
+                  //     ],
+                  //   ),
+                  // ),
+                  SizedBox(height: 4),
 
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Card(
-                  color: color_primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16), // 👈 Rounded corners here
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        _buildSectionTitle("Today's Attendance"),
-                        SizedBox(height: 16),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Card(
+                      color: color_primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            16), // 👈 Rounded corners here
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
                           children: [
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Radio<String>(
-                                    value: 'Site',
-                                    groupValue: attendanceController.selectedPlace,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        attendanceController.selectedPlace = value!;
-                                        isAttendanceFilled = false;
-                                        attendanceController.selectedOffice = null;
-                                        attendanceController.selectedSite = null;
-                                        attendanceController.statusOfAttendance = null;
-                                      });
-                                    },
+                            _buildSectionTitle("Today's Attendance"),
+                            SizedBox(height: 16),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Radio<String>(
+                                        value: 'Site',
+                                        groupValue:
+                                            attendanceController.selectedPlace,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            attendanceController.selectedPlace =
+                                                value!;
+                                            isAttendanceFilled = false;
+                                            attendanceController
+                                                .selectedOffice = null;
+                                            attendanceController.selectedSite =
+                                                null;
+                                            attendanceController
+                                                .statusOfAttendance = null;
+                                          });
+                                        },
+                                      ),
+                                      Text(
+                                        'Site',
+                                        style: AppTextStyle.largeBold.copyWith(
+                                          fontSize: 16,
+                                          color: color_secondary,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    'Site',
-                                    style: AppTextStyle.largeBold.copyWith(
-                                      fontSize: 16,
-                                      color: color_secondary,
-                                    ),
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Radio<String>(
+                                        value: 'Office',
+                                        groupValue:
+                                            attendanceController.selectedPlace,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            attendanceController.selectedPlace =
+                                                value!;
+                                            isAttendanceFilled = false;
+                                            attendanceController
+                                                .selectedOffice = null;
+                                            attendanceController.selectedSite =
+                                                null;
+                                            attendanceController
+                                                .statusOfAttendance = null;
+                                          });
+                                        },
+                                      ),
+                                      Text(
+                                        'Office',
+                                        style: AppTextStyle.largeBold.copyWith(
+                                          fontSize: 16,
+                                          color: color_secondary,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Radio<String>(
-                                    value: 'Office',
-                                    groupValue: attendanceController.selectedPlace,
-                                    onChanged: (value) {
+
+                            SizedBox(height: 12),
+                            attendanceController.selectedPlace == "Office"
+                                ? Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 12),
+                                    child: _buildDropdownOfficeList(
+                                        attendanceController.officeList,
+                                        attendanceController.selectedOffice,
+                                        (val) {
                                       setState(() {
-                                        attendanceController.selectedPlace = value!;
+                                        attendanceController.selectedOffice =
+                                            val;
+                                        attendanceController
+                                            .statusOfAttendance = null;
                                         isAttendanceFilled = false;
-                                        attendanceController.selectedOffice = null;
-                                        attendanceController.selectedSite = null;
-                                        attendanceController.statusOfAttendance = null;
+
+                                        if (!isAttendanceFilled) {
+                                          for (int i = 0;
+                                              i <
+                                                  attendanceController
+                                                      .attendanceList.length;
+                                              i++) {
+                                            if (attendanceController
+                                                    .attendanceList[i].officeId
+                                                    .toString() ==
+                                                attendanceController
+                                                    .selectedOffice) {
+                                              attendanceController
+                                                      .attendanceId =
+                                                  attendanceController
+                                                      .attendanceList[i].id
+                                                      .toString();
+                                              attendanceController
+                                                      .statusOfAttendance =
+                                                  attendanceController
+                                                      .attendanceList[i].status
+                                                      .toString();
+
+                                              if (attendanceController
+                                                      .attendanceList[i]
+                                                      .status ==
+                                                  2) {
+                                                isAttendanceFilled = true;
+                                                setState(() {});
+
+                                                snackBar(context,
+                                                    "Attendance already filled");
+                                              }
+                                            }
+                                          }
+                                        }
                                       });
-                                    },
-                                  ),
-                                  Text(
-                                    'Office',
-                                    style: AppTextStyle.largeBold.copyWith(
-                                      fontSize: 16,
-                                      color: color_secondary,
+                                    }, "Select Office"),
+                                  )
+                                : attendanceController.selectedPlace == "Site"
+                                    ? Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 12),
+                                        child: _buildDropdownSite(
+                                            attendanceController.siteList,
+                                            attendanceController.selectedSite,
+                                            (val) {
+                                          setState(() {
+                                            attendanceController.selectedSite =
+                                                val;
+                                            attendanceController
+                                                .statusOfAttendance = null;
+                                            isAttendanceFilled = false;
+
+                                            if (!isAttendanceFilled) {
+                                              for (int i = 0;
+                                                  i <
+                                                      attendanceController
+                                                          .attendanceList
+                                                          .length;
+                                                  i++) {
+                                                if (attendanceController
+                                                        .attendanceList[i]
+                                                        .headId
+                                                        .toString() ==
+                                                    attendanceController
+                                                        .selectedSite) {
+                                                  attendanceController
+                                                          .attendanceId =
+                                                      attendanceController
+                                                          .attendanceList[i].id
+                                                          .toString();
+                                                  attendanceController
+                                                          .statusOfAttendance =
+                                                      attendanceController
+                                                          .attendanceList[i]
+                                                          .status
+                                                          .toString();
+
+                                                  if (attendanceController
+                                                          .attendanceList[i]
+                                                          .status ==
+                                                      2) {
+                                                    isAttendanceFilled = true;
+
+                                                    snackBar(context,
+                                                        "Attendance already filled");
+                                                    setState(() {});
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          });
+                                        }, "Select Site"),
+                                      )
+                                    : SizedBox(),
+
+                            SizedBox(height: 8),
+                            // Login Button
+                            (attendanceController.selectedSite != null ||
+                                        attendanceController.selectedOffice !=
+                                            null) &&
+                                    attendanceController.statusOfAttendance ==
+                                        null
+                                ? Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 16),
+                                    child: CommonButton(
+                                      titleText: "Sign In",
+                                      textColor: Colors.white,
+                                      onCustomButtonPressed: () async {
+                                        attendanceController
+                                                .createAttendanceInRequest
+                                                .value =
+                                            CreateAttendanceInRequest();
+                                        attendanceController
+                                                .createAttendanceInRequest
+                                                .value
+                                                .empId =
+                                            attendanceController
+                                                .loginData.value.id
+                                                .toString();
+                                        attendanceController
+                                                .createAttendanceInRequest
+                                                .value
+                                                .headId =
+                                            attendanceController.selectedSite;
+                                        attendanceController
+                                                .createAttendanceInRequest
+                                                .value
+                                                .officeId =
+                                            attendanceController.selectedOffice;
+                                        attendanceController
+                                                .createAttendanceInRequest
+                                                .value
+                                                .date =
+                                            DateFormat('dd-MM-yyyy')
+                                                .format(DateTime.now());
+                                        DateTime now = DateTime.now();
+                                        String formattedTime =
+                                            DateFormat('HH:mm:ss')
+                                                .format(now); // 24-hour format
+                                        attendanceController
+                                            .createAttendanceInRequest
+                                            .value
+                                            .time = formattedTime;
+                                        attendanceController
+                                            .createAttendanceInRequest
+                                            .value
+                                            .status = "1";
+                                        attendanceController
+                                                .createAttendanceInRequest
+                                                .value
+                                                .typeLocation =
+                                            attendanceController.selectedSite !=
+                                                    null
+                                                ? "2"
+                                                : "1";
+
+                                        (await attendanceController
+                                            .callCreateAttendanceIn());
+
+                                        setState(() {});
+                                      },
+                                      borderColor: color_brown_title,
+                                      borderWidth: 0,
+                                      buttonColor: color_brown_title,
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                  )
+                                : SizedBox(),
+
+                            attendanceController.statusOfAttendance == "1" &&
+                                    !isAttendanceFilled
+                                ? Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 16),
+                                    child: CommonButton(
+                                      titleText: "Sign Out",
+                                      textColor: Colors.white,
+                                      onCustomButtonPressed: () async {
+                                        attendanceController
+                                                .createAttendanceInRequest
+                                                .value =
+                                            CreateAttendanceInRequest();
+                                        attendanceController
+                                                .createAttendanceInRequest
+                                                .value
+                                                .empId =
+                                            attendanceController
+                                                .loginData.value.id
+                                                .toString();
+                                        attendanceController
+                                                .createAttendanceInRequest
+                                                .value
+                                                .headId =
+                                            attendanceController.selectedSite;
+                                        attendanceController
+                                                .createAttendanceInRequest
+                                                .value
+                                                .officeId =
+                                            attendanceController.selectedOffice;
+                                        attendanceController
+                                                .createAttendanceInRequest
+                                                .value
+                                                .date =
+                                            DateFormat('dd-MM-yyyy')
+                                                .format(DateTime.now());
+                                        DateTime now = DateTime.now();
+                                        String formattedTime =
+                                            DateFormat('HH:mm:ss')
+                                                .format(now); // 24-hour format
+                                        attendanceController
+                                            .createAttendanceInRequest
+                                            .value
+                                            .time = formattedTime;
+                                        attendanceController
+                                            .createAttendanceInRequest
+                                            .value
+                                            .status = "1";
+                                        attendanceController
+                                                .createAttendanceInRequest
+                                                .value
+                                                .typeLocation =
+                                            attendanceController.selectedSite !=
+                                                    null
+                                                ? "2"
+                                                : "1";
+
+                                        await attendanceController
+                                            .callCreateAttendanceOut();
+
+                                        setState(() {});
+                                      },
+                                      borderColor: color_brown_title,
+                                      borderWidth: 0,
+                                      buttonColor: color_brown_title,
+                                    ),
+                                  )
+                                : SizedBox(),
                           ],
                         ),
+                      ),
+                    ),
+                  ),
 
+                  SizedBox(
+                    height: 12,
+                  ),
 
-                        SizedBox(height: 12),
-                        attendanceController.selectedPlace == "Office"? Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12),
-                          child: _buildDropdownOfficeList(attendanceController.officeList, attendanceController.selectedOffice,
-                                  (val) {
+                  Expanded(
+                    child: GridView.count(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20,
+                      childAspectRatio: 2.0,
+                      children: [
+                        InkWell(
+                            onTap: () {
+                              Get.to(EmpPlanningScreen());
+                            },
+                            child: _buildGridItem('Planning', Icons.schedule)),
 
-                                setState(() {
-                                  attendanceController.selectedOffice = val;
-                                  attendanceController.statusOfAttendance = null;
-                                  isAttendanceFilled = false;
-
-                                  if(!isAttendanceFilled) {
-                                    for (int i = 0; i <
-                                        attendanceController.attendanceList
-                                            .length; i++) {
-                                      if (attendanceController.attendanceList[i]
-                                          .officeId.toString() ==
-                                          attendanceController.selectedOffice) {
-                                        attendanceController.attendanceId =
-                                            attendanceController.attendanceList[i].id
-                                                .toString();
-                                        attendanceController.statusOfAttendance =
-                                            attendanceController
-                                                .attendanceList[i].status.toString();
-
-                                        if (attendanceController
-                                            .attendanceList[i].status == 2) {
-                                          isAttendanceFilled = true;
-                                          setState(() {
-
-                                          });
-
-                                          snackBar(
-                                              context, "Attendance already filled");
-                                        }
-                                      }
-                                    }
-                                  }
-
-
-                                });
-
-                              } , "Select Office"),
-                        ):
-                        attendanceController.selectedPlace == "Site"? Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12),
-                          child: _buildDropdownSite(attendanceController.siteList, attendanceController.selectedSite,
-                                  (val) {
-
-                                setState(() {
-                                  attendanceController.selectedSite = val;
-                                  attendanceController.statusOfAttendance = null;
-                                  isAttendanceFilled = false;
-
-                                  if(!isAttendanceFilled){
-                                    for(int i=0; i<attendanceController.attendanceList.length; i++){
-                                      if(attendanceController.attendanceList[i].headId.toString() == attendanceController.selectedSite){
-                                        attendanceController.attendanceId = attendanceController.attendanceList[i].id.toString();
-                                        attendanceController.statusOfAttendance = attendanceController
-                                            .attendanceList[i].status.toString();
-
-                                        if(attendanceController
-                                            .attendanceList[i].status == 2){
-                                          isAttendanceFilled = true;
-
-                                          snackBar(context, "Attendance already filled");
-                                          setState(() {
-
-                                          });
-
-
-
-                                        }
-                                      }
-
-
-                                    }
-                                  }
-
-
-                                });
-
-                              } , "Select Site"),
-                        ):SizedBox(),
-
-                        SizedBox(height: 8),
-                        // Login Button
-                        (attendanceController.selectedSite != null || attendanceController.selectedOffice != null) && attendanceController.statusOfAttendance == null? Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                          child: CommonButton(
-                            titleText: "Sign In",
-                            textColor: Colors.white,
-                            onCustomButtonPressed: () async {
-
-                              attendanceController.createAttendanceInRequest.value = CreateAttendanceInRequest();
-                              attendanceController.createAttendanceInRequest.value.empId = attendanceController.loginData.value.id.toString();
-                              attendanceController.createAttendanceInRequest.value.headId = attendanceController.selectedSite;
-                              attendanceController.createAttendanceInRequest.value.officeId = attendanceController.selectedOffice;
-                              attendanceController.createAttendanceInRequest.value.date = DateFormat('dd-MM-yyyy').format(DateTime.now());
-                              DateTime now = DateTime.now();
-                              String formattedTime = DateFormat('HH:mm:ss').format(now); // 24-hour format
-                              attendanceController.createAttendanceInRequest.value.time = formattedTime;
-                              attendanceController.createAttendanceInRequest.value.status = "1";
-                              attendanceController.createAttendanceInRequest.value.typeLocation = attendanceController.selectedSite != null?"2":"1";
-
-                              (await attendanceController.callCreateAttendanceIn());
-
-                              setState(() {
-
+                        // InkWell(
+                        //     onTap: () {
+                        //       Get.to(WorkReportListScreen());
+                        //     },
+                        //     child:
+                        //     _buildGridItem('Site Report', Icons.work_history_outlined)),
+                        InkWell(
+                            onTap: () {
+                              Get.to(EmpSiteAttendanceCalenderScreen())
+                                  ?.then((value) async {
+                                await attendanceController
+                                    .callAttendanceListByDate(
+                                        DateFormat('dd-MM-yyyy')
+                                            .format(DateTime.now()));
+                                attendanceController.selectedPlace = null;
+                                isAttendanceFilled = false;
+                                attendanceController.selectedOffice = null;
+                                attendanceController.selectedSite = null;
+                                attendanceController.statusOfAttendance = null;
                               });
-
                             },
-                            borderColor: color_primary,
-                            borderWidth: 0,
-                          ),
-                        ):SizedBox(),
+                            child: _buildGridItem(
+                                'Site Report', Icons.event_note)),
 
-                       attendanceController.statusOfAttendance =="1" && !isAttendanceFilled? Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                          child: CommonButton(
-                            titleText: "Sign Out",
-                            textColor: Colors.white,
-                            onCustomButtonPressed: () async {
-
-                              attendanceController.createAttendanceInRequest.value = CreateAttendanceInRequest();
-                              attendanceController.createAttendanceInRequest.value.empId = attendanceController.loginData.value.id.toString();
-                              attendanceController.createAttendanceInRequest.value.headId = attendanceController.selectedSite;
-                              attendanceController.createAttendanceInRequest.value.officeId = attendanceController.selectedOffice;
-                              attendanceController.createAttendanceInRequest.value.date = DateFormat('dd-MM-yyyy').format(DateTime.now());
-                              DateTime now = DateTime.now();
-                              String formattedTime = DateFormat('HH:mm:ss').format(now); // 24-hour format
-                              attendanceController.createAttendanceInRequest.value.time = formattedTime;
-                              attendanceController.createAttendanceInRequest.value.status = "1";
-                              attendanceController.createAttendanceInRequest.value.typeLocation = attendanceController.selectedSite != null?"2":"1";
-
-                             await attendanceController.callCreateAttendanceOut();
-
-                             setState(() {
-
-                             });
-
-
+                        InkWell(
+                            onTap: () {
+                              Get.to(EmpCalibrationListScreen());
                             },
-                            borderColor: color_primary,
-                            borderWidth: 0,
-                          ),
-                        ):SizedBox(),
-
-
+                            child: _buildGridItem('Calibration Certificates',
+                                Icons.compass_calibration)),
+                        // InkWell(
+                        //     onTap: () {
+                        //       Get.to(EmpExpenseScreen());
+                        //     },
+                        //     child: _buildGridItem('Expense', Icons.event_note)),
+                        InkWell(
+                            onTap: () {
+                              Get.to(EmplLeaveRequestListScreen());
+                            },
+                            child: _buildGridItem(
+                                'Leave Request', Icons.note_add_outlined)),
+                        // InkWell(
+                        //     onTap: () {
+                        //       Get.to(NotesScreen());
+                        //     },
+                        //     child: _buildGridItem('Note', Icons.note_alt)),
+                        InkWell(
+                            onTap: () {
+                              Get.to(EmployeeCircularScreen());
+                            },
+                            child: _buildGridItem('Circular', Icons.newspaper)),
+                        _buildGridItem('Help/Query', Icons.contact_support),
                       ],
                     ),
                   ),
-                ),
-              ),
+                  SizedBox(height: 20),
 
-
-              SizedBox(height: 12,),
-
-
-              Expanded(
-                child: GridView.count(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                  childAspectRatio: 2.0,
-                  children: [
-                    InkWell(
-                        onTap: () {
-                          Get.to(EmpPlanningScreen());
-                        },
-                        child: _buildGridItem('Planning', Icons.schedule)),
-
-                    // InkWell(
-                    //     onTap: () {
-                    //       Get.to(WorkReportListScreen());
-                    //     },
-                    //     child:
-                    //     _buildGridItem('Site Report', Icons.work_history_outlined)),
-                    InkWell(
-                        onTap: () {
-                          Get.to(EmpSiteAttendanceCalenderScreen())?.then((value)async{
-                            await attendanceController.callAttendanceListByDate(DateFormat('dd-MM-yyyy').format(DateTime.now()));
-                            attendanceController.selectedPlace = null;
-                            isAttendanceFilled = false;
-                            attendanceController.selectedOffice = null;
-                            attendanceController.selectedSite = null;
-                            attendanceController.statusOfAttendance = null;
-                          });
-                        },
-                        child:
-                        _buildGridItem('Site Report', Icons.event_note)),
-
-                    InkWell(
-                        onTap: () {
-                          Get.to(EmpCalibrationListScreen());
-                        },
-                        child: _buildGridItem(
-                            'Calibration Certificates', Icons.compass_calibration)),
-                    // InkWell(
-                    //     onTap: () {
-                    //       Get.to(EmpExpenseScreen());
-                    //     },
-                    //     child: _buildGridItem('Expense', Icons.event_note)),
-                    InkWell(
-                        onTap: () {
-                          Get.to(EmplLeaveRequestListScreen());
-                        },
-                        child:
-                        _buildGridItem('Leave Request', Icons.note_add_outlined)),
-                    // InkWell(
-                    //     onTap: () {
-                    //       Get.to(NotesScreen());
-                    //     },
-                    //     child: _buildGridItem('Note', Icons.note_alt)),
-                    InkWell(
-                        onTap: () {
-                          Get.to(EmployeeCircularScreen());
-                        },
-                        child: _buildGridItem('Circular', Icons.newspaper)),
-                    _buildGridItem('Help/Query', Icons.contact_support),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-
-
-              InkWell(
-                onTap: (){
-                  Get.to(EmployeeReportScreen())?.then((value)async{
-                    await attendanceController.callAttendanceListByDate(DateFormat('dd-MM-yyyy').format(DateTime.now()));
-                    attendanceController.selectedPlace = null;
-                    isAttendanceFilled = false;
-                    attendanceController.selectedOffice = null;
-                    attendanceController.selectedSite = null;
-                    attendanceController.statusOfAttendance = null;
-                  });
-                },
-                child: Container(
-                  margin: EdgeInsets.only(right: 24, left: 24),
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple.shade600,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Center(
-                    child: Text(
-                      textAlign: TextAlign.center,
-                      "My Report",
-                      style: AppTextStyle.largeBold
-                          .copyWith(fontSize: 14, color: Colors.white),
+                  InkWell(
+                    onTap: () {
+                      Get.to(EmployeeReportScreen())?.then((value) async {
+                        await attendanceController.callAttendanceListByDate(
+                            DateFormat('dd-MM-yyyy').format(DateTime.now()));
+                        attendanceController.selectedPlace = null;
+                        isAttendanceFilled = false;
+                        attendanceController.selectedOffice = null;
+                        attendanceController.selectedSite = null;
+                        attendanceController.statusOfAttendance = null;
+                      });
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(right: 24, left: 24),
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.deepPurple.shade600,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Center(
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          "My Report",
+                          style: AppTextStyle.largeBold
+                              .copyWith(fontSize: 14, color: Colors.white),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              )
-
-
-
+                  )
+                ],
+              ),
+              if (attendanceController.isLoading.value)
+                Center(
+                  child: CircularProgressIndicator(),
+                )
             ],
-          ),
-
-         if(attendanceController.isLoading.value) Center(child: CircularProgressIndicator(),)
-
-        ],
-      )),
+          )),
     );
   }
 
@@ -499,12 +610,11 @@ class _EmpHomePageState extends State<EmpHomePage> {
     );
   }
 
-
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style:
-      AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_brown_title),
+      style: AppTextStyle.largeBold
+          .copyWith(fontSize: 20, color: color_brown_title),
     );
   }
 
@@ -522,13 +632,13 @@ class _EmpHomePageState extends State<EmpHomePage> {
         hintText: hint,
         // Hint text
         hintStyle: AppTextStyle.largeMedium
-            .copyWith(fontSize: 15, color: color_hint_text),
+            .copyWith(fontSize: 15, color: color_brown_title),
         // Hint text style
         labelStyle: AppTextStyle.largeMedium
-            .copyWith(fontSize: 15, color: color_hint_text),
+            .copyWith(fontSize: 15, color: color_brown_title),
         // Hint text style
         enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey), // Bottom-only border
+          borderSide: BorderSide(color: Colors.white), // Bottom-only border
         ),
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: Colors.blue), // Bottom border on focus
@@ -539,7 +649,7 @@ class _EmpHomePageState extends State<EmpHomePage> {
       // Ensures dropdown takes full width
       items: items
           .map((e) => DropdownMenuItem(
-          value: e.id.toString(), child: Text(e.title ?? "")))
+              value: e.id.toString(), child: Text(e.title ?? "")))
           .toList(),
       onChanged: onChanged,
     );
@@ -560,13 +670,13 @@ class _EmpHomePageState extends State<EmpHomePage> {
         hintText: hint,
         // Hint text
         hintStyle: AppTextStyle.largeMedium
-            .copyWith(fontSize: 15, color: color_hint_text),
+            .copyWith(fontSize: 15, color: color_brown_title),
         // Hint text style
         labelStyle: AppTextStyle.largeMedium
-            .copyWith(fontSize: 15, color: color_hint_text),
+            .copyWith(fontSize: 15, color: color_brown_title),
         // Hint text style
         enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey), // Bottom-only border
+          borderSide: BorderSide(color: Colors.white), // Bottom-only border
         ),
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: Colors.blue), // Bottom border on focus
@@ -577,12 +687,10 @@ class _EmpHomePageState extends State<EmpHomePage> {
       // Ensures dropdown takes full width
       items: items
           .map((e) => DropdownMenuItem(
-          value: e.id.toString(), child: Text(e.headName ?? "")))
+              value: e.id.toString(), child: Text(e.headName ?? "")))
           .toList(),
       onChanged: onChanged,
     );
     ;
   }
-
-
 }
