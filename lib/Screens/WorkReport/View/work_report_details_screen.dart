@@ -203,45 +203,48 @@ class _WorkReportDetailsScreenState extends State<WorkReportDetailsScreen> {
                             [])
                         .length;
                 i++)
-              Container(
-                width: double.infinity,
-                margin: EdgeInsets.only(bottom: 12),
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                color: Colors.grey.shade300,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    InfoRow(
-                        label: 'Test Location :',
-                        value: workReportController.selectedWorkReportData.value
-                                .serviceStatus?[i].testLocation ??
-                            ""),
-                    InfoRow(
-                        label: 'Room Equipment :',
-                        value: workReportController.selectedWorkReportData.value
-                                .serviceStatus?[i].roomEquipment ??
-                            ""),
-                    InfoRow(
-                        label: 'Test Performed By :',
-                        value: workReportController.selectedWorkReportData.value
-                                .serviceStatus?[i].testPerfomedName ??
-                            ""),
-                    InfoRow(
-                        label: 'Head Instrument :',
-                        value: workReportController.selectedWorkReportData.value
-                                .serviceStatus?[i].headInstrumentName ??
-                            ""),
-                    InfoRow(
-                        label: 'Remark :',
-                        value: workReportController.selectedWorkReportData.value
-                                .serviceStatus?[i].remark ??
-                            ""),
-                    InfoRow(
-                        label: 'Status :',
-                        value: workReportController.selectedWorkReportData.value
-                                .serviceStatus?[i].statusType ??
-                            ""),
-                  ],
+              Card(
+                color: Colors.white,
+                child: Container(
+                  width: double.infinity,
+                  margin: EdgeInsets.only(bottom: 6,top: 6, left: 6, right: 6),
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InfoRow(
+                          label: 'Test Location :',
+                          value: workReportController.selectedWorkReportData.value
+                                  .serviceStatus?[i].testLocation ??
+                              ""),
+                      InfoRow(
+                          label: 'Room Equipment :',
+                          value: workReportController.selectedWorkReportData.value
+                                  .serviceStatus?[i].roomEquipment ??
+                              ""),
+                      InfoRow(
+                          label: 'Test Performed By :',
+                          value: workReportController.selectedWorkReportData.value
+                                  .serviceStatus?[i].testPerfomedName ??
+                              ""),
+                      InfoRow(
+                          label: 'Head Instrument :',
+                          value: workReportController.selectedWorkReportData.value
+                                  .serviceStatus?[i].headInstrumentName ??
+                              ""),
+                      InfoRow(
+                          label: 'Remark :',
+                          value: workReportController.selectedWorkReportData.value
+                                  .serviceStatus?[i].remark ??
+                              ""),
+                      InfoRow(
+                          label: 'Status :',
+                          value: workReportController.selectedWorkReportData.value
+                                  .serviceStatus?[i].statusType ??
+                              ""),
+                    ],
+                  ),
                 ),
               ),
 

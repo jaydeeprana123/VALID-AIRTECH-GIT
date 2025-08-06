@@ -155,60 +155,62 @@ class _WorkmanDetailsScreenState extends State<WorkmanDetailsScreen> {
               SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
                       height: 16,
                     ),
 
-                    _buildTextField(
+                    _sectionTitle("Personal Details"),
+
+                    _infoColumn(
                         workmanController.nameController.value, "Workman Name"),
 
                     SizedBox(
                       height: 16,
                     ),
 
-                    _buildTextField(
-                        workmanController.emailController.value,
-                        "Workman Email"
-                    ),
+                    // _infoColumn(
+                    //     workmanController.emailController.value,
+                    //     "Workman Email"
+                    // ),
+                    //
+                    // SizedBox(
+                    //   height: 16,
+                    // ),
 
-                    SizedBox(
-                      height: 16,
-                    ),
 
 
-
-                    _buildTextField(workmanController.userNameController.value,
+                    _infoColumn(workmanController.userNameController.value,
                         "Workman Username"),
 
                     SizedBox(
                       height: 16,
                     ),
 
-                    _buildTextField(workmanController.contactNoController.value,
+                    _infoColumn(workmanController.contactNoController.value,
                         "Workman Contact No"),
 
                     SizedBox(
                       height: 16,
                     ),
 
-                    _buildTextField(workmanController.workmanNoController.value,
+                    _infoColumn(workmanController.workmanNoController.value,
                         "Workman No."),
 
                     SizedBox(
                       height: 16,
                     ),
 
-                    _buildTextFieldOnlyNumber(
-                        workmanController.workmanPasswordController.value,
-                        "Workman Pin"),
+                    // _infoColumn(
+                    //     workmanController.workmanPasswordController.value,
+                    //     "Workman Pin"),
+                    //
+                    // SizedBox(
+                    //   height: 16,
+                    // ),
 
-                    SizedBox(
-                      height: 16,
-                    ),
-
-                    _buildMultilineTextField(
+                    _infoColumn(
                         workmanController.permanentAddressController.value,
                         "Permanent Address"),
 
@@ -216,7 +218,7 @@ class _WorkmanDetailsScreenState extends State<WorkmanDetailsScreen> {
                       height: 16,
                     ),
 
-                    _buildMultilineTextField(
+                    _infoColumn(
                         workmanController.residentAddressController.value,
                         "Resident Address"),
 
@@ -224,23 +226,18 @@ class _WorkmanDetailsScreenState extends State<WorkmanDetailsScreen> {
                       height: 16,
                     ),
 
-                    _buildDatePicker(),
+                    _infoColumn(
+                        workmanController.birthDateController.value,
+                        "Birth Date"),
 
                     SizedBox(
                       height: 16,
                     ),
 
 
-                    _buildTextFieldOnlyNumber(
-                        workmanController.aadharCardNoController.value,
-                        "Aadhar Card No."),
-
-                    SizedBox(
-                      height: 16,
-                    ),
 
 
-                    _buildTextFieldOnlyReadableStartTime(
+                    _infoColumn(
                       workmanController.startTimeController.value,
                       "Start Time"
                     ),
@@ -250,7 +247,7 @@ class _WorkmanDetailsScreenState extends State<WorkmanDetailsScreen> {
                     ),
 
 
-                    _buildTextFieldOnlyReadableEndTime(
+                    _infoColumn(
                         workmanController.endTimeController.value,
                         "End Time"
                     ),
@@ -259,74 +256,90 @@ class _WorkmanDetailsScreenState extends State<WorkmanDetailsScreen> {
                     ),
 
 
-                    DropdownButton<String>(
-                      value: workmanController.bloodGroups
-                              .contains(selectedBloodGroup)
-                          ? selectedBloodGroup
-                          : null,
-                      // Ensure valid value
-                      hint: Text("Select Blood Group"),
-                      isExpanded: true,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedBloodGroup = newValue;
-                        });
-                      },
-                      items: workmanController.bloodGroups.map((String group) {
-                        return DropdownMenuItem<String>(
-                          value: group,
-                          child: Text(group),
-                        );
-                      }).toList(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Blood Group",
+                          style: AppTextStyle.largeMedium
+                              .copyWith(fontSize: 14, color: color_brown_title),
+                        ),
+                        SizedBox(
+                          height: 1,
+                        ),
+                        Text(
+                          selectedBloodGroup??"",
+                          textAlign: TextAlign.right,
+                          style: AppTextStyle.largeSemiBold
+                              .copyWith(fontSize: 16, color: Colors.black),
+                        ),
+                      ],
                     ),
 
                     SizedBox(
                       height: 16,
                     ),
 
-                    _buildTextField(workmanController.licenseNoController.value,
+                    Center(child: _sectionTitle("Document Detail")),
+
+                    _infoColumn(
+                        workmanController.aadharCardNoController.value,
+                        "Aadhar Card No."),
+
+                    SizedBox(
+                      height: 16,
+                    ),
+
+
+
+                    _infoColumn(workmanController.licenseNoController.value,
                         "License No."),
 
                     SizedBox(
                       height: 16,
                     ),
 
-                    _buildTextField(
+                    _infoColumn(
                         workmanController.epfNoController.value, "EPF No."),
 
                     SizedBox(
                       height: 16,
                     ),
 
-                    _buildTextField(
+                    _infoColumn(
                         workmanController.esiNoController.value, "ECI No."),
 
                     SizedBox(
                       height: 16,
                     ),
 
-                    _buildTextField(workmanController.bankNameController.value,
+                    Center(child: _sectionTitle("Bank Detail")),
+
+                    _infoColumn(workmanController.bankNameController.value,
                         "Bank Name"),
 
                     SizedBox(
                       height: 16,
                     ),
 
-                    _buildTextField(workmanController.ifscCodeController.value,
+                    _infoColumn(workmanController.ifscCodeController.value,
                         "Bank IFSC Code"),
 
                     SizedBox(
                       height: 16,
                     ),
 
-                    _buildTextField(workmanController.accountNoController.value,
+                    _infoColumn(workmanController.accountNoController.value,
                         "Bank Account No."),
 
                     SizedBox(
                       height: 16,
                     ),
 
-                    _buildTextField(
+                    Center(child: _sectionTitle("Father's Detail")),
+
+                    _infoColumn(
                         workmanController.fatherNameController.value,
                         "Father Name"),
 
@@ -334,7 +347,7 @@ class _WorkmanDetailsScreenState extends State<WorkmanDetailsScreen> {
                       height: 16,
                     ),
 
-                    _buildTextField(
+                    _infoColumn(
                         workmanController.fatherAadharCardNoController.value,
                         "Father Aadhar Card No."),
 
@@ -342,7 +355,9 @@ class _WorkmanDetailsScreenState extends State<WorkmanDetailsScreen> {
                       height: 16,
                     ),
 
-                    _buildTextField(
+
+                    Center(child: _sectionTitle("Mother's Detail")),
+                    _infoColumn(
                         workmanController.motherNameController.value,
                         "Mother Name"),
 
@@ -350,7 +365,7 @@ class _WorkmanDetailsScreenState extends State<WorkmanDetailsScreen> {
                       height: 16,
                     ),
 
-                    _buildTextField(
+                    _infoColumn(
                         workmanController.motherAadharCardNoController.value,
                         "Mother Aadhar Card No."),
 
@@ -358,14 +373,17 @@ class _WorkmanDetailsScreenState extends State<WorkmanDetailsScreen> {
                       height: 16,
                     ),
 
-                    _buildTextField(workmanController.wifeNameController.value,
+                    Center(child: _sectionTitle("Wife's Detail")),
+
+
+                    _infoColumn(workmanController.wifeNameController.value,
                         "Wife Name"),
 
                     SizedBox(
                       height: 16,
                     ),
 
-                    _buildTextField(
+                    _infoColumn(
                         workmanController.wifeAadharCardNoController.value,
                         "Wife Aadhar Card No."),
 
@@ -373,227 +391,42 @@ class _WorkmanDetailsScreenState extends State<WorkmanDetailsScreen> {
                       height: 20,
                     ),
 
-                    _buildSectionTitle("Children's"),
 
+                    Center(child: _sectionTitle("Children's Detail")),
                     SizedBox(
                       height: 4,
                     ),
-                    Container(
-                      padding: EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: color_hint_text, width: 0.5),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Column(
-                        children: [
-                          for (int i = 0;
-                              i < workmanController.childrenList.length;
-                              i++)
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: _buildTextField(
-                                          workmanController.childrenList[i]
-                                              .textEditingControllerName,
-                                          'Children ${i + 1}'),
-                                    ),
-                                    SizedBox(
-                                      width: 16,
-                                    ),
-                                    (i ==
-                                            (workmanController
-                                                    .childrenList.length -
-                                                1))
-                                        ? InkWell(
-                                            onTap: () {
-                                              workmanController.childrenList
-                                                  .add(AddChildrenModel());
-                                              setState(() {});
-                                            },
-                                            child: Icon(
-                                              Icons.add_circle,
-                                              size: 30,
-                                              color: color_brown_title,
-                                            ))
-                                        : InkWell(
-                                            onTap: () {
-                                              RemovedWorkmanChild
-                                                  removedWorkmanChild =
-                                                  RemovedWorkmanChild();
-                                              removedWorkmanChild
-                                                      .removedChildrenId =
-                                                  workmanController
-                                                      .childrenList[i].id
-                                                      .toString();
-                                              workmanController
-                                                  .removedChildrenList
-                                                  .add(removedWorkmanChild);
-
-                                              workmanController.childrenList
-                                                  .removeAt(i);
-                                              setState(() {});
-                                            },
-                                            child: Icon(
-                                              Icons.remove_circle,
-                                              size: 30,
-                                              color: color_primary,
-                                            ))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 12,
-                                ),
-                              ],
-                            )
-                        ],
+                    Card(
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: color_hint_text, width: 0.5),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            for (int i = 0;
+                                i < workmanController.childrenList.length;
+                                i++)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _infoColumn(
+                                      workmanController.childrenList[i]
+                                          .textEditingControllerName,
+                                      'Children ${i + 1}'),
+                                  SizedBox(
+                                    height: 12,
+                                  ),
+                                ],
+                              )
+                          ],
+                        ),
                       ),
                     ),
 
-                    // Login Button
-                    workmanController.isEdit.value?Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                      child: CommonButton(
-                        titleText: "Save",
-                        textColor: Colors.white,
-                        onCustomButtonPressed: () async {
-
-                         if(!validateWorkmanDetails(context)){
-                           return;
-                         }
-                          if(selectedBloodGroup == null){
-                            snackBar(context, "Select blood group");
-
-                            return;
-                          }
-
-                         if(selectedDate == null){
-                           snackBar(context, "Select DOB");
-                           return;
-                         }
-
-                          workmanController.createWorkmanRequest.value =
-                              CreateWorkmanRequest();
-                          workmanController.createWorkmanRequest.value.id =
-                              workmanController.selectedWorkman.value.id
-                                  .toString();
-                          workmanController.createWorkmanRequest.value.name =
-                              workmanController.nameController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.userName =
-                              workmanController.userNameController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.mobileNumber =
-                              workmanController.contactNoController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.workmanNo =
-                              workmanController.workmanNoController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.password =
-                              workmanController
-                                  .workmanPasswordController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.permanetAddress =
-                              workmanController
-                                  .permanentAddressController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.residentAddress =
-                              workmanController
-                                  .residentAddressController.value.text;
-
-                          if(selectedDate != null){
-                            workmanController
-                                .createWorkmanRequest.value.dateOfBirth =
-                                DateFormat('dd-MM-yyyy').format(selectedDate!);
-                          }
-
-
-                          workmanController
-                                  .createWorkmanRequest.value.addharNo =
-                              workmanController
-                                  .aadharCardNoController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.licenceNo =
-                              workmanController.licenseNoController.value.text;
-                          workmanController.createWorkmanRequest.value.epfNo =
-                              workmanController.epfNoController.value.text;
-                          workmanController.createWorkmanRequest.value.esiNo =
-                              workmanController.esiNoController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.bankName =
-                              workmanController.bankNameController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.ifscCode =
-                              workmanController.ifscCodeController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.bankAccountNo =
-                              workmanController.accountNoController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.fatherName =
-                              workmanController.fatherNameController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.fatherAddharNo =
-                              workmanController
-                                  .fatherAadharCardNoController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.motherName =
-                              workmanController.motherNameController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.motherAddharNo =
-                              workmanController
-                                  .motherAadharCardNoController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.wifeName =
-                              workmanController.wifeNameController.value.text;
-                          workmanController
-                                  .createWorkmanRequest.value.wifeAddharNo =
-                              workmanController
-                                  .wifeAadharCardNoController.value.text;
-
-                          if(selectedBloodGroup != null){
-                            workmanController
-                                .createWorkmanRequest.value.bloodGroup =
-                            ((workmanController.bloodGroups.value.indexOf(selectedBloodGroup??"")) +1).toString();
-
-                          }
-
-                          workmanController
-                              .createWorkmanRequest.value.startTime =  workmanController.startTimeController.value.text;
-                          workmanController
-                              .createWorkmanRequest.value.endTime =  workmanController.endTimeController.value.text;
-
-                          workmanController
-                              .createWorkmanRequest.value.status = (workmanController.selectedWorkman.value.status == "Active")?"1":"0";
-                          workmanController
-                              .createWorkmanRequest.value.children = [];
-
-                          for (int i = 0;
-                              i < workmanController.childrenList.length;
-                              i++) {
-                            Children child = Children();
-                            child.id =
-                                workmanController.childrenList[i].id ?? "";
-
-                            child.childrenName = workmanController
-                                .childrenList[i].textEditingControllerName.text;
-
-                            workmanController
-                                .createWorkmanRequest.value.children
-                                ?.add(child);
-                          }
-
-                         workmanController.createWorkmanRequest.value.removedChildren = [];
-                          workmanController.createWorkmanRequest.value.removedChildren?.addAll(workmanController.removedChildrenList);
-
-                          workmanController.callUpdateWorkman();
-                        },
-                        borderColor: color_primary,
-                        borderWidth: 0,
-                      ),
-                    ):SizedBox(),
                   ],
                 ),
               ),
@@ -613,241 +446,9 @@ class _WorkmanDetailsScreenState extends State<WorkmanDetailsScreen> {
           AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
     );
   }
+  
+  
 
-  Widget _buildDropdownString(List<String> items, String? selectedValue,
-      Function(String?) onChanged, String hint) {
-    return DropdownButtonFormField<String>(
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.only(bottom: 10),
-        alignLabelWithHint: true,
-
-        labelText: hint,
-        // Moves up as a floating label when a value is selected
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-        // Auto float when selecting
-        hintText: hint,
-        // Hint text
-        hintStyle: AppTextStyle.largeMedium
-            .copyWith(fontSize: 15, color: color_hint_text),
-        // Hint text style
-        labelStyle: AppTextStyle.largeMedium
-            .copyWith(fontSize: 15, color: color_hint_text),
-        // Hint text style
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey), // Bottom-only border
-        ),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue), // Bottom border on focus
-        ),
-      ),
-      value: selectedValue,
-      isExpanded: true,
-      // Ensures dropdown takes full width
-      items:
-          items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-      onChanged: onChanged,
-    );
-    ;
-  }
-
-  Widget _buildDropdown(List<HeadInstrumentData> items, String? selectedValue,
-      Function(String?) onChanged, String hint) {
-    return DropdownButtonFormField<String>(
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.only(bottom: 10),
-        alignLabelWithHint: true,
-
-        labelText: hint,
-        // Moves up as a floating label when a value is selected
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-        // Auto float when selecting
-        hintText: hint,
-        // Hint text
-        hintStyle: AppTextStyle.largeMedium
-            .copyWith(fontSize: 15, color: color_hint_text),
-        // Hint text style
-        labelStyle: AppTextStyle.largeMedium
-            .copyWith(fontSize: 15, color: color_hint_text),
-        // Hint text style
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey), // Bottom-only border
-        ),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue), // Bottom border on focus
-        ),
-      ),
-      value: selectedValue,
-      isExpanded: true,
-      // Ensures dropdown takes full width
-      items: items
-          .map((e) => DropdownMenuItem(
-              value: e.id.toString(), child: Text(e.name ?? "")))
-          .toList(),
-      onChanged: onChanged,
-    );
-    ;
-  }
-
-  Widget _buildTimePicker(String title, TimeOfDay? time, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (time != null) // Show label only when time is selected
-            Text(
-              title, // Floating label text
-              style: TextStyle(
-                fontSize: 12,
-                color: color_hint_text, // Floating label color
-              ),
-            ),
-          Container(
-            padding: EdgeInsets.only(bottom: 4, right: 10),
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: Colors.grey), // Bottom-only border
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  time == null ? title : time.format(context),
-                  style: AppTextStyle.largeRegular.copyWith(
-                    fontSize: 15,
-                    color: time == null ? color_hint_text : Colors.black,
-                  ),
-                ),
-                Icon(Icons.timer_outlined, color: Colors.black54),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTextField(TextEditingController controller, String hint) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.only(bottom: 0),
-        alignLabelWithHint: true,
-        labelText: hint,
-        // Display hint as title when typing
-        hintText: hint,
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-        // Auto float when typing
-        border: UnderlineInputBorder(),
-        hintStyle: AppTextStyle.largeRegular
-            .copyWith(fontSize: 16, color: color_hint_text),
-
-        labelStyle: AppTextStyle.largeRegular
-            .copyWith(fontSize: 16, color: color_hint_text),
-      ),
-    );
-  }
-
-  Widget _buildTextFieldOnlyNumber(TextEditingController controller, String hint) {
-    return TextField(
-      controller: controller,
-      keyboardType: TextInputType.number,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.only(bottom: 0),
-        alignLabelWithHint: true,
-        labelText: hint,
-        // Display hint as title when typing
-        hintText: hint,
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-        // Auto float when typing
-        border: UnderlineInputBorder(),
-        hintStyle: AppTextStyle.largeRegular
-            .copyWith(fontSize: 16, color: color_hint_text),
-
-        labelStyle: AppTextStyle.largeRegular
-            .copyWith(fontSize: 16, color: color_hint_text),
-      ),
-    );
-  }
-
-  Widget _buildTextFieldOnlyReadableStartTime(TextEditingController controller, String hint) {
-    return TextField(
-      controller: controller,
-      readOnly: true, // Makes the field non-editable
-      onTap: (){
-        _selectTime(context);
-      },
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.only(bottom: 0),
-        alignLabelWithHint: true,
-        labelText: hint,
-
-        // Display hint as title when typing
-        hintText: hint,
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-        // Auto float when typing
-        border: UnderlineInputBorder(),
-        hintStyle: AppTextStyle.largeRegular
-            .copyWith(fontSize: 16, color: color_hint_text),
-
-        labelStyle: AppTextStyle.largeRegular
-            .copyWith(fontSize: 16, color: color_hint_text),
-
-      ),
-    );
-  }
-  Widget _buildTextFieldOnlyReadableEndTime(TextEditingController controller, String hint) {
-    return TextField(
-      controller:  controller,
-      readOnly: true, // Makes the field non-editable
-      onTap: (){
-        selectTimeEnd(context);
-      },
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.only(bottom: 0),
-        alignLabelWithHint: true,
-        labelText: hint,
-
-        // Display hint as title when typing
-        hintText: hint,
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-        // Auto float when typing
-        border: UnderlineInputBorder(),
-        hintStyle: AppTextStyle.largeRegular
-            .copyWith(fontSize: 16, color: color_hint_text),
-
-        labelStyle: AppTextStyle.largeRegular
-            .copyWith(fontSize: 16, color: color_hint_text),
-
-      ),
-    );
-  }
-
-  Widget _buildMultilineTextField(
-      TextEditingController controller, String hint) {
-    return TextField(
-      controller: controller,
-      maxLines: 5,
-      minLines: 5,
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.only(bottom: 0),
-        alignLabelWithHint: true,
-        labelText: hint,
-        // Display hint as title when typing
-        hintText: hint,
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-        // Auto float when typing
-        border: UnderlineInputBorder(),
-        hintStyle: AppTextStyle.largeRegular
-            .copyWith(fontSize: 16, color: color_hint_text),
-
-        labelStyle: AppTextStyle.largeRegular
-            .copyWith(fontSize: 16, color: color_hint_text),
-      ),
-    );
-  }
 
   Widget _buildDatePicker() {
     return GestureDetector(
@@ -954,41 +555,42 @@ class _WorkmanDetailsScreenState extends State<WorkmanDetailsScreen> {
   }
 
 
-  bool validateWorkmanDetails(BuildContext context) {
-
-    bool isValid = true;
-
-    // Define all controllers and their respective field names
-    Map<TextEditingController, String> fields = {
-      workmanController.nameController.value: "Please enter name",
-      workmanController.emailController.value: "Please enter email",
-      workmanController.workmanPasswordController.value: "Please enter password",
-      workmanController.userNameController.value: "Please enter username",
-      workmanController.contactNoController.value: "Please enter contact number",
-      workmanController.workmanNoController.value: "Please enter workman number",
-      workmanController.permanentAddressController.value: "Please enter permanent address",
-      workmanController.residentAddressController.value: "Please enter resident address",
-      workmanController.startTimeController.value: "Please enter start time",
-      workmanController.endTimeController.value: "Please enter end time",
-    };
 
 
-
-
-    // Loop through all controllers and validate
-    for (var entry in fields.entries) {
-      if (entry.key.text.trim().isEmpty) {
-        printData("fields", "isEmpty");
-        isValid = false;
-        snackBar(context, entry.value); // Show respective error message
-
-      }
-    }
-
-    return isValid;
-    // If all fields are filled, proceed
-    print("All fields are valid!");
+  Widget _sectionTitle(String title) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0),
+        child: Text(
+          title,
+          style: AppTextStyle.largeRegular
+              .copyWith(fontSize: 18, color: color_secondary),
+        ),
+      ),
+    );
   }
 
+  Widget _infoColumn(TextEditingController controller,String label) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: AppTextStyle.largeMedium
+              .copyWith(fontSize: 14, color: color_brown_title),
+        ),
+        SizedBox(
+          height: 1,
+        ),
+        Text(
+          controller.text,
+          textAlign: TextAlign.right,
+          style: AppTextStyle.largeSemiBold
+              .copyWith(fontSize: 16, color: Colors.black),
+        ),
+      ],
+    );
+  }
 
 }

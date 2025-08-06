@@ -132,23 +132,30 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
 
                     Column(
                       children: [
-                        Text("Reporting Date",
+                        Text("Reporting Date & Day",
                             style: AppTextStyle.largeMedium.copyWith(
-                                fontSize: 16, color: color_hint_text)),
-                        Text(widget.date,
+                                fontSize: 15, color: color_brown_title)),
+                        Text(
+                            widget.date,
                             style: AppTextStyle.largeBold.copyWith(
-                                fontSize: 16, color: color_brown_title)),
+                                fontSize: 16, color: Colors.black)),
                         SizedBox(
                           height: 16,
                         ),
                         Text("Site Name",
                             style: AppTextStyle.largeMedium.copyWith(
-                                fontSize: 16, color: color_hint_text)),
-                        Text(widget.siteName,
+                                fontSize: 15, color: color_brown_title)),
+                        Text(
+                            widget.siteName,
                             style: AppTextStyle.largeBold.copyWith(
-                                fontSize: 16, color: color_brown_title)),
+                                fontSize: 16, color: Colors.black)),
+                        SizedBox(
+                          height: 16,
+                        ),
+
                       ],
                     ),
+
 
                     SizedBox(
                       height: 16,
@@ -158,9 +165,6 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
 
                     // _buildTextFieldOnlyReadableDate(TextEditingController(text: widget.date), "Site Reporting Date"),
 
-                    SizedBox(
-                      height: 16,
-                    ),
 
                     // DropdownButton<SiteAttendByData>(
                     //   value: workReportController.siteAttendByList
@@ -187,8 +191,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                     //   }).toList(),
                     // ),
 
-                    _buildSectionTitle('Site Attend By'),
-
+                    _buildTitle('Site Attend By'),
                     MultiSelectDialogField<SiteAttendByData>(
                       items: workReportController.siteAttendByList
                           .map((item) => MultiSelectItem<SiteAttendByData>(
@@ -227,9 +230,10 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                     // ),
 
                     SizedBox(
-                      height: 8,
+                      height: 16,
                     ),
 
+                    _buildTitle('Convey Through'),
                     DropdownButton<String>(
                       value: workReportController.conveyThroughList
                               .contains(workReportController.conveyThrough)
@@ -259,7 +263,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                       }).toList(),
                     ),
                     SizedBox(
-                      height: 12,
+                      height: 16,
                     ),
 
                     _buildTextField(
@@ -268,6 +272,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                       height: 16,
                     ),
 
+                    _buildTitle('Driver Name'),
                     DropdownButton<ConveyanceData>(
                       value: workReportController.conveysList
                               .contains(workReportController.conveyanceData)
@@ -297,8 +302,10 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
                       }).toList(),
                     ),
                     SizedBox(
-                      height: 12,
+                      height: 16,
                     ),
+
+                    _buildTitle('Service Nature'),
 
                     DropdownButton<ServiceByNatureData>(
                       value: workReportController.serviceByNatureList.contains(
@@ -853,7 +860,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
     return Text(
       title,
       style:
-          AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
+          AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_brown_title),
     );
   }
 
@@ -944,7 +951,7 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
             .copyWith(fontSize: 16, color: color_hint_text),
 
         labelStyle: AppTextStyle.largeMedium
-            .copyWith(fontSize: 16, color: color_hint_text),
+            .copyWith(fontSize: 16, color: color_brown_title),
       ),
     );
   }
@@ -1282,5 +1289,20 @@ class _AddWorkReportScreenState extends State<AddWorkReportScreen> {
         workReportController.serviceStatusList.add(newItem);
       });
     }
+
+
   }
+}
+
+
+
+Widget _buildTitle(String title) {
+  return Align(
+    alignment: Alignment.centerLeft,
+    child: Text(
+      title,
+      style: AppTextStyle.largeMedium
+          .copyWith(fontSize: 14, color: color_brown_title),
+    ),
+  );
 }

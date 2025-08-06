@@ -342,37 +342,37 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                       children: [
                         Text("Reporting Date & Day",
                             style: AppTextStyle.largeMedium.copyWith(
-                                fontSize: 16, color: color_hint_text)),
+                                fontSize: 15, color: color_brown_title)),
                         Text(
                             getDateWithDay(workReportController
                                     .selectedWorkReportData.value.date ??
                                 ""),
                             style: AppTextStyle.largeBold.copyWith(
-                                fontSize: 16, color: color_brown_title)),
+                                fontSize: 16, color: Colors.black)),
                         SizedBox(
                           height: 16,
                         ),
                         Text("Site Name",
                             style: AppTextStyle.largeMedium.copyWith(
-                                fontSize: 16, color: color_hint_text)),
+                                fontSize: 15, color: color_brown_title)),
                         Text(
                             workReportController
                                     .selectedWorkReportData.value.siteName ??
                                 "",
                             style: AppTextStyle.largeBold.copyWith(
-                                fontSize: 16, color: color_brown_title)),
+                                fontSize: 16, color: Colors.black)),
                         SizedBox(
                           height: 16,
                         ),
                         Text("Site Suffix",
                             style: AppTextStyle.largeMedium.copyWith(
-                                fontSize: 16, color: color_hint_text)),
+                                fontSize: 15, color: color_brown_title)),
                         Text(
                             workReportController.selectedWorkReportData.value
                                     .siteSuffixName ??
                                 "",
                             style: AppTextStyle.largeBold.copyWith(
-                                fontSize: 16, color: color_brown_title)),
+                                fontSize: 16, color: Colors.black)),
                       ],
                     ),
 
@@ -428,7 +428,9 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                     //   }).toList(),
                     // ),
 
-                    _buildSectionTitle('Site Attend By'),
+                    SizedBox(height: 16,),
+
+                    _buildTitle('Site Attend By'),
 
                     MultiSelectDialogField<SiteAttendByData>(
                       items: workReportController.siteAttendByList
@@ -571,7 +573,7 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                             .controllerNameOfContactPerson.value,
                         "Name Of Contact Person"),
                     SizedBox(
-                      height: 16,
+                      height: 18,
                     ),
 
                     _buildTextField(
@@ -657,19 +659,22 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
                     ),
 
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
                       children: [
-                        Expanded(
-                            child:
-                                _buildSectionTitle('Given Service & Status')),
-                        IconButton(
-                          icon: Icon(
-                            Icons.add_circle,
-                            color: color_brown_title,
-                            size: 30,
+                        _buildSectionTitle('Given Service & Status'),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.add_circle,
+                              color: color_brown_title,
+                              size: 30,
+                            ),
+                            onPressed: () {
+                              _showAddDialog(context);
+                            },
                           ),
-                          onPressed: () {
-                            _showAddDialog(context);
-                          },
                         )
                       ],
                     ),
@@ -1292,7 +1297,7 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
     return Text(
       title,
       style:
-          AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_hint_text),
+          AppTextStyle.largeBold.copyWith(fontSize: 20, color: color_brown_title),
     );
   }
 
@@ -1302,7 +1307,7 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
       child: Text(
         title,
         style: AppTextStyle.largeMedium
-            .copyWith(fontSize: 14, color: color_hint_text),
+            .copyWith(fontSize: 14, color: color_brown_title),
       ),
     );
   }
@@ -1399,7 +1404,7 @@ class _EditWorkReportScreenState extends State<EditWorkReportScreen> {
             .copyWith(fontSize: 16, color: color_hint_text),
 
         labelStyle: AppTextStyle.largeMedium
-            .copyWith(fontSize: 16, color: color_hint_text),
+            .copyWith(fontSize: 16, color: color_brown_title),
       ),
     );
   }

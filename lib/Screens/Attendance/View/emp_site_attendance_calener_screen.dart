@@ -115,7 +115,6 @@ class _EmpSiteAttendanceCalenderScreenState extends State<EmpSiteAttendanceCalen
               Padding(
                 padding: EdgeInsets.all(16.0),
                 child: TableCalendar(
-
                   firstDay: DateTime.utc(2000, 1, 1),
                   lastDay: DateTime.utc(2100, 12, 31),
                   focusedDay: _focusedDay,
