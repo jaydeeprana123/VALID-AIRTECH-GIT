@@ -179,7 +179,7 @@ class _AddAttendanceOutScreenState extends State<AddAttendanceOutScreen> {
                           attendanceController.createAttendanceInRequest.value.status = "2";
                           attendanceController.createAttendanceInRequest.value.typeLocation = selectedSite != null?"2":"1";
 
-                          attendanceController.callCreateAttendanceOut();
+                          // attendanceController.callCreateAttendanceOut();
                         },
                         borderColor: color_primary,
                         borderWidth: 0,

@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:geocoding/geocoding.dart';
 
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
@@ -241,6 +242,7 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
                                         5: FixedColumnWidth(130),
                                         6: FixedColumnWidth(130),
                                         7: FixedColumnWidth(130),
+                                        8: FixedColumnWidth(180),
                                       },
                                       children: [
                     
@@ -256,6 +258,8 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
 
                                             tableHeader('Site Duration'),
                                             tableHeader('Attendance Status'),
+                                            tableHeader('Location'),
+
                                           ],
                                         ),
                     
@@ -270,6 +274,15 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
 
                                             tableCell(data.siteDuration ?? ''),
                                             tableCell(data.attendanceStatus ?? ''),
+                                            InkWell(onTap: ()async{
+                                              if((data.lat??"").isNotEmpty){
+                                                data.address = await getAddressFromLatLong(double.parse(data.lat??""), double.parse(data.long??""));
+
+                                                setState(() {
+
+                                                });
+                                              }
+                                            },child: tableCell((data.lat??"").isNotEmpty?(data.address??"").isEmpty?"Get Location":data.address??"":"")),
                                           ],
                                         ),
                                       ],
@@ -570,5 +583,30 @@ class _AttendanceListForAdminReportScreenState extends State<AttendanceListForAd
       ),
     );
   }
+
+
+
+  Future<String> getAddressFromLatLong(double latitude, double longitude) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+
+        String address =
+            '${place.street}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea} ${place.postalCode}, ${place.country}';
+
+        print("Address: $address");
+        return address;
+      } else {
+        print("No address found");
+        return 'No address found';
+      }
+    } catch (e) {
+      print("Error: $e");
+      return 'Error: $e';
+    }
+  }
+
 
 }

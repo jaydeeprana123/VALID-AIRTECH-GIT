@@ -16,6 +16,8 @@ class CreateAttendanceInRequest {
   String? officeId;
   String? headId;
   String? status;
+  String? lat;
+  String? long;
 
   CreateAttendanceInRequest({
     this.empId,
@@ -25,6 +27,9 @@ class CreateAttendanceInRequest {
     this.officeId,
     this.headId,
     this.status,
+    this.lat,
+    this.long,
+
   });
 
   factory CreateAttendanceInRequest.fromJson(Map<String, dynamic> json) => CreateAttendanceInRequest(
@@ -35,6 +40,8 @@ class CreateAttendanceInRequest {
     officeId: json["office_id"],
     headId: json["head_id"],
     status: json["status"],
+    lat: json["lat"],
+    long: json["long"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -45,5 +52,7 @@ class CreateAttendanceInRequest {
     "office_id": officeId,
     "head_id": headId,
     "status": status,
+    "lat":lat,
+    "long":long,
   };
 }

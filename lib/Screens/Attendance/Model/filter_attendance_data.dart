@@ -11,6 +11,9 @@ class FilterAttendanceData {
   String? overallOfficeInTime;
   String? overallOfficeOutTime;
   String? attendanceStatus;
+  String? lat;
+  String? long;
+  String? address;
 
   FilterAttendanceData({
     this.date,
@@ -22,6 +25,9 @@ class FilterAttendanceData {
     this.overallOfficeInTime,
     this.overallOfficeOutTime,
     this.attendanceStatus,
+    this.lat,
+    this.long,
+    this.address
   });
 
   factory FilterAttendanceData.fromJson(Map<String, dynamic> json) {
@@ -38,6 +44,9 @@ class FilterAttendanceData {
       overallOfficeInTime: json['overallOfficeInTime'],
       overallOfficeOutTime: json['overallOfficeOutTime'],
       attendanceStatus: json['attendanceStatus'],
+      lat: json['lat'],
+      long: json['long'],
+        address:json["address"]
     );
   }
 
@@ -52,6 +61,8 @@ class FilterAttendanceData {
       'overallOfficeInTime': overallOfficeInTime,
       'overallOfficeOutTime': overallOfficeOutTime,
       'attendanceStatus': attendanceStatus,
+      'lat': lat,
+      "long":long
     };
   }
 }

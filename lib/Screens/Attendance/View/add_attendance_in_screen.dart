@@ -174,7 +174,7 @@ class _AddAttendanceInScreenState extends State<AddAttendanceInScreen> {
                           attendanceController.createAttendanceInRequest.value.status = "1";
                           attendanceController.createAttendanceInRequest.value.typeLocation = selectedSite != null?"2":"1";
 
-                          attendanceController.callCreateAttendanceIn();
+                          // attendanceController.callCreateAttendanceIn();
 
 
 

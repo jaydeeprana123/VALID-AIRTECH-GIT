@@ -16,6 +16,8 @@ class SiteAttendanceData {
   String? outTime;
   bool isWorkReportAvail = false;
   WorkReportData? workReportData;
+  String? lat;
+  String? long;
 
 
   SiteAttendanceData({
@@ -25,7 +27,9 @@ class SiteAttendanceData {
     this.siteName,
     this.inTime,
     this.outTime,
-    this.workReportData
+    this.workReportData,
+    this.lat,
+    this.long
   });
 
   // From JSON
@@ -36,6 +40,8 @@ class SiteAttendanceData {
       siteName: json['siteName'],
       inTime: json['inTime'],
       outTime: json['outTime'],
+      lat: json['lat'],
+      long: json['long'],
     );
   }
 
@@ -47,6 +53,8 @@ class SiteAttendanceData {
       'siteName': siteName,
       'inTime': inTime,
       'outTime': outTime,
+      'lat': lat,
+      'long': long,
     };
   }
 }

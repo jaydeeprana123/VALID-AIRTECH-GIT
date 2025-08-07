@@ -50,6 +50,8 @@ class AttendanceData {
   String? headName;
   int? status;
   String? statusType;
+  String? lat;
+  String? long;
 
   AttendanceData({
     this.id,
@@ -65,6 +67,8 @@ class AttendanceData {
     this.headName,
     this.status,
     this.statusType,
+    this.lat,
+    this.long,
   });
 
   factory AttendanceData.fromJson(Map<String, dynamic> json) => AttendanceData(
@@ -81,6 +85,8 @@ class AttendanceData {
     headName: json["head_name"],
     status: json["status"],
     statusType: json["status_type"],
+    lat: json["lat"],
+    long: json["long"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -97,5 +103,7 @@ class AttendanceData {
     "head_name": headName,
     "status": status,
     "status_type": statusType,
+    "lat":lat,
+    "long":long,
   };
 }

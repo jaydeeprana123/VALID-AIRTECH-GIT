@@ -164,7 +164,6 @@ class _EmpHomePageState extends State<EmpHomePage> {
                                             attendanceController
                                                 .statusOfAttendance = null;
 
-                                            _getCurrentPosition("1");
                                           });
                                         },
                                       ),
@@ -198,7 +197,6 @@ class _EmpHomePageState extends State<EmpHomePage> {
                                             attendanceController
                                                 .statusOfAttendance = null;
 
-                                            _getCurrentPosition("1");
                                           });
                                         },
                                       ),
@@ -713,11 +711,11 @@ class _EmpHomePageState extends State<EmpHomePage> {
 
         attendanceController.isLoading.value = false;
 
-        // if (attendanceType == "1") {
-        //   (attendanceController.callCreateAttendanceIn());
-        // } else if(attendanceType == "2"){
-        //   (attendanceController.callCreateAttendanceOut());
-        // }
+        if (attendanceType == "1") {
+          (attendanceController.callCreateAttendanceIn(position.latitude ?? 0, position.longitude ?? 0));
+        } else if(attendanceType == "2"){
+          (attendanceController.callCreateAttendanceOut(position.latitude ?? 0, position.longitude ?? 0));
+        }
       }
     }).catchError((e) {
       debugPrint(e.toString());

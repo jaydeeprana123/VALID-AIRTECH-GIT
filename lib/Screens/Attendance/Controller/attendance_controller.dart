@@ -317,6 +317,8 @@ class AttendanceController extends GetxController {
                     siteData.outTime = attendanceList[i].time ?? "";
                   }
 
+                  siteData.lat = attendanceList[i].lat;
+                  siteData.long = attendanceList[i].long;
                   entryUpdated = true;
                   break;
                 }
@@ -332,6 +334,8 @@ class AttendanceController extends GetxController {
                     officeId: attendanceList[i].officeId,
                     inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
                     outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+                    lat: attendanceList[i].lat??"",
+                    long: attendanceList[i].long??"",
                   ),
                 );
               }
@@ -353,6 +357,10 @@ class AttendanceController extends GetxController {
                 officeId: attendanceList[i].officeId,
                 inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
                 outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+                lat: attendanceList[i].lat??"",
+                long: attendanceList[i].long??"",
+
+
               )
             ];
             filterAttendanceData.add(newFilterData);
@@ -382,6 +390,9 @@ class AttendanceController extends GetxController {
                 siteAttendanceData[j].outTime = attendanceList[i].time ?? "";
               }
 
+              siteAttendanceData[j].lat = attendanceList[i].lat;
+              siteAttendanceData[j].long = attendanceList[i].long;
+
               entryUpdated = true;
               break;
             }
@@ -398,6 +409,9 @@ class AttendanceController extends GetxController {
                 officeId: attendanceList[i].officeId,
                 inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
                 outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+                lat: attendanceList[i].lat??"",
+                long: attendanceList[i].long ?? "",
+
               ),
             );
           }
@@ -458,6 +472,9 @@ class AttendanceController extends GetxController {
         filterAttendanceData.clear();
 
         for (int i = 0; i < attendanceList.length; i++) {
+
+          printData("latttyy", attendanceList[i].lat??"");
+
           bool isDateAvail = false;
 
           for (int j = 0; j < filterAttendanceData.length; j++) {
@@ -481,6 +498,8 @@ class AttendanceController extends GetxController {
                     siteData.outTime = attendanceList[i].time ?? "";
                   }
 
+                  siteData.lat = attendanceList[i].lat;
+                  siteData.long = attendanceList[i].long;
                   entryUpdated = true;
                   break;
                 }
@@ -496,7 +515,8 @@ class AttendanceController extends GetxController {
                     officeId: attendanceList[i].officeId,
                     inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
                     outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
-                  ),
+                    lat: attendanceList[i].lat??"",
+                    long: attendanceList[i].long ?? "",),
                 );
               }
 
@@ -517,13 +537,20 @@ class AttendanceController extends GetxController {
                 officeId: attendanceList[i].officeId,
                 inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
                 outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+                lat: attendanceList[i].lat??"",
+                long: attendanceList[i].long ?? "",
               )
             ];
+
+            newFilterData.lat = attendanceList[i].lat??"";
+            newFilterData.long = attendanceList[i].long??"";
             filterAttendanceData.add(newFilterData);
           }
         }
 
 
+        printData("filter final laaattt", (filterAttendanceData[0].date??"") + (filterAttendanceData[0].lat??""));
+        printData("final laaattt", (attendanceList[0].date??"") + (attendanceList[0].lat??""));
 
         for (int i = 0; i < attendanceList.length; i++) {
 
@@ -539,6 +566,8 @@ class AttendanceController extends GetxController {
                   siteAttendanceData[j].outTime = attendanceList[i].time ?? "";
                 }
 
+                siteAttendanceData[j].lat = attendanceList[i].lat;
+                siteAttendanceData[j].long = attendanceList[i].long;
                 entryUpdated = true;
                 break;
               }
@@ -558,6 +587,8 @@ class AttendanceController extends GetxController {
                 officeId: attendanceList[i].officeId,
                 inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
                 outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+                lat: attendanceList[i].lat??"",
+                long: attendanceList[i].long??"",
               ),
             );
           }
@@ -686,6 +717,9 @@ class AttendanceController extends GetxController {
                     siteData.outTime = attendanceList[i].time ?? "";
                   }
 
+                  siteData.lat = attendanceList[i].lat;
+                  siteData.long = attendanceList[i].long;
+
                   entryUpdated = true;
                   break;
                 }
@@ -701,6 +735,8 @@ class AttendanceController extends GetxController {
                     officeId: attendanceList[i].officeId,
                     inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
                     outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+                    lat: attendanceList[i].lat??"",
+                    long: attendanceList[i].long??"",
                   ),
                 );
               }
@@ -722,6 +758,8 @@ class AttendanceController extends GetxController {
                 officeId: attendanceList[i].officeId,
                 inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
                 outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+                lat: attendanceList[i].lat??"",
+                long: attendanceList[i].long??"",
               )
             ];
             filterAttendanceData.add(newFilterData);
@@ -750,6 +788,9 @@ class AttendanceController extends GetxController {
                 siteAttendanceData[j].outTime = attendanceList[i].time ?? "";
               }
 
+              siteAttendanceData[j].lat = attendanceList[i].lat;
+              siteAttendanceData[j].long = attendanceList[i].long;
+
               entryUpdated = true;
               break;
             }
@@ -766,6 +807,8 @@ class AttendanceController extends GetxController {
                 officeId: attendanceList[i].officeId,
                 inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
                 outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+                lat: attendanceList[i].lat??"",
+                long: attendanceList[i].long??"",
               ),
             );
           }
@@ -873,6 +916,8 @@ class AttendanceController extends GetxController {
                   } else if (attendanceList[i].status == 2) {
                     siteData.outTime = attendanceList[i].time ?? "";
                   }
+                  siteData.lat = attendanceList[i].lat;
+                  siteData.long = attendanceList[i].long;
 
                   entryUpdated = true;
                   break;
@@ -889,6 +934,8 @@ class AttendanceController extends GetxController {
                     officeId: attendanceList[i].officeId,
                     inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
                     outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+                    lat: attendanceList[i].lat??"",
+                    long: attendanceList[i].long??"",
                   ),
                 );
               }
@@ -910,6 +957,8 @@ class AttendanceController extends GetxController {
                 officeId: attendanceList[i].officeId,
                 inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
                 outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+                lat: attendanceList[i].lat??"",
+                long: attendanceList[i].long??"",
               )
             ];
             filterAttendanceData.add(newFilterData);
@@ -939,6 +988,8 @@ class AttendanceController extends GetxController {
                 siteAttendanceData[j].outTime = attendanceList[i].time ?? "";
               }
 
+              siteAttendanceData[j].lat = attendanceList[i].lat;
+              siteAttendanceData[j].long = attendanceList[i].long;
               entryUpdated = true;
               break;
             }
@@ -955,6 +1006,8 @@ class AttendanceController extends GetxController {
                 officeId: attendanceList[i].officeId,
                 inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
                 outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
+                lat: attendanceList[i].lat??"",
+                long: attendanceList[i].long??"",
               ),
             );
           }
@@ -1001,8 +1054,11 @@ class AttendanceController extends GetxController {
 
 
   /// Attendance create api call
-  Future<void> callCreateAttendanceIn() async {
+  Future<void> callCreateAttendanceIn(double lat, double long) async {
     try {
+
+      createAttendanceInRequest.value.lat = lat.toString();
+      createAttendanceInRequest.value.long = long.toString();
       isLoading.value = true;
 
       printData("site ", "api called");
@@ -1114,8 +1170,11 @@ class AttendanceController extends GetxController {
 
 
   /// Attendance out api call
-  Future<void> callCreateAttendanceOut() async {
+  Future<void> callCreateAttendanceOut(double lat, double long) async {
     try {
+
+      createAttendanceInRequest.value.lat = lat.toString();
+      createAttendanceInRequest.value.long = long.toString();
       isLoading.value = true;
 
       printData("site ", "api called");
