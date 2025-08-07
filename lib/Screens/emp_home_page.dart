@@ -1,6 +1,8 @@
 import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:geolocator/geolocator.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:valid_airtech/Screens/Allowance/View/emp_expense_screen.dart';
@@ -161,6 +163,8 @@ class _EmpHomePageState extends State<EmpHomePage> {
                                                 null;
                                             attendanceController
                                                 .statusOfAttendance = null;
+
+                                            _getCurrentPosition("1");
                                           });
                                         },
                                       ),
@@ -193,6 +197,8 @@ class _EmpHomePageState extends State<EmpHomePage> {
                                                 null;
                                             attendanceController
                                                 .statusOfAttendance = null;
+
+                                            _getCurrentPosition("1");
                                           });
                                         },
                                       ),
@@ -383,10 +389,10 @@ class _EmpHomePageState extends State<EmpHomePage> {
                                                 ? "2"
                                                 : "1";
 
-                                        (await attendanceController
-                                            .callCreateAttendanceIn());
+                                        attendanceController.isLoading.value =
+                                            true;
 
-                                        setState(() {});
+                                        _getCurrentPosition("1");
                                       },
                                       borderColor: color_brown_title,
                                       borderWidth: 0,
@@ -452,10 +458,10 @@ class _EmpHomePageState extends State<EmpHomePage> {
                                                 ? "2"
                                                 : "1";
 
-                                        await attendanceController
-                                            .callCreateAttendanceOut();
+                                        attendanceController.isLoading.value =
+                                            true;
 
-                                        setState(() {});
+                                        _getCurrentPosition("2");
                                       },
                                       borderColor: color_brown_title,
                                       borderWidth: 0,
@@ -692,5 +698,100 @@ class _EmpHomePageState extends State<EmpHomePage> {
       onChanged: onChanged,
     );
     ;
+  }
+
+  Future<void> _getCurrentPosition(String attendanceType) async {
+    print("_getCurrentPosition method call");
+
+    final hasPermission = await _handleLocationPermission(attendanceType);
+    if (!hasPermission) return;
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((Position? position) {
+      if (position != null) {
+        print("position lat ${position.latitude ?? 0}");
+        print("position long ${position.longitude ?? 0}");
+
+        attendanceController.isLoading.value = false;
+
+        // if (attendanceType == "1") {
+        //   (attendanceController.callCreateAttendanceIn());
+        // } else if(attendanceType == "2"){
+        //   (attendanceController.callCreateAttendanceOut());
+        // }
+      }
+    }).catchError((e) {
+      debugPrint(e.toString());
+    });
+  }
+
+  Future<bool> _handleLocationPermission(String attendanceType) async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      attendanceController.isLoading.value = false;
+
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location services are disabled. Please enable the services')));
+
+      await Geolocator.openLocationSettings();
+
+      return false;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        print("LocationPermission.denied aayo");
+
+        _showLocationPermissionAlertDialog(false, permission, attendanceType);
+
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      print("LocationPermission.deniedForever aayo");
+      _showLocationPermissionAlertDialog(true, permission, attendanceType);
+
+      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      //     content: Text('Location permissions are permanently denied, we cannot request permissions.')));
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> _showLocationPermissionAlertDialog(bool isPermanentDenied,
+      LocationPermission permission, String attendanceType) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Location Permission'),
+          content: SingleChildScrollView(
+            child: Text((isPermanentDenied
+                    ? "Location permissions are permanently denied, we cannot request permissions. Sorry!! "
+                    : "Location permissions are denied. ") +
+                "You can not use this application without giving location permission"),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(isPermanentDenied ? 'Ok' : 'Give Permission'),
+              onPressed: () async {
+                Navigator.pop(context);
+
+                if (isPermanentDenied) {
+                  SystemNavigator.pop();
+                } else {
+                  _getCurrentPosition(attendanceType);
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
