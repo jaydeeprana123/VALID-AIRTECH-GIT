@@ -28,8 +28,8 @@ import '../../../Styles/app_text_style.dart';
 import '../../../Styles/my_colors.dart';
 import '../../AdminLeaveRequest/View/leave_filter_dialog.dart';
 import '../../Notes/View/edit_note_screen.dart';
+import 'admin_plannig_details_screen.dart';
 import 'edit_plannig_screen.dart';
-
 
 class PlanningListScreen extends StatefulWidget {
   @override
@@ -37,7 +37,6 @@ class PlanningListScreen extends StatefulWidget {
 }
 
 class _PlanningListScreenState extends State<PlanningListScreen> {
-
   PlanningController planningController = Get.find<PlanningController>();
 
   @override
@@ -50,7 +49,7 @@ class _PlanningListScreenState extends State<PlanningListScreen> {
   void _initializeData() async {
     await planningController.getLoginData();
 
-    printData("_initializeData", "_initializeData");
+    printData("Admin", "PlanningListScreen");
 
     planningController.callPlanningList();
   }
@@ -69,8 +68,8 @@ class _PlanningListScreenState extends State<PlanningListScreen> {
         ),
         title: Text(
           'Valid Services',
-          style: AppTextStyle.largeBold.copyWith(fontSize: 18
-              , color: color_secondary),
+          style: AppTextStyle.largeBold
+              .copyWith(fontSize: 18, color: color_secondary),
         ),
         centerTitle: true,
         actions: [
@@ -82,170 +81,223 @@ class _PlanningListScreenState extends State<PlanningListScreen> {
           ),
         ],
       ),
-      body: Obx(() =>Stack(
-        children: [
-         Column(
+      body: Obx(() => Stack(
             children: [
-
-              Container(
-                width: double.infinity,
-                color: color_primary,
-                padding: const EdgeInsets.all(12),
-                child:  Center(
-                  child: Text(
-                    'Planning',
-                    style: AppTextStyle.largeBold.copyWith(fontSize: 14
-                        , color: Colors.white),
-                    textAlign: TextAlign.center,
-
+              Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    color: color_primary,
+                    padding: const EdgeInsets.all(12),
+                    child: Center(
+                      child: Text(
+                        'Planning',
+                        style: AppTextStyle.largeBold
+                            .copyWith(fontSize: 14, color: Colors.white),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
-                ),
-              ),
 
+                  // SizedBox(height: 12,),
+                  // ElevatedButton(
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: color_primary,
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(8),
+                  //     ),
+                  //   ),
+                  //   onPressed: () {
+                  //
+                  //     showLeaveFilterDialog();
+                  //   },
+                  //   child: Row(
+                  //     mainAxisSize: MainAxisSize.min,
+                  //     children: [
+                  //       Text(
+                  //         'Filter',
+                  //         style:AppTextStyle.largeBold.copyWith(fontSize: 13
+                  //             , color: Colors.white),
+                  //       ),
+                  //       SizedBox(width: 4,),
+                  //
+                  //       Icon(Icons.filter_alt_sharp, color: Colors.white,)
+                  //
+                  //     ],
+                  //   ),
+                  // ),
 
-              // SizedBox(height: 12,),
-              // ElevatedButton(
-              //   style: ElevatedButton.styleFrom(
-              //     backgroundColor: color_primary,
-              //     shape: RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.circular(8),
-              //     ),
-              //   ),
-              //   onPressed: () {
-              //
-              //     showLeaveFilterDialog();
-              //   },
-              //   child: Row(
-              //     mainAxisSize: MainAxisSize.min,
-              //     children: [
-              //       Text(
-              //         'Filter',
-              //         style:AppTextStyle.largeBold.copyWith(fontSize: 13
-              //             , color: Colors.white),
-              //       ),
-              //       SizedBox(width: 4,),
-              //
-              //       Icon(Icons.filter_alt_sharp, color: Colors.white,)
-              //
-              //     ],
-              //   ),
-              // ),
-
-              planningController.planningList.isNotEmpty?Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(10),
-                  itemCount: planningController.planningList.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: (){
-                        planningController.selectedPlanning.value = planningController.planningList[index];
-                        Get.to(EditPlanningScreen())?.then((value) {
-                          planningController.isLoading.value = false;
-                          planningController.callPlanningList();
-                        });
-                      },
-                      child: Card(
-                        elevation: 2,
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
+                  planningController.planningList.isNotEmpty
+                      ? Expanded(
+                          child: ListView.builder(
+                            padding: const EdgeInsets.all(10),
+                            itemCount: planningController.planningList.length,
+                            itemBuilder: (context, index) {
+                              return InkWell(
+                                onTap: () {
+                                  planningController.selectedPlanning.value =
+                                      planningController.planningList[index];
+                                  Get.to(AdminPlanningDetailsScreen())
+                                      ?.then((value) {
+                                    planningController.isLoading.value = false;
+                                    planningController.callPlanningList();
+                                  });
+                                },
+                                child: Card(
+                                  elevation: 2,
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Planning Date',
+                                                    style: AppTextStyle
+                                                        .largeMedium
+                                                        .copyWith(
+                                                            fontSize: 12,
+                                                            color:
+                                                                color_brown_title),
+                                                  ),
+                                                  Text(
+                                                    planningController
+                                                            .planningList[index]
+                                                            .date ??
+                                                        "",
+                                                    style: AppTextStyle
+                                                        .largeRegular
+                                                        .copyWith(
+                                                            fontSize: 15,
+                                                            color:
+                                                                Colors.black),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Planning No.',
+                                                  style: AppTextStyle
+                                                      .largeMedium
+                                                      .copyWith(
+                                                          fontSize: 12,
+                                                          color:
+                                                              color_brown_title),
+                                                ),
+                                                Text(
+                                                  (planningController
+                                                              .planningList[
+                                                                  index]
+                                                              .planning?[0]
+                                                              .planningId ??
+                                                          0)
+                                                      .toString(),
+                                                  style: AppTextStyle
+                                                      .largeRegular
+                                                      .copyWith(
+                                                          fontSize: 15,
+                                                          color: Colors.black),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                        const SizedBox(height: 12),
                                         Text(
-                                          'Planning Date',
-                                          style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                              , color: color_brown_title),
+                                          'Site Name',
+                                          style: AppTextStyle.largeMedium
+                                              .copyWith(
+                                                  fontSize: 12,
+                                                  color: color_brown_title),
                                         ),
                                         Text(
-                                          planningController.planningList[index].date??"",
-                                          style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                              , color: Colors.black),
+                                          "${planningController.planningList[index].headName ?? ""}, ${planningController.planningList[index].siteHeadAddress ?? ""}",
+                                          style: AppTextStyle.largeRegular
+                                              .copyWith(
+                                                  fontSize: 15,
+                                                  color: Colors.black),
+                                        ),
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          'Workman Name',
+                                          style: AppTextStyle.largeMedium
+                                              .copyWith(
+                                                  fontSize: 12,
+                                                  color: color_brown_title),
+                                        ),
+                                        Text(
+                                          (planningController
+                                                          .planningList[index]
+                                                          .workman ??
+                                                      [])
+                                                  .isNotEmpty
+                                              ? (planningController
+                                                          .planningList[index]
+                                                          .workman?[0]
+                                                          .workmanName ??
+                                                      "")
+                                                  .toString()
+                                              : "",
+                                          style: AppTextStyle.largeRegular
+                                              .copyWith(
+                                                  fontSize: 15,
+                                                  color: Colors.black),
+                                        ),
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          'Conveyance Name',
+                                          style: AppTextStyle.largeMedium
+                                              .copyWith(
+                                                  fontSize: 12,
+                                                  color: color_brown_title),
+                                        ),
+                                        Text(
+                                          (planningController
+                                                      .planningList[index]
+                                                      .conveyance?[0]
+                                                      .conveyanceName ??
+                                                  "")
+                                              .toString(),
+                                          style: AppTextStyle.largeRegular
+                                              .copyWith(
+                                                  fontSize: 15,
+                                                  color: Colors.black),
                                         ),
                                       ],
                                     ),
-
-
-
                                   ),
-
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Planning No.',
-                                        style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                            , color: color_brown_title),
-                                      ),
-                                      Text(
-                                        (planningController.planningList[index].planning?[0].planningId??0).toString(),
-                                        style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                            , color: Colors.black),
-                                      ),
-                                    ],
-                                  )
-
-                                ],
-                              ),
-
-
-                              const SizedBox(height: 12),
-                               Text(
-                                'Site Name',
-                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                    , color: color_brown_title),
-                              ),
-                              Text(
-                                "${planningController.planningList[index].headName??""}, ${planningController.planningList[index].siteHeadAddress??""}",
-                                style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                    , color: Colors.black),
-                              ),
-
-                              const SizedBox(height: 12),
-                              Text(
-                                'Workman Name',
-                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                    , color: color_brown_title),
-                              ),
-                              Text(
-                                (planningController.planningList[index].workman??[]).isNotEmpty?(planningController.planningList[index].workman?[0].workmanName??"").toString():"",
-                                style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                    , color: Colors.black),
-                              ),
-
-
-                              const SizedBox(height: 12),
-                              Text(
-                                'Conveyance Name',
-                                style: AppTextStyle.largeMedium.copyWith(fontSize: 12
-                                    , color: color_brown_title),
-                              ),
-                              Text(
-                                (planningController.planningList[index].conveyance?[0].conveyanceName??"").toString(),
-                                style:  AppTextStyle.largeRegular.copyWith(fontSize: 15
-                                    , color: Colors.black),
-                              ),
-                            ],
+                                ),
+                              );
+                            },
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ):(!planningController.isLoading.value)?Expanded(child: Center(child: Text("No data found"),)):SizedBox(),
+                        )
+                      : (!planningController.isLoading.value)
+                          ? Expanded(
+                              child: Center(
+                              child: Text("No data found"),
+                            ))
+                          : SizedBox(),
+                ],
+              ),
+              if (planningController.isLoading.value)
+                Center(
+                  child: CircularProgressIndicator(),
+                )
             ],
-          ),
-
-          if(planningController.isLoading.value)Center(child: CircularProgressIndicator(),)
-        ],
-      )),
-
+          )),
     );
   }
 
@@ -257,4 +309,3 @@ class _PlanningListScreenState extends State<PlanningListScreen> {
     );
   }
 }
-

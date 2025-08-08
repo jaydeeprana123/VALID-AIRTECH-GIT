@@ -27,12 +27,16 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
 
-class PlanningDetailsScreen extends StatefulWidget {
+import 'edit_plannig_screen.dart';
+
+class AdminPlanningDetailsScreen extends StatefulWidget {
   @override
-  _PlanningDetailsScreenState createState() => _PlanningDetailsScreenState();
+  _AdminPlanningDetailsScreenState createState() =>
+      _AdminPlanningDetailsScreenState();
 }
 
-class _PlanningDetailsScreenState extends State<PlanningDetailsScreen> {
+class _AdminPlanningDetailsScreenState
+    extends State<AdminPlanningDetailsScreen> {
   PlanningController planningController = Get.find<PlanningController>();
 
   @override
@@ -58,6 +62,15 @@ class _PlanningDetailsScreenState extends State<PlanningDetailsScreen> {
             icon: Icon(Icons.home, color: color_secondary),
             onPressed: () {
               Get.back();
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.edit, color: color_secondary),
+            onPressed: () {
+              Get.to(EditPlanningScreen())?.then((value) {
+                planningController.isLoading.value = false;
+                Get.back();
+              });
             },
           ),
         ],
