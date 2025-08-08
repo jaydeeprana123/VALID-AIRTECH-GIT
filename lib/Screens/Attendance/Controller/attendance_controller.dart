@@ -14,7 +14,6 @@ import 'package:valid_airtech/Screens/Attendance/Model/create_attendance_in_requ
 import 'package:valid_airtech/Screens/Attendance/Model/filter_attendance_data.dart';
 import 'package:valid_airtech/Screens/Offices/Model/office_list_response.dart';
 
-
 import '../../../RepoDB/repositories/api_repository.dart';
 import '../../../Widget/common_widget.dart';
 import '../../../base_model.dart';
@@ -32,17 +31,13 @@ import '../Model/admin_create_attendance_request.dart';
 import '../Model/admin_update_attendance_request.dart';
 import '../Model/site_attendance_data.dart';
 
-
 /// Controller
 class AttendanceController extends GetxController {
-
-
   String? selectedPlace;
   String? statusOfAttendance;
   String? selectedSite;
   String? selectedOffice;
   String? attendanceId;
-
 
   APIRepository postRepository = APIRepository();
   RxBool isLoading = false.obs;
@@ -53,34 +48,44 @@ class AttendanceController extends GetxController {
   RxList<OfficeData> officeList = <OfficeData>[].obs;
   RxList<String> statusList = <String>[].obs;
   RxList<String> attendanceStatusList = <String>[].obs;
-  Rx<AdminCreateAttendanceRequest> adminCreateAttendanceRequest = AdminCreateAttendanceRequest().obs;
+  Rx<AdminCreateAttendanceRequest> adminCreateAttendanceRequest =
+      AdminCreateAttendanceRequest().obs;
 
-  RxList<FilterAttendanceData> filterAttendanceData = <FilterAttendanceData>[].obs;
-  RxList<FilterAttendanceData> finalFilterAttendanceData = <FilterAttendanceData>[].obs;
+  RxList<FilterAttendanceData> filterAttendanceData =
+      <FilterAttendanceData>[].obs;
+  RxList<FilterAttendanceData> finalFilterAttendanceData =
+      <FilterAttendanceData>[].obs;
 
-
-  RxList<SiteAttendanceData> filterSiteAttendanceData = <SiteAttendanceData>[].obs;
+  RxList<SiteAttendanceData> filterSiteAttendanceData =
+      <SiteAttendanceData>[].obs;
 
   RxList<SiteAttendanceData> siteAttendanceData = <SiteAttendanceData>[].obs;
-  RxList<SiteAttendanceData> finalSiteAttendanceData = <SiteAttendanceData>[].obs;
+  RxList<SiteAttendanceData> finalSiteAttendanceData =
+      <SiteAttendanceData>[].obs;
 
   RxList<WorkReportData> workReportListByDates = <WorkReportData>[].obs;
 
   RxList<AdminAttendanceData> adminAttendanceList = <AdminAttendanceData>[].obs;
   RxList<WorkmanData> workmanList = <WorkmanData>[].obs;
-  Rx<AdminAttendanceData> selectedAdminAttendanceData = AdminAttendanceData().obs;
-  Rx<AdminUpdateAttendanceRequest> adminUpdateAttendanceRequest= AdminUpdateAttendanceRequest().obs;
+  Rx<AdminAttendanceData> selectedAdminAttendanceData =
+      AdminAttendanceData().obs;
+  Rx<AdminUpdateAttendanceRequest> adminUpdateAttendanceRequest =
+      AdminUpdateAttendanceRequest().obs;
   RxList<AttendanceData> attendanceList = <AttendanceData>[].obs;
   Rx<AttendanceData> selectedAttendance = AttendanceData().obs;
-  RxList<AppointmentContactData> attendanceContactList = <AppointmentContactData>[].obs;
+  RxList<AppointmentContactData> attendanceContactList =
+      <AppointmentContactData>[].obs;
   Rx<TextEditingController> fromDateEditingController =
       TextEditingController().obs;
   Rx<TextEditingController> toDateEditingController =
       TextEditingController().obs;
-  Rx<CreateAttendanceInRequest> createAttendanceInRequest = CreateAttendanceInRequest().obs;
+  Rx<CreateAttendanceInRequest> createAttendanceInRequest =
+      CreateAttendanceInRequest().obs;
 
-  Future<void> getLoginData()async{
-    loginData.value =  await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel)??LoginData();
+  Future<void> getLoginData() async {
+    loginData.value =
+        await MySharedPref().getLoginModel(SharePreData.keySaveLoginModel) ??
+            LoginData();
 
     statusList.clear();
     statusList.add("In");
@@ -92,7 +97,7 @@ class AttendanceController extends GetxController {
     attendanceStatusList.add("O (Weekly Off)");
     attendanceStatusList.add("H (Holiday)");
     attendanceStatusList.add("A (Absent)");
-    printData("token", loginData.value.token??"");
+    printData("token", loginData.value.token ?? "");
 
     var now = DateTime.now();
     var formatter = DateFormat('dd-MM-yyyy');
@@ -109,26 +114,24 @@ class AttendanceController extends GetxController {
 
     fromDateEditingController.value.text = oneMonthBeforeDate;
     toDateEditingController.value.text = todayDate;
-
   }
-
 
   /// Workman list api call
   Future<void> callWorkmanList() async {
     try {
       isLoading.value = true;
 
-      WorkmanListResponse response = await postRepository.workmanList(loginData.value.token??"");
+      WorkmanListResponse response =
+          await postRepository.workmanList(loginData.value.token ?? "");
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
       workmanList.clear();
-      if (response.status??false) {
-        workmanList.value = response.data??[];
-
+      if (response.status ?? false) {
+        workmanList.value = response.data ?? [];
       } else if (response.code == 401) {
         Helper().logout();
-      }else {
+      } else {
         Get.snackbar("Error", response.message ?? "Something went wrong");
       }
     } catch (ex) {
@@ -146,14 +149,20 @@ class AttendanceController extends GetxController {
     try {
       isLoading.value = true;
 
-      AdminAttendanceListResponse response = await postRepository.adminAttendanceList(loginData.value.token??"", "0", empId, fromDateEditingController.value.text, toDateEditingController.value.text);
+      AdminAttendanceListResponse response =
+          await postRepository.adminAttendanceList(
+              loginData.value.token ?? "",
+              "0",
+              empId,
+              fromDateEditingController.value.text,
+              toDateEditingController.value.text);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
       adminAttendanceList.clear();
-      if (response.status??false) {
-        adminAttendanceList.value = response.data??[];
-      } else if(response.code == 401){
+      if (response.status ?? false) {
+        adminAttendanceList.value = response.data ?? [];
+      } else if (response.code == 401) {
         Helper().logout();
       }
     } catch (ex) {
@@ -168,19 +177,19 @@ class AttendanceController extends GetxController {
 
   /// site list api call
   Future<void> callSiteList() async {
-
     printData("callSiteList", "callSiteList");
     try {
       isLoading.value = true;
 
-      SiteListResponse response = await postRepository.siteList(loginData.value.token??"");
+      SiteListResponse response =
+          await postRepository.siteList(loginData.value.token ?? "");
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
-        siteList.value = response.data??[];
-      }else if(response.code == 401){
+      if (response.status ?? false) {
+        siteList.value = response.data ?? [];
+      } else if (response.code == 401) {
         Helper().logout();
       }
     } catch (ex) {
@@ -192,23 +201,22 @@ class AttendanceController extends GetxController {
       Get.snackbar('Error', errorMessage.value);
     }
   }
-
 
   /// office list api call
   Future<void> callOfficeList() async {
-
     printData("callSiteList", "callSiteList");
     try {
       isLoading.value = true;
 
-      OfficeListResponse response = await postRepository.officeList(loginData.value.token??"");
+      OfficeListResponse response =
+          await postRepository.officeList(loginData.value.token ?? "");
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
-        officeList.value = response.data??[];
-      }else if(response.code == 401){
+      if (response.status ?? false) {
+        officeList.value = response.data ?? [];
+      } else if (response.code == 401) {
         Helper().logout();
       }
     } catch (ex) {
@@ -220,23 +228,22 @@ class AttendanceController extends GetxController {
       Get.snackbar('Error', errorMessage.value);
     }
   }
-
 
   /// site Emp list api call
   Future<void> callEmpSiteList() async {
-
     printData("callSiteList", "callSiteList");
     try {
       isLoading.value = true;
 
-      SiteListResponse response = await postRepository.empSiteList(loginData.value.token??"",loginData.value.id.toString());
+      SiteListResponse response = await postRepository.empSiteList(
+          loginData.value.token ?? "", loginData.value.id.toString());
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
-        siteList.value = response.data??[];
-      }else if(response.code == 401){
+      if (response.status ?? false) {
+        siteList.value = response.data ?? [];
+      } else if (response.code == 401) {
         Helper().logout();
       }
     } catch (ex) {
@@ -249,22 +256,21 @@ class AttendanceController extends GetxController {
     }
   }
 
-
   /// office list api call
   Future<void> callEmpOfficeList() async {
-
     printData("callEmpOfficeList", "callEmpOfficeList");
     try {
       isLoading.value = true;
 
-      OfficeListResponse response = await postRepository.empOfficeList(loginData.value.token??"",loginData.value.id.toString());
+      OfficeListResponse response = await postRepository.empOfficeList(
+          loginData.value.token ?? "", loginData.value.id.toString());
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
-        officeList.value = response.data??[];
-      }else if(response.code == 401){
+      if (response.status ?? false) {
+        officeList.value = response.data ?? [];
+      } else if (response.code == 401) {
         Helper().logout();
       }
     } catch (ex) {
@@ -276,21 +282,20 @@ class AttendanceController extends GetxController {
       Get.snackbar('Error', errorMessage.value);
     }
   }
-
-
 
   /// Attendance list api call
   Future<void> callAttendanceList(List<WorkReportData> workReportList) async {
     try {
       isLoading.value = true;
 
-      AttendanceListResponse response = await postRepository.attendanceList(loginData.value.token??"",loginData.value.id.toString());
+      AttendanceListResponse response = await postRepository.attendanceList(
+          loginData.value.token ?? "", loginData.value.id.toString());
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
-        attendanceList.value = response.data??[];
+      if (response.status ?? false) {
+        attendanceList.value = response.data ?? [];
         siteAttendanceData.clear();
         filterAttendanceData.clear();
         for (int i = 0; i < attendanceList.length; i++) {
@@ -301,7 +306,9 @@ class AttendanceController extends GetxController {
               isDateAvail = true;
               bool entryUpdated = false;
 
-              for (int z = 0; z < filterAttendanceData[j].siteAttendanceData.length; z++) {
+              for (int z = 0;
+                  z < filterAttendanceData[j].siteAttendanceData.length;
+                  z++) {
                 final siteData = filterAttendanceData[j].siteAttendanceData[z];
 
                 final isSameHead = attendanceList[i].headId != null &&
@@ -313,12 +320,14 @@ class AttendanceController extends GetxController {
                 if (isSameHead || isSameOffice) {
                   if (attendanceList[i].status == 1) {
                     siteData.inTime = attendanceList[i].time ?? "";
+                    siteData.siteInLat = attendanceList[i].lat;
+                    siteData.siteInLong = attendanceList[i].long;
                   } else if (attendanceList[i].status == 2) {
                     siteData.outTime = attendanceList[i].time ?? "";
+                    siteData.siteOutLat = attendanceList[i].lat;
+                    siteData.siteOutLong = attendanceList[i].long;
                   }
 
-                  siteData.lat = attendanceList[i].lat;
-                  siteData.long = attendanceList[i].long;
                   entryUpdated = true;
                   break;
                 }
@@ -326,18 +335,33 @@ class AttendanceController extends GetxController {
 
               if (!entryUpdated) {
                 filterAttendanceData[j].siteAttendanceData.add(
-                  SiteAttendanceData(
-                    siteName: (attendanceList[i].officeName ?? "").isNotEmpty
-                        ? attendanceList[i].officeName!
-                        : (attendanceList[i].headName ?? ""),
-                    headId: attendanceList[i].headId,
-                    officeId: attendanceList[i].officeId,
-                    inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
-                    outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
-                    lat: attendanceList[i].lat??"",
-                    long: attendanceList[i].long??"",
-                  ),
-                );
+                      SiteAttendanceData(
+                        siteName:
+                            (attendanceList[i].officeName ?? "").isNotEmpty
+                                ? attendanceList[i].officeName!
+                                : (attendanceList[i].headName ?? ""),
+                        headId: attendanceList[i].headId,
+                        officeId: attendanceList[i].officeId,
+                        inTime: attendanceList[i].status == 1
+                            ? attendanceList[i].time ?? ""
+                            : "",
+                        outTime: attendanceList[i].status == 2
+                            ? attendanceList[i].time ?? ""
+                            : "",
+                        siteInLat: attendanceList[i].status == 1
+                            ? attendanceList[i].lat ?? ""
+                            : "",
+                        siteInLong: attendanceList[i].status == 1
+                            ? attendanceList[i].long ?? ""
+                            : "",
+                        siteOutLat: attendanceList[i].status == 2
+                            ? attendanceList[i].lat ?? ""
+                            : "",
+                        siteOutLong: attendanceList[i].status == 2
+                            ? attendanceList[i].long ?? ""
+                            : "",
+                      ),
+                    );
               }
 
               break;
@@ -355,19 +379,29 @@ class AttendanceController extends GetxController {
                     : (attendanceList[i].headName ?? ""),
                 headId: attendanceList[i].headId,
                 officeId: attendanceList[i].officeId,
-                inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
-                outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
-                lat: attendanceList[i].lat??"",
-                long: attendanceList[i].long??"",
-
-
+                inTime: attendanceList[i].status == 1
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                outTime: attendanceList[i].status == 2
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                siteInLat: attendanceList[i].status == 1
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteInLong: attendanceList[i].status == 1
+                    ? attendanceList[i].long ?? ""
+                    : "",
+                siteOutLat: attendanceList[i].status == 2
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteOutLong: attendanceList[i].status == 2
+                    ? attendanceList[i].long ?? ""
+                    : "",
               )
             ];
             filterAttendanceData.add(newFilterData);
           }
         }
-
-
 
         for (int i = 0; i < attendanceList.length; i++) {
           printData("date of attendance", attendanceList[i].date ?? "");
@@ -375,7 +409,8 @@ class AttendanceController extends GetxController {
           bool entryUpdated = false;
 
           for (int j = 0; j < siteAttendanceData.length; j++) {
-            final isSameDate = attendanceList[i].date == siteAttendanceData[j].dateOfAttendance;
+            final isSameDate = attendanceList[i].date ==
+                siteAttendanceData[j].dateOfAttendance;
 
             final isSameHead = attendanceList[i].headId != null &&
                 attendanceList[i].headId == siteAttendanceData[j].headId;
@@ -386,12 +421,13 @@ class AttendanceController extends GetxController {
             if (isSameDate && (isSameHead || isSameOffice)) {
               if (attendanceList[i].status == 1) {
                 siteAttendanceData[j].inTime = attendanceList[i].time ?? "";
+                siteAttendanceData[j].siteInLat = attendanceList[i].lat;
+                siteAttendanceData[j].siteInLong = attendanceList[i].long;
               } else if (attendanceList[i].status == 2) {
                 siteAttendanceData[j].outTime = attendanceList[i].time ?? "";
+                siteAttendanceData[j].siteOutLat = attendanceList[i].lat;
+                siteAttendanceData[j].siteOutLong = attendanceList[i].long;
               }
-
-              siteAttendanceData[j].lat = attendanceList[i].lat;
-              siteAttendanceData[j].long = attendanceList[i].long;
 
               entryUpdated = true;
               break;
@@ -407,43 +443,50 @@ class AttendanceController extends GetxController {
                     : (attendanceList[i].headName ?? ""),
                 headId: attendanceList[i].headId,
                 officeId: attendanceList[i].officeId,
-                inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
-                outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
-                lat: attendanceList[i].lat??"",
-                long: attendanceList[i].long ?? "",
-
+                inTime: attendanceList[i].status == 1
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                outTime: attendanceList[i].status == 2
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                siteInLat: attendanceList[i].status == 1
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteInLong: attendanceList[i].status == 1
+                    ? attendanceList[i].long ?? ""
+                    : "",
+                siteOutLat: attendanceList[i].status == 2
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteOutLong: attendanceList[i].status == 2
+                    ? attendanceList[i].long ?? ""
+                    : "",
               ),
             );
           }
         }
 
-
-
-
-
         printData("workReportList length", workReportList.length.toString());
 
-        for (int i = 0; i < siteAttendanceData.length; i++){
-          for (int j = 0; j < workReportList.length; j++){
-            if((siteAttendanceData[i].dateOfAttendance == workReportList[j].date) && (siteAttendanceData[i].headId == workReportList[j].siteId)){
+        for (int i = 0; i < siteAttendanceData.length; i++) {
+          for (int j = 0; j < workReportList.length; j++) {
+            if ((siteAttendanceData[i].dateOfAttendance ==
+                    workReportList[j].date) &&
+                (siteAttendanceData[i].headId == workReportList[j].siteId)) {
               siteAttendanceData[i].isWorkReportAvail = true;
-
             }
           }
         }
 
-
         // Update filterSiteAttendanceData (same as siteAttendanceData initially)
         filterSiteAttendanceData.clear();
 
-        for(int i=0; i< siteAttendanceData.length;i++){
-          if(siteAttendanceData[i].headId != null){
+        for (int i = 0; i < siteAttendanceData.length; i++) {
+          if (siteAttendanceData[i].headId != null) {
             filterSiteAttendanceData.add(siteAttendanceData[i]);
           }
         }
-
-
-      }else if(response.code == 401){
+      } else if (response.code == 401) {
         Helper().logout();
       }
     } catch (ex) {
@@ -461,19 +504,19 @@ class AttendanceController extends GetxController {
     try {
       isLoading.value = true;
 
-      AttendanceListResponse response = await postRepository.attendanceList(loginData.value.token??"",empId);
+      AttendanceListResponse response = await postRepository.attendanceList(
+          loginData.value.token ?? "", empId);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
-        attendanceList.value = response.data??[];
+      if (response.status ?? false) {
+        attendanceList.value = response.data ?? [];
         siteAttendanceData.clear();
         filterAttendanceData.clear();
 
         for (int i = 0; i < attendanceList.length; i++) {
-
-          printData("latttyy", attendanceList[i].lat??"");
+          printData("latttyy", attendanceList[i].lat ?? "");
 
           bool isDateAvail = false;
 
@@ -482,7 +525,9 @@ class AttendanceController extends GetxController {
               isDateAvail = true;
               bool entryUpdated = false;
 
-              for (int z = 0; z < filterAttendanceData[j].siteAttendanceData.length; z++) {
+              for (int z = 0;
+                  z < filterAttendanceData[j].siteAttendanceData.length;
+                  z++) {
                 final siteData = filterAttendanceData[j].siteAttendanceData[z];
 
                 final isSameHead = attendanceList[i].headId != null &&
@@ -494,30 +539,47 @@ class AttendanceController extends GetxController {
                 if (isSameHead || isSameOffice) {
                   if (attendanceList[i].status == 1) {
                     siteData.inTime = attendanceList[i].time ?? "";
+                    siteData.siteInLat = attendanceList[i].lat;
+                    siteData.siteInLong = attendanceList[i].long;
                   } else if (attendanceList[i].status == 2) {
                     siteData.outTime = attendanceList[i].time ?? "";
+                    siteData.siteOutLat = attendanceList[i].lat;
+                    siteData.siteOutLong = attendanceList[i].long;
                   }
 
-                  siteData.lat = attendanceList[i].lat;
-                  siteData.long = attendanceList[i].long;
                   entryUpdated = true;
                   break;
                 }
               }
 
               if (!entryUpdated) {
-                filterAttendanceData[j].siteAttendanceData.add(
-                  SiteAttendanceData(
-                    siteName: (attendanceList[i].officeName ?? "").isNotEmpty
-                        ? attendanceList[i].officeName!
-                        : (attendanceList[i].headName ?? ""),
-                    headId: attendanceList[i].headId,
-                    officeId: attendanceList[i].officeId,
-                    inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
-                    outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
-                    lat: attendanceList[i].lat??"",
-                    long: attendanceList[i].long ?? "",),
-                );
+                filterAttendanceData[j]
+                    .siteAttendanceData
+                    .add(SiteAttendanceData(
+                      siteName: (attendanceList[i].officeName ?? "").isNotEmpty
+                          ? attendanceList[i].officeName!
+                          : (attendanceList[i].headName ?? ""),
+                      headId: attendanceList[i].headId,
+                      officeId: attendanceList[i].officeId,
+                      inTime: attendanceList[i].status == 1
+                          ? attendanceList[i].time ?? ""
+                          : "",
+                      outTime: attendanceList[i].status == 2
+                          ? attendanceList[i].time ?? ""
+                          : "",
+                      siteInLat: attendanceList[i].status == 1
+                          ? attendanceList[i].lat ?? ""
+                          : "",
+                      siteInLong: attendanceList[i].status == 1
+                          ? attendanceList[i].long ?? ""
+                          : "",
+                      siteOutLat: attendanceList[i].status == 2
+                          ? attendanceList[i].lat ?? ""
+                          : "",
+                      siteOutLong: attendanceList[i].status == 2
+                          ? attendanceList[i].long ?? ""
+                          : "",
+                    ));
               }
 
               break;
@@ -535,82 +597,117 @@ class AttendanceController extends GetxController {
                     : (attendanceList[i].headName ?? ""),
                 headId: attendanceList[i].headId,
                 officeId: attendanceList[i].officeId,
-                inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
-                outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
-                lat: attendanceList[i].lat??"",
-                long: attendanceList[i].long ?? "",
+                inTime: attendanceList[i].status == 1
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                outTime: attendanceList[i].status == 2
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                siteInLat: attendanceList[i].status == 1
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteInLong: attendanceList[i].status == 1
+                    ? attendanceList[i].long ?? ""
+                    : "",
+                siteOutLat: attendanceList[i].status == 2
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteOutLong: attendanceList[i].status == 2
+                    ? attendanceList[i].long ?? ""
+                    : "",
               )
             ];
 
-            newFilterData.lat = attendanceList[i].lat??"";
-            newFilterData.long = attendanceList[i].long??"";
+            newFilterData.lat = attendanceList[i].lat ?? "";
+            newFilterData.long = attendanceList[i].long ?? "";
             filterAttendanceData.add(newFilterData);
           }
         }
 
-
-        printData("filter final laaattt", (filterAttendanceData[0].date??"") + (filterAttendanceData[0].lat??""));
-        printData("final laaattt", (attendanceList[0].date??"") + (attendanceList[0].lat??""));
+        printData(
+            "filter final laaattt",
+            (filterAttendanceData[0].date ?? "") +
+                (filterAttendanceData[0].lat ?? ""));
+        printData("final laaattt",
+            (attendanceList[0].date ?? "") + (attendanceList[0].lat ?? ""));
 
         for (int i = 0; i < attendanceList.length; i++) {
-
           bool entryUpdated = false;
           for (int j = 0; j < siteAttendanceData.length; j++) {
-
-            if(attendanceList[i].date == siteAttendanceData[j].dateOfAttendance){
+            if (attendanceList[i].date ==
+                siteAttendanceData[j].dateOfAttendance) {
               if (attendanceList[i].headId == siteAttendanceData[j].headId ||
-                  attendanceList[i].officeId == siteAttendanceData[j].officeId) {
+                  attendanceList[i].officeId ==
+                      siteAttendanceData[j].officeId) {
                 if (attendanceList[i].status == 1) {
                   siteAttendanceData[j].inTime = attendanceList[i].time ?? "";
+                  siteAttendanceData[j].siteInLat = attendanceList[i].lat;
+                  siteAttendanceData[j].siteInLong = attendanceList[i].long;
                 } else if (attendanceList[i].status == 2) {
                   siteAttendanceData[j].outTime = attendanceList[i].time ?? "";
+                  siteAttendanceData[j].siteOutLat = attendanceList[i].lat;
+                  siteAttendanceData[j].siteOutLong = attendanceList[i].long;
                 }
 
-                siteAttendanceData[j].lat = attendanceList[i].lat;
-                siteAttendanceData[j].long = attendanceList[i].long;
                 entryUpdated = true;
                 break;
               }
             }
-
           }
 
           // If no existing site/office match, add new
           if (!entryUpdated) {
             siteAttendanceData.add(
               SiteAttendanceData(
-                dateOfAttendance: attendanceList[i].date??"",
+                dateOfAttendance: attendanceList[i].date ?? "",
                 siteName: (attendanceList[i].officeName ?? "").isNotEmpty
                     ? attendanceList[i].officeName!
                     : (attendanceList[i].headName ?? ""),
                 headId: attendanceList[i].headId,
                 officeId: attendanceList[i].officeId,
-                inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
-                outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
-                lat: attendanceList[i].lat??"",
-                long: attendanceList[i].long??"",
+                inTime: attendanceList[i].status == 1
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                outTime: attendanceList[i].status == 2
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                siteInLat: attendanceList[i].status == 1
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteInLong: attendanceList[i].status == 1
+                    ? attendanceList[i].long ?? ""
+                    : "",
+                siteOutLat: attendanceList[i].status == 2
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteOutLong: attendanceList[i].status == 2
+                    ? attendanceList[i].long ?? ""
+                    : "",
               ),
             );
           }
-
         }
 
         for (int j = 0; j < filterAttendanceData.length; j++) {
-          final officeDurations = calculateTotalOfficeDuration(filterAttendanceData[j].siteAttendanceData);
-          final siteDurations = calculateTotalSiteDuration(filterAttendanceData[j].siteAttendanceData);
+          final officeDurations = calculateTotalOfficeDuration(
+              filterAttendanceData[j].siteAttendanceData);
+          final siteDurations = calculateTotalSiteDuration(
+              filterAttendanceData[j].siteAttendanceData);
 
           officeDurations.forEach((officeId, duration) {
+            filterAttendanceData[j].officeDuration =
+                "${duration.inHours} hours ${duration.inMinutes % 60} mins";
 
-            filterAttendanceData[j].officeDuration = "${duration.inHours} hours ${duration.inMinutes % 60} mins";
-
-            print("Office $officeId total duration: ${duration.inHours} hours ${duration.inMinutes % 60} mins");
+            print(
+                "Office $officeId total duration: ${duration.inHours} hours ${duration.inMinutes % 60} mins");
           });
 
           siteDurations.forEach((siteName, duration) {
+            filterAttendanceData[j].siteDuration =
+                "${duration.inHours} hours ${duration.inMinutes % 60} mins";
 
-            filterAttendanceData[j].siteDuration = "${duration.inHours} hours ${duration.inMinutes % 60} mins";
-
-            print("Site $siteName total duration: ${duration.inHours} hours ${duration.inMinutes % 60} mins");
+            print(
+                "Site $siteName total duration: ${duration.inHours} hours ${duration.inMinutes % 60} mins");
           });
         }
 
@@ -619,12 +716,11 @@ class AttendanceController extends GetxController {
           calculateOverallInOutTimes(filterAttendanceData[j]);
         }
 
-        finalFilterAttendanceData.value = generateAttendanceWithAllDates(fromDateStr: fromDateEditingController.value.text,
+        finalFilterAttendanceData.value = generateAttendanceWithAllDates(
+            fromDateStr: fromDateEditingController.value.text,
             toDateStr: toDateEditingController.value.text,
             existingData: filterAttendanceData);
-
-
-      }else if(response.code == 401){
+      } else if (response.code == 401) {
         Helper().logout();
       }
     } catch (ex) {
@@ -636,7 +732,6 @@ class AttendanceController extends GetxController {
       Get.snackbar('Error', errorMessage.value);
     }
   }
-
 
   /// Employee Work report list api call
   Future<void> callEmployeeWorkReportListByMonth(
@@ -659,12 +754,11 @@ class AttendanceController extends GetxController {
         workReportListByDates.value = response.data ?? [];
         finalSiteAttendanceData.clear();
         callAttendanceListForAdminSiteReport(workReportListByDates, empId);
-
       } else if (response.code == 401) {
         Helper().logout();
       } else if (response.code == 404) {
         finalSiteAttendanceData.clear();
-      }else{
+      } else {
         finalSiteAttendanceData.clear();
       }
     } catch (ex) {
@@ -677,19 +771,20 @@ class AttendanceController extends GetxController {
     }
   }
 
-
   /// Attendance list api call
-  Future<void> callAttendanceListForAdminSiteReport(List<WorkReportData> workReportList,String empId) async {
+  Future<void> callAttendanceListForAdminSiteReport(
+      List<WorkReportData> workReportList, String empId) async {
     try {
       isLoading.value = true;
 
-      AttendanceListResponse response = await postRepository.attendanceList(loginData.value.token??"",empId);
+      AttendanceListResponse response = await postRepository.attendanceList(
+          loginData.value.token ?? "", empId);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
-        attendanceList.value = response.data??[];
+      if (response.status ?? false) {
+        attendanceList.value = response.data ?? [];
         siteAttendanceData.clear();
         filterAttendanceData.clear();
         finalSiteAttendanceData.clear();
@@ -701,7 +796,9 @@ class AttendanceController extends GetxController {
               isDateAvail = true;
               bool entryUpdated = false;
 
-              for (int z = 0; z < filterAttendanceData[j].siteAttendanceData.length; z++) {
+              for (int z = 0;
+                  z < filterAttendanceData[j].siteAttendanceData.length;
+                  z++) {
                 final siteData = filterAttendanceData[j].siteAttendanceData[z];
 
                 final isSameHead = attendanceList[i].headId != null &&
@@ -713,12 +810,13 @@ class AttendanceController extends GetxController {
                 if (isSameHead || isSameOffice) {
                   if (attendanceList[i].status == 1) {
                     siteData.inTime = attendanceList[i].time ?? "";
+                    siteData.siteInLat = attendanceList[i].lat;
+                    siteData.siteInLong = attendanceList[i].long;
                   } else if (attendanceList[i].status == 2) {
                     siteData.outTime = attendanceList[i].time ?? "";
+                    siteData.siteOutLat = attendanceList[i].lat;
+                    siteData.siteOutLong = attendanceList[i].long;
                   }
-
-                  siteData.lat = attendanceList[i].lat;
-                  siteData.long = attendanceList[i].long;
 
                   entryUpdated = true;
                   break;
@@ -727,18 +825,33 @@ class AttendanceController extends GetxController {
 
               if (!entryUpdated) {
                 filterAttendanceData[j].siteAttendanceData.add(
-                  SiteAttendanceData(
-                    siteName: (attendanceList[i].officeName ?? "").isNotEmpty
-                        ? attendanceList[i].officeName!
-                        : (attendanceList[i].headName ?? ""),
-                    headId: attendanceList[i].headId,
-                    officeId: attendanceList[i].officeId,
-                    inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
-                    outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
-                    lat: attendanceList[i].lat??"",
-                    long: attendanceList[i].long??"",
-                  ),
-                );
+                      SiteAttendanceData(
+                        siteName:
+                            (attendanceList[i].officeName ?? "").isNotEmpty
+                                ? attendanceList[i].officeName!
+                                : (attendanceList[i].headName ?? ""),
+                        headId: attendanceList[i].headId,
+                        officeId: attendanceList[i].officeId,
+                        inTime: attendanceList[i].status == 1
+                            ? attendanceList[i].time ?? ""
+                            : "",
+                        outTime: attendanceList[i].status == 2
+                            ? attendanceList[i].time ?? ""
+                            : "",
+                        siteInLat: attendanceList[i].status == 1
+                            ? attendanceList[i].lat ?? ""
+                            : "",
+                        siteInLong: attendanceList[i].status == 1
+                            ? attendanceList[i].long ?? ""
+                            : "",
+                        siteOutLat: attendanceList[i].status == 2
+                            ? attendanceList[i].lat ?? ""
+                            : "",
+                        siteOutLong: attendanceList[i].status == 2
+                            ? attendanceList[i].long ?? ""
+                            : "",
+                      ),
+                    );
               }
 
               break;
@@ -756,16 +869,33 @@ class AttendanceController extends GetxController {
                     : (attendanceList[i].headName ?? ""),
                 headId: attendanceList[i].headId,
                 officeId: attendanceList[i].officeId,
-                inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
-                outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
-                lat: attendanceList[i].lat??"",
-                long: attendanceList[i].long??"",
+                inTime: attendanceList[i].status == 1
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                outTime: attendanceList[i].status == 2
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                siteInLat: attendanceList[i].status == 1
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteInLong: attendanceList[i].status == 1
+                    ? attendanceList[i].long ?? ""
+                    : "",
+                siteOutLat: attendanceList[i].status == 2
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteOutLong: attendanceList[i].status == 2
+                    ? attendanceList[i].long ?? ""
+                    : "",
               )
             ];
+
+            newFilterData.lat = attendanceList[i].lat ?? "";
+            newFilterData.long = attendanceList[i].long ?? "";
+
             filterAttendanceData.add(newFilterData);
           }
         }
-
 
         for (int i = 0; i < attendanceList.length; i++) {
           printData("date of attendance", attendanceList[i].date ?? "");
@@ -773,7 +903,8 @@ class AttendanceController extends GetxController {
           bool entryUpdated = false;
 
           for (int j = 0; j < siteAttendanceData.length; j++) {
-            final isSameDate = attendanceList[i].date == siteAttendanceData[j].dateOfAttendance;
+            final isSameDate = attendanceList[i].date ==
+                siteAttendanceData[j].dateOfAttendance;
 
             final isSameHead = attendanceList[i].headId != null &&
                 attendanceList[i].headId == siteAttendanceData[j].headId;
@@ -784,12 +915,13 @@ class AttendanceController extends GetxController {
             if (isSameDate && (isSameHead || isSameOffice)) {
               if (attendanceList[i].status == 1) {
                 siteAttendanceData[j].inTime = attendanceList[i].time ?? "";
+                siteAttendanceData[j].siteInLat = attendanceList[i].lat;
+                siteAttendanceData[j].siteInLong = attendanceList[i].long;
               } else if (attendanceList[i].status == 2) {
                 siteAttendanceData[j].outTime = attendanceList[i].time ?? "";
+                siteAttendanceData[j].siteOutLat = attendanceList[i].lat;
+                siteAttendanceData[j].siteOutLong = attendanceList[i].long;
               }
-
-              siteAttendanceData[j].lat = attendanceList[i].lat;
-              siteAttendanceData[j].long = attendanceList[i].long;
 
               entryUpdated = true;
               break;
@@ -805,10 +937,24 @@ class AttendanceController extends GetxController {
                     : (attendanceList[i].headName ?? ""),
                 headId: attendanceList[i].headId,
                 officeId: attendanceList[i].officeId,
-                inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
-                outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
-                lat: attendanceList[i].lat??"",
-                long: attendanceList[i].long??"",
+                inTime: attendanceList[i].status == 1
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                outTime: attendanceList[i].status == 2
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                siteInLat: attendanceList[i].status == 1
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteInLong: attendanceList[i].status == 1
+                    ? attendanceList[i].long ?? ""
+                    : "",
+                siteOutLat: attendanceList[i].status == 2
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteOutLong: attendanceList[i].status == 2
+                    ? attendanceList[i].long ?? ""
+                    : "",
               ),
             );
           }
@@ -816,25 +962,21 @@ class AttendanceController extends GetxController {
 
         printData("workReportList length", workReportList.length.toString());
 
-        for (int i = 0; i < siteAttendanceData.length; i++){
-          for (int j = 0; j < workReportList.length; j++){
-            if((siteAttendanceData[i].dateOfAttendance == workReportList[j].date) && (siteAttendanceData[i].headId == workReportList[j].siteId)){
+        for (int i = 0; i < siteAttendanceData.length; i++) {
+          for (int j = 0; j < workReportList.length; j++) {
+            if ((siteAttendanceData[i].dateOfAttendance ==
+                    workReportList[j].date) &&
+                (siteAttendanceData[i].headId == workReportList[j].siteId)) {
               siteAttendanceData[i].isWorkReportAvail = true;
               siteAttendanceData[i].workReportData = workReportList[j];
 
               finalSiteAttendanceData.add(siteAttendanceData[i]);
-
             }
           }
         }
-
-
-
-
-
-      }else if(response.code == 401){
+      } else if (response.code == 401) {
         Helper().logout();
-      }else{
+      } else {
         finalSiteAttendanceData.clear();
       }
     } catch (ex) {
@@ -847,23 +989,21 @@ class AttendanceController extends GetxController {
     }
   }
 
-
-
-
-
   /// Attendance list api call
   Future<void> callAttendanceListByDate(String date) async {
     try {
       isLoading.value = true;
 
-      AttendanceListResponse response = await postRepository.attendanceListByDate(loginData.value.token??"",loginData.value.id.toString(), date);
+      AttendanceListResponse response =
+          await postRepository.attendanceListByDate(
+              loginData.value.token ?? "", loginData.value.id.toString(), date);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
-        attendanceList.value = response.data??[];
-      }else if(response.code == 401){
+      if (response.status ?? false) {
+        attendanceList.value = response.data ?? [];
+      } else if (response.code == 401) {
         Helper().logout();
       }
     } catch (ex) {
@@ -876,22 +1016,23 @@ class AttendanceController extends GetxController {
     }
   }
 
-
   /// Attendance list api call
-  Future<void> callAttendanceListByDateForWorkReport(String date,List<WorkReportData> workReportList) async {
+  Future<void> callAttendanceListByDateForWorkReport(
+      String date, List<WorkReportData> workReportList) async {
     try {
       isLoading.value = true;
 
-      AttendanceListResponse response = await postRepository.attendanceListByDate(loginData.value.token??"",loginData.value.id.toString(), date);
+      AttendanceListResponse response =
+          await postRepository.attendanceListByDate(
+              loginData.value.token ?? "", loginData.value.id.toString(), date);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
-      if (response.status??false) {
-        attendanceList.value = response.data??[];
+      if (response.status ?? false) {
+        attendanceList.value = response.data ?? [];
         siteAttendanceData.clear();
         filterAttendanceData.clear();
-
 
         for (int i = 0; i < attendanceList.length; i++) {
           bool isDateAvail = false;
@@ -901,7 +1042,9 @@ class AttendanceController extends GetxController {
               isDateAvail = true;
               bool entryUpdated = false;
 
-              for (int z = 0; z < filterAttendanceData[j].siteAttendanceData.length; z++) {
+              for (int z = 0;
+                  z < filterAttendanceData[j].siteAttendanceData.length;
+                  z++) {
                 final siteData = filterAttendanceData[j].siteAttendanceData[z];
 
                 final isSameHead = attendanceList[i].headId != null &&
@@ -913,11 +1056,13 @@ class AttendanceController extends GetxController {
                 if (isSameHead || isSameOffice) {
                   if (attendanceList[i].status == 1) {
                     siteData.inTime = attendanceList[i].time ?? "";
+                    siteData.siteInLat = attendanceList[i].lat;
+                    siteData.siteInLong = attendanceList[i].long;
                   } else if (attendanceList[i].status == 2) {
                     siteData.outTime = attendanceList[i].time ?? "";
+                    siteData.siteOutLat = attendanceList[i].lat;
+                    siteData.siteOutLong = attendanceList[i].long;
                   }
-                  siteData.lat = attendanceList[i].lat;
-                  siteData.long = attendanceList[i].long;
 
                   entryUpdated = true;
                   break;
@@ -926,18 +1071,33 @@ class AttendanceController extends GetxController {
 
               if (!entryUpdated) {
                 filterAttendanceData[j].siteAttendanceData.add(
-                  SiteAttendanceData(
-                    siteName: (attendanceList[i].officeName ?? "").isNotEmpty
-                        ? attendanceList[i].officeName!
-                        : (attendanceList[i].headName ?? ""),
-                    headId: attendanceList[i].headId,
-                    officeId: attendanceList[i].officeId,
-                    inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
-                    outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
-                    lat: attendanceList[i].lat??"",
-                    long: attendanceList[i].long??"",
-                  ),
-                );
+                      SiteAttendanceData(
+                        siteName:
+                            (attendanceList[i].officeName ?? "").isNotEmpty
+                                ? attendanceList[i].officeName!
+                                : (attendanceList[i].headName ?? ""),
+                        headId: attendanceList[i].headId,
+                        officeId: attendanceList[i].officeId,
+                        inTime: attendanceList[i].status == 1
+                            ? attendanceList[i].time ?? ""
+                            : "",
+                        outTime: attendanceList[i].status == 2
+                            ? attendanceList[i].time ?? ""
+                            : "",
+                        siteInLat: attendanceList[i].status == 1
+                            ? attendanceList[i].lat ?? ""
+                            : "",
+                        siteInLong: attendanceList[i].status == 1
+                            ? attendanceList[i].long ?? ""
+                            : "",
+                        siteOutLat: attendanceList[i].status == 2
+                            ? attendanceList[i].lat ?? ""
+                            : "",
+                        siteOutLong: attendanceList[i].status == 2
+                            ? attendanceList[i].long ?? ""
+                            : "",
+                      ),
+                    );
               }
 
               break;
@@ -955,17 +1115,29 @@ class AttendanceController extends GetxController {
                     : (attendanceList[i].headName ?? ""),
                 headId: attendanceList[i].headId,
                 officeId: attendanceList[i].officeId,
-                inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
-                outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
-                lat: attendanceList[i].lat??"",
-                long: attendanceList[i].long??"",
+                inTime: attendanceList[i].status == 1
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                outTime: attendanceList[i].status == 2
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                siteInLat: attendanceList[i].status == 1
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteInLong: attendanceList[i].status == 1
+                    ? attendanceList[i].long ?? ""
+                    : "",
+                siteOutLat: attendanceList[i].status == 2
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteOutLong: attendanceList[i].status == 2
+                    ? attendanceList[i].long ?? ""
+                    : "",
               )
             ];
             filterAttendanceData.add(newFilterData);
           }
         }
-
-
 
         for (int i = 0; i < attendanceList.length; i++) {
           printData("date of attendance", attendanceList[i].date ?? "");
@@ -973,7 +1145,8 @@ class AttendanceController extends GetxController {
           bool entryUpdated = false;
 
           for (int j = 0; j < siteAttendanceData.length; j++) {
-            final isSameDate = attendanceList[i].date == siteAttendanceData[j].dateOfAttendance;
+            final isSameDate = attendanceList[i].date ==
+                siteAttendanceData[j].dateOfAttendance;
 
             final isSameHead = attendanceList[i].headId != null &&
                 attendanceList[i].headId == siteAttendanceData[j].headId;
@@ -984,12 +1157,14 @@ class AttendanceController extends GetxController {
             if (isSameDate && (isSameHead || isSameOffice)) {
               if (attendanceList[i].status == 1) {
                 siteAttendanceData[j].inTime = attendanceList[i].time ?? "";
+                siteAttendanceData[j].siteInLat = attendanceList[i].lat;
+                siteAttendanceData[j].siteInLong = attendanceList[i].long;
               } else if (attendanceList[i].status == 2) {
                 siteAttendanceData[j].outTime = attendanceList[i].time ?? "";
+                siteAttendanceData[j].siteOutLat = attendanceList[i].lat;
+                siteAttendanceData[j].siteOutLong = attendanceList[i].long;
               }
 
-              siteAttendanceData[j].lat = attendanceList[i].lat;
-              siteAttendanceData[j].long = attendanceList[i].long;
               entryUpdated = true;
               break;
             }
@@ -1004,40 +1179,51 @@ class AttendanceController extends GetxController {
                     : (attendanceList[i].headName ?? ""),
                 headId: attendanceList[i].headId,
                 officeId: attendanceList[i].officeId,
-                inTime: attendanceList[i].status == 1 ? attendanceList[i].time ?? "" : "",
-                outTime: attendanceList[i].status == 2 ? attendanceList[i].time ?? "" : "",
-                lat: attendanceList[i].lat??"",
-                long: attendanceList[i].long??"",
+                inTime: attendanceList[i].status == 1
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                outTime: attendanceList[i].status == 2
+                    ? attendanceList[i].time ?? ""
+                    : "",
+                siteInLat: attendanceList[i].status == 1
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteInLong: attendanceList[i].status == 1
+                    ? attendanceList[i].long ?? ""
+                    : "",
+                siteOutLat: attendanceList[i].status == 2
+                    ? attendanceList[i].lat ?? ""
+                    : "",
+                siteOutLong: attendanceList[i].status == 2
+                    ? attendanceList[i].long ?? ""
+                    : "",
               ),
             );
           }
         }
 
+        printData(
+            "siteAttendanceData length", siteAttendanceData.length.toString());
 
-
-        printData("siteAttendanceData length", siteAttendanceData.length.toString());
-
-
-        for (int i = 0; i < siteAttendanceData.length; i++){
-          for (int j = 0; j < workReportList.length; j++){
-            if((siteAttendanceData[i].dateOfAttendance == workReportList[j].date) && (siteAttendanceData[i].headId == workReportList[j].siteId)){
+        for (int i = 0; i < siteAttendanceData.length; i++) {
+          for (int j = 0; j < workReportList.length; j++) {
+            if ((siteAttendanceData[i].dateOfAttendance ==
+                    workReportList[j].date) &&
+                (siteAttendanceData[i].headId == workReportList[j].siteId)) {
               siteAttendanceData[i].isWorkReportAvail = true;
             }
           }
         }
 
-
         // Update filterSiteAttendanceData (same as siteAttendanceData initially)
         filterSiteAttendanceData.clear();
 
-        for(int i=0; i< siteAttendanceData.length;i++){
-          if(siteAttendanceData[i].headId != null){
+        for (int i = 0; i < siteAttendanceData.length; i++) {
+          if (siteAttendanceData[i].headId != null) {
             filterSiteAttendanceData.add(siteAttendanceData[i]);
           }
         }
-
-
-      }else if(response.code == 401){
+      } else if (response.code == 401) {
         Helper().logout();
       }
     } catch (ex) {
@@ -1050,28 +1236,24 @@ class AttendanceController extends GetxController {
     }
   }
 
-
-
-
   /// Attendance create api call
   Future<void> callCreateAttendanceIn(double lat, double long) async {
     try {
-
       createAttendanceInRequest.value.lat = lat.toString();
       createAttendanceInRequest.value.long = long.toString();
       isLoading.value = true;
 
       printData("site ", "api called");
 
-      BaseModel response =
-      await postRepository.createAttendanceIn(loginData.value.token ?? "",createAttendanceInRequest.value);
+      BaseModel response = await postRepository.createAttendanceIn(
+          loginData.value.token ?? "", createAttendanceInRequest.value);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
-        Get.snackbar("Success", response.message??"");
-        printData("response", response.message??"");
+        Get.snackbar("Success", response.message ?? "");
+        printData("response", response.message ?? "");
 
         selectedSite = null;
         selectedOffice = null;
@@ -1080,11 +1262,10 @@ class AttendanceController extends GetxController {
 
         refresh();
 
-        callAttendanceListByDate(createAttendanceInRequest.value.date??"");
-
+        callAttendanceListByDate(createAttendanceInRequest.value.date ?? "");
       } else if (response.code == 401) {
         Helper().logout();
-      }else {
+      } else {
         Get.snackbar("Error", response.message ?? "Something went wrong");
       }
     } catch (ex) {
@@ -1104,21 +1285,19 @@ class AttendanceController extends GetxController {
 
       printData("site ", "api called");
 
-      BaseModel response =
-      await postRepository.createAdminAttendance(loginData.value.token ?? "",adminCreateAttendanceRequest.value);
+      BaseModel response = await postRepository.createAdminAttendance(
+          loginData.value.token ?? "", adminCreateAttendanceRequest.value);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
         Get.back();
-        Get.snackbar("Success", response.message??"");
-        printData("response", response.message??"");
-
-
+        Get.snackbar("Success", response.message ?? "");
+        printData("response", response.message ?? "");
       } else if (response.code == 401) {
         Helper().logout();
-      }else {
+      } else {
         Get.snackbar("Error", response.message ?? "Something went wrong");
       }
     } catch (ex) {
@@ -1138,21 +1317,19 @@ class AttendanceController extends GetxController {
 
       printData("site ", "api called");
 
-      BaseModel response =
-      await postRepository.updateAdminAttendance(loginData.value.token ?? "",adminUpdateAttendanceRequest.value);
+      BaseModel response = await postRepository.updateAdminAttendance(
+          loginData.value.token ?? "", adminUpdateAttendanceRequest.value);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
         Get.back();
-        Get.snackbar("Success", response.message??"");
-        printData("response", response.message??"");
-
-
+        Get.snackbar("Success", response.message ?? "");
+        printData("response", response.message ?? "");
       } else if (response.code == 401) {
         Helper().logout();
-      }else {
+      } else {
         Get.snackbar("Error", response.message ?? "Something went wrong");
       }
     } catch (ex) {
@@ -1165,30 +1342,25 @@ class AttendanceController extends GetxController {
     }
   }
 
-
-
-
-
   /// Attendance out api call
   Future<void> callCreateAttendanceOut(double lat, double long) async {
     try {
-
       createAttendanceInRequest.value.lat = lat.toString();
       createAttendanceInRequest.value.long = long.toString();
       isLoading.value = true;
 
       printData("site ", "api called");
 
-      BaseModel response =
-      await postRepository.createAttendanceOut(loginData.value.token ?? "",createAttendanceInRequest.value);
+      BaseModel response = await postRepository.createAttendanceOut(
+          loginData.value.token ?? "", createAttendanceInRequest.value);
       isLoading.value = false;
 
       // Get.snackbar("response ",loginResponseToJson(response));
 
       if (response.status ?? false) {
         // Get.back();
-        Get.snackbar("Success", response.message??"");
-        printData("response", response.message??"");
+        Get.snackbar("Success", response.message ?? "");
+        printData("response", response.message ?? "");
         selectedSite = null;
         selectedOffice = null;
         selectedPlace = null;
@@ -1196,11 +1368,10 @@ class AttendanceController extends GetxController {
 
         refresh();
 
-        callAttendanceListByDate(createAttendanceInRequest.value.date??"");
-
+        callAttendanceListByDate(createAttendanceInRequest.value.date ?? "");
       } else if (response.code == 401) {
         Helper().logout();
-      }else {
+      } else {
         Get.snackbar("Error", response.message ?? "Something went wrong");
       }
     } catch (ex) {
@@ -1223,16 +1394,18 @@ class AttendanceController extends GetxController {
   }
 
   ///Clear all field
-  clearAllField() {
+  clearAllField() {}
 
-  }
-
-  Map<int, Duration> calculateTotalOfficeDuration(List<SiteAttendanceData> dataList) {
+  Map<int, Duration> calculateTotalOfficeDuration(
+      List<SiteAttendanceData> dataList) {
     Map<int, Duration> officeDurations = {};
 
     for (var data in dataList) {
-      if (data.officeId != null && data.inTime != null && data.outTime != null &&
-          data.inTime!.isNotEmpty && data.outTime!.isNotEmpty) {
+      if (data.officeId != null &&
+          data.inTime != null &&
+          data.outTime != null &&
+          data.inTime!.isNotEmpty &&
+          data.outTime!.isNotEmpty) {
         final inTime = DateFormat('HH:mm:ss').parse(data.inTime!);
         final outTime = DateFormat('HH:mm:ss').parse(data.outTime!);
 
@@ -1246,13 +1419,16 @@ class AttendanceController extends GetxController {
     return officeDurations;
   }
 
-
-  Map<String, Duration> calculateTotalSiteDuration(List<SiteAttendanceData> dataList) {
+  Map<String, Duration> calculateTotalSiteDuration(
+      List<SiteAttendanceData> dataList) {
     Map<String, Duration> siteDurations = {};
 
     for (var data in dataList) {
-      if (data.headId != null && data.inTime != null && data.outTime != null &&
-          data.inTime!.isNotEmpty && data.outTime!.isNotEmpty) {
+      if (data.headId != null &&
+          data.inTime != null &&
+          data.outTime != null &&
+          data.inTime!.isNotEmpty &&
+          data.outTime!.isNotEmpty) {
         final inTime = DateFormat('HH:mm:ss').parse(data.inTime!);
         final outTime = DateFormat('HH:mm:ss').parse(data.outTime!);
 
@@ -1271,25 +1447,29 @@ class AttendanceController extends GetxController {
 
     // Get all site inTimes
     final siteInTimes = data.siteAttendanceData
-        .where((d) => d.headId != null && d.inTime != null && d.inTime!.isNotEmpty)
+        .where(
+            (d) => d.headId != null && d.inTime != null && d.inTime!.isNotEmpty)
         .map((d) => format.parse(d.inTime!))
         .toList();
 
     // Get all site outTimes
     final siteOutTimes = data.siteAttendanceData
-        .where((d) => d.headId != null && d.outTime != null && d.outTime!.isNotEmpty)
+        .where((d) =>
+            d.headId != null && d.outTime != null && d.outTime!.isNotEmpty)
         .map((d) => format.parse(d.outTime!))
         .toList();
 
     // Get all office inTimes
     final officeInTimes = data.siteAttendanceData
-        .where((d) => d.officeId != null && d.inTime != null && d.inTime!.isNotEmpty)
+        .where((d) =>
+            d.officeId != null && d.inTime != null && d.inTime!.isNotEmpty)
         .map((d) => format.parse(d.inTime!))
         .toList();
 
     // Get all office outTimes
     final officeOutTimes = data.siteAttendanceData
-        .where((d) => d.officeId != null && d.outTime != null && d.outTime!.isNotEmpty)
+        .where((d) =>
+            d.officeId != null && d.outTime != null && d.outTime!.isNotEmpty)
         .map((d) => format.parse(d.outTime!))
         .toList();
 
@@ -1323,14 +1503,10 @@ class AttendanceController extends GetxController {
     );
   }
 
-
-
-
   List<FilterAttendanceData> generateAttendanceWithAllDates({
-
     required String fromDateStr, // format: dd-MM-yyyy
     required String toDateStr,
-    required List<FilterAttendanceData> existingData,// format: dd-MM-yyyy
+    required List<FilterAttendanceData> existingData, // format: dd-MM-yyyy
   }) {
     final DateFormat inputFormat = DateFormat('dd-MM-yyyy');
     final DateTime fromDate = inputFormat.parse(fromDateStr);
@@ -1344,8 +1520,8 @@ class AttendanceController extends GetxController {
     List<FilterAttendanceData> finalList = [];
 
     for (DateTime current = fromDate;
-    !current.isAfter(toDate);
-    current = current.add(Duration(days: 1))) {
+        !current.isAfter(toDate);
+        current = current.add(Duration(days: 1))) {
       String formattedDate = inputFormat.format(current);
 
       if (dataMap.containsKey(formattedDate)) {
@@ -1355,9 +1531,7 @@ class AttendanceController extends GetxController {
         finalList.add(item);
       } else {
         // Data missing
-        String status = current.weekday == DateTime.sunday
-            ? 'Week Off'
-            : 'A';
+        String status = current.weekday == DateTime.sunday ? 'Week Off' : 'A';
 
         finalList.add(FilterAttendanceData()
           ..date = formattedDate
@@ -1368,11 +1542,8 @@ class AttendanceController extends GetxController {
     return finalList;
   }
 
-
-
   void filterAttendanceListBySite(String siteId) {
     filterSiteAttendanceData.clear();
-
 
     if (siteId == "0") {
       // Show all items
@@ -1380,14 +1551,11 @@ class AttendanceController extends GetxController {
       return;
     }
 
-
-
     printData("selected siteId", siteId);
 
     printData("Atendance List Length", siteAttendanceData.length.toString());
 
     for (var item in siteAttendanceData) {
-
       printData("head ID", "${item.siteName ?? ""} - ${item.headId}");
 
       if (item.headId.toString() == siteId) {
@@ -1396,8 +1564,4 @@ class AttendanceController extends GetxController {
       }
     }
   }
-
-
-
-
 }

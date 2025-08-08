@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:geocoding/geocoding.dart';
 
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
@@ -195,12 +196,13 @@ class _SiteReportListForAdminScreenState
                         ),
                         InkWell(
                           onTap: () async {
-
-                            attendanceController.callEmployeeWorkReportListByMonth(
-                                widget.empId,
-                                attendanceController.fromDateEditingController.value.text,
-                                attendanceController.toDateEditingController.value.text);
-
+                            attendanceController
+                                .callEmployeeWorkReportListByMonth(
+                                    widget.empId,
+                                    attendanceController
+                                        .fromDateEditingController.value.text,
+                                    attendanceController
+                                        .toDateEditingController.value.text);
                           },
                           child: Container(
                             alignment: Alignment.center,
@@ -223,335 +225,405 @@ class _SiteReportListForAdminScreenState
                       ],
                     ),
                   ),
-                  attendanceController.finalSiteAttendanceData.isNotEmpty?Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 16,
-                          ),
-
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
+                  attendanceController.finalSiteAttendanceData.isNotEmpty
+                      ? Expanded(
+                          child: SingleChildScrollView(
                             child: Column(
-                              children: List.generate(
-                                attendanceController
-                                    .finalSiteAttendanceData.length,
-                                (index) {
-                                  final data = attendanceController
-                                      .finalSiteAttendanceData[index];
+                              children: [
+                                SizedBox(
+                                  height: 16,
+                                ),
 
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12),
-                                    child: Table(
-                                      border: TableBorder.all(
-                                          color: Colors.grey.shade300),
-                                      defaultVerticalAlignment:
-                                          TableCellVerticalAlignment.middle,
-                                      columnWidths: const {
-                                        0: FixedColumnWidth(100),
-                                        1: FixedColumnWidth(140),
-                                        2: FixedColumnWidth(100),
-                                        3: FixedColumnWidth(140),
-                                        4: FixedColumnWidth(140),
-                                        5: FixedColumnWidth(130),
-                                        6: FixedColumnWidth(130),
-                                        7: FixedColumnWidth(130),
-                                      },
-                                      children: [
-                                        if (index == 0)
-                                          TableRow(
-                                            decoration: BoxDecoration(
-                                                color: Colors.grey.shade200),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Column(
+                                    children: List.generate(
+                                      attendanceController
+                                          .finalSiteAttendanceData.length,
+                                      (index) {
+                                        final data = attendanceController
+                                            .finalSiteAttendanceData[index];
+
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12),
+                                          child: Table(
+                                            border: TableBorder.all(
+                                                color: Colors.grey.shade300),
+                                            defaultVerticalAlignment:
+                                                TableCellVerticalAlignment
+                                                    .middle,
+                                            columnWidths: const {
+                                              0: FixedColumnWidth(100),
+                                              1: FixedColumnWidth(140),
+                                              2: FixedColumnWidth(100),
+                                              3: FixedColumnWidth(140),
+                                              4: FixedColumnWidth(140),
+                                              5: FixedColumnWidth(130),
+                                              6: FixedColumnWidth(130),
+                                              7: FixedColumnWidth(130),
+                                              8: FixedColumnWidth(180),
+                                              9: FixedColumnWidth(180),
+                                            },
                                             children: [
-                                              tableHeader('Date'),
-                                              tableHeader('Site Name'),
-                                              tableHeader('Site Suffix'),
-                                              tableHeader('Conveyance Through'),
-                                              tableHeader('Service Nature'),
-                                              tableHeader('Site In'),
-                                              tableHeader('Site Out'),
+                                              if (index == 0)
+                                                TableRow(
+                                                  decoration: BoxDecoration(
+                                                      color:
+                                                          Colors.grey.shade200),
+                                                  children: [
+                                                    tableHeader('Date'),
+                                                    tableHeader('Site Name'),
+                                                    tableHeader('Site Suffix'),
+                                                    tableHeader(
+                                                        'Conveyance Through'),
+                                                    tableHeader(
+                                                        'Service Nature'),
+                                                    tableHeader('Site In'),
+                                                    tableHeader('Site Out'),
+                                                    tableHeader(
+                                                        'Site In Location'),
+                                                    tableHeader(
+                                                        'Site Out Location'),
+                                                  ],
+                                                ),
+                                              TableRow(
+                                                children: [
+                                                  tableCell(
+                                                      data.dateOfAttendance ??
+                                                          ''),
+                                                  tableCell(
+                                                      data.siteName ?? ''),
+                                                  tableCell(data.workReportData
+                                                          ?.siteSuffixName ??
+                                                      ''),
+                                                  tableCell(data.workReportData
+                                                          ?.convenyenceThroughName ??
+                                                      ''),
+                                                  tableCell(data.workReportData
+                                                          ?.serviceNatureName ??
+                                                      ''),
+                                                  tableCell(data.inTime ?? ''),
+                                                  tableCell(data.outTime ?? ''),
+                                                  InkWell(
+                                                      onTap: () async {
+                                                        if ((data.siteInLat ??
+                                                                "")
+                                                            .isNotEmpty) {
+                                                          data.siteInAddress =
+                                                              await getAddressFromLatLong(
+                                                                  double.parse(
+                                                                      data.siteInLat ??
+                                                                          ""),
+                                                                  double.parse(
+                                                                      data.siteInLong ??
+                                                                          ""));
+
+                                                          setState(() {});
+                                                        }
+                                                      },
+                                                      child: tableCell((data
+                                                                      .siteInLat ??
+                                                                  "")
+                                                              .isNotEmpty
+                                                          ? (data.siteInAddress ??
+                                                                      "")
+                                                                  .isEmpty
+                                                              ? "Get Site In Location"
+                                                              : data.siteInAddress ??
+                                                                  ""
+                                                          : "")),
+                                                  InkWell(
+                                                      onTap: () async {
+                                                        if ((data.siteOutLat ??
+                                                                "")
+                                                            .isNotEmpty) {
+                                                          data.siteOutAddress =
+                                                              await getAddressFromLatLong(
+                                                                  double.parse(
+                                                                      data.siteOutLat ??
+                                                                          ""),
+                                                                  double.parse(
+                                                                      data.siteOutLong ??
+                                                                          ""));
+
+                                                          setState(() {});
+                                                        }
+                                                      },
+                                                      child: tableCell((data
+                                                                      .siteOutLat ??
+                                                                  "")
+                                                              .isNotEmpty
+                                                          ? (data.siteOutAddress ??
+                                                                      "")
+                                                                  .isEmpty
+                                                              ? "Get Site Out Location"
+                                                              : data.siteOutAddress ??
+                                                                  ""
+                                                          : "")),
+                                                ],
+                                              ),
                                             ],
                                           ),
-                                        TableRow(
-                                          children: [
-                                            tableCell(data.dateOfAttendance ?? ''),
-                                            tableCell(
-                                                data.siteName ?? ''),
-                                            tableCell(
-                                                data.workReportData?.siteSuffixName ??
-                                                    ''),
-                                            tableCell(
-                                                data.workReportData?.convenyenceThroughName ?? ''),
-                                            tableCell(
-                                                data.workReportData?.serviceNatureName ?? ''),
-                                            tableCell(
-                                                data.inTime ?? ''),
-                                            tableCell(data.outTime ?? ''),
-
-                                          ],
-                                        ),
-                                      ],
+                                        );
+                                      },
                                     ),
-                                  );
-                                },
-                              ),
+                                  ),
+                                ),
+
+                                // attendanceController.finalSiteAttendanceData.isNotEmpty
+                                //     ? Expanded(
+                                //         child: ListView.builder(
+                                //           padding: const EdgeInsets.all(10),
+                                //           itemCount: attendanceController.finalSiteAttendanceData.length,
+                                //           itemBuilder: (context, index) {
+                                //             final data = attendanceController.finalSiteAttendanceData[index];
+                                //
+                                //             return Card(
+                                //               elevation: 2,
+                                //               margin: const EdgeInsets.symmetric(vertical: 8),
+                                //               child: Padding(
+                                //                 padding: const EdgeInsets.all(12),
+                                //                 child: Table(
+                                //                   border: TableBorder.all(color: Colors.grey.shade300),
+                                //                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                //                   columnWidths: const {
+                                //                     0: FixedColumnWidth(100),
+                                //                     1: FixedColumnWidth(100),
+                                //                     2: FixedColumnWidth(100),
+                                //                     3: FixedColumnWidth(100),
+                                //                     4: FixedColumnWidth(100),
+                                //                     5: FixedColumnWidth(130),
+                                //                     6: FixedColumnWidth(130),
+                                //                   },
+                                //                   children: [
+                                //                     TableRow(
+                                //                       decoration: BoxDecoration(color: Colors.grey.shade200),
+                                //                       children: [
+                                //                         tableHeader('Date'),
+                                //                         tableHeader('Office In'),
+                                //                         tableHeader('Office Out'),
+                                //                         tableHeader('Site In'),
+                                //                         tableHeader('Site Out'),
+                                //                         tableHeader('Office Duration'),
+                                //                         tableHeader('Site Duration'),
+                                //                       ],
+                                //                     ),
+                                //                     TableRow(
+                                //                       children: [
+                                //                         tableCell(data.date ?? ''),
+                                //                         tableCell(data.overallOfficeInTime ?? ''),
+                                //                         tableCell(data.overallOfficeOutTime ?? ''),
+                                //                         tableCell(data.overallSiteInTime ?? ''),
+                                //                         tableCell(data.overallSiteOutTime ?? ''),
+                                //                         tableCell(data.officeDuration ?? ''),
+                                //                         tableCell(data.siteDuration ?? ''),
+                                //                       ],
+                                //                     ),
+                                //                   ],
+                                //                 ),
+                                //               ),
+                                //             );
+                                //           },
+                                //         )
+                                //
+                                //
+                                //
+                                //   // ListView.builder(
+                                //         //   padding: const EdgeInsets.all(10),
+                                //         //   itemCount:
+                                //         //   attendanceController.attendanceList.length,
+                                //         //   itemBuilder: (context, index) {
+                                //         //     return Card(
+                                //         //       elevation: 2,
+                                //         //       margin:
+                                //         //       const EdgeInsets.symmetric(vertical: 8),
+                                //         //       child: Padding(
+                                //         //         padding: const EdgeInsets.all(12),
+                                //         //         child: Column(
+                                //         //           crossAxisAlignment:
+                                //         //           CrossAxisAlignment.start,
+                                //         //           children: [
+                                //         //             Row(
+                                //         //               mainAxisAlignment: MainAxisAlignment.start,
+                                //         //               children: [
+                                //         //                 Expanded(
+                                //         //                   child: Column(
+                                //         //                     crossAxisAlignment: CrossAxisAlignment.start
+                                //         //                     ,children: [
+                                //         //                     Text(
+                                //         //                       'Date',
+                                //         //                       style: AppTextStyle.largeMedium
+                                //         //                           .copyWith(
+                                //         //                           fontSize: 12,
+                                //         //                           color: color_brown_title),
+                                //         //                     ),
+                                //         //                     Text(
+                                //         //                       "${attendanceController
+                                //         //                           .attendanceList[index]
+                                //         //                           .date ??
+                                //         //                           ""} || ${attendanceController
+                                //         //                           .attendanceList[index]
+                                //         //                           .time ??
+                                //         //                           ""}",
+                                //         //                       style: AppTextStyle.largeRegular
+                                //         //                           .copyWith(
+                                //         //                           fontSize: 15,
+                                //         //                           color: Colors.black),
+                                //         //                     ),
+                                //         //                   ],
+                                //         //                   ),
+                                //         //                 ),
+                                //         //                 const SizedBox(height: 12),
+                                //         //                 Column(
+                                //         //                   children: [
+                                //         //                     Text(
+                                //         //                       'Status',
+                                //         //                       style: AppTextStyle.largeMedium
+                                //         //                           .copyWith(
+                                //         //                           fontSize: 12,
+                                //         //                           color: color_brown_title),
+                                //         //                     ),
+                                //         //                     Text(
+                                //         //                       (attendanceController
+                                //         //                           .attendanceList[index]
+                                //         //                           .statusType ??
+                                //         //                           "")
+                                //         //                           .toString(),
+                                //         //                       style: AppTextStyle.largeRegular
+                                //         //                           .copyWith(
+                                //         //                           fontSize: 15,
+                                //         //                           color: Colors.black),
+                                //         //                     ),
+                                //         //                   ],
+                                //         //                 ),
+                                //         //               ],
+                                //         //             ),
+                                //         //
+                                //         //
+                                //         //             const SizedBox(height: 12),
+                                //         //             Text(
+                                //         //               (attendanceController
+                                //         //                   .attendanceList[index]
+                                //         //                   .officeName ??
+                                //         //                   "").isNotEmpty?'Office Name':"Site Name",
+                                //         //               style: AppTextStyle.largeMedium
+                                //         //                   .copyWith(
+                                //         //                   fontSize: 12,
+                                //         //                   color: color_brown_title),
+                                //         //             ),
+                                //         //             Text(
+                                //         //               (attendanceController
+                                //         //                   .attendanceList[index]
+                                //         //                   .officeName ??
+                                //         //                   "").isNotEmpty?(attendanceController
+                                //         //                   .attendanceList[index]
+                                //         //                   .officeName ??
+                                //         //                   ""):(attendanceController
+                                //         //                   .attendanceList[index]
+                                //         //                   .headName ??
+                                //         //                   ""),
+                                //         //               style: AppTextStyle.largeRegular
+                                //         //                   .copyWith(
+                                //         //                   fontSize: 15,
+                                //         //                   color: Colors.black),
+                                //         //             ),
+                                //         //
+                                //         //             const SizedBox(height: 12),
+                                //         //             // InkWell(
+                                //         //             //   onTap: () {
+                                //         //             //     Get.to(WorkReportListScreen(
+                                //         //             //         siteId: (attendanceController
+                                //         //             //             .attendanceList[index]
+                                //         //             //             .headName??"").isNotEmpty?attendanceController
+                                //         //             //             .attendanceList[index]
+                                //         //             //             .headId.toString():attendanceController
+                                //         //             //             .attendanceList[index]
+                                //         //             //             .officeId.toString(),
+                                //         //             //         attendanceId:
+                                //         //             //             attendanceController
+                                //         //             //                 .attendanceList[index]
+                                //         //             //                 .id
+                                //         //             //                 .toString(),
+                                //         //             //         date: attendanceController
+                                //         //             //                 .attendanceList[index]
+                                //         //             //                 .date ??
+                                //         //             //             ""));
+                                //         //             //   },
+                                //         //             //   child: Row(
+                                //         //             //     children: [
+                                //         //             //       Icon(Icons.add_circle),
+                                //         //             //       SizedBox(
+                                //         //             //         width: 2,
+                                //         //             //       ),
+                                //         //             //       Text(
+                                //         //             //         "Site Report",
+                                //         //             //         style: AppTextStyle.largeBold
+                                //         //             //             .copyWith(
+                                //         //             //                 fontSize: 15,
+                                //         //             //                 color: Colors.black),
+                                //         //             //       ),
+                                //         //             //     ],
+                                //         //             //   ),
+                                //         //             // ),
+                                //         //
+                                //         //
+                                //         //
+                                //         //             // const SizedBox(height: 12),
+                                //         //             // attendanceController
+                                //         //             //     .attendanceList[index].status ==
+                                //         //             //     1? InkWell(
+                                //         //             //   onTap: () {
+                                //         //             //     attendanceController
+                                //         //             //         .selectedAttendance.value =
+                                //         //             //     attendanceController
+                                //         //             //         .attendanceList[index];
+                                //         //             //     Get.to(AddAttendanceOutScreen(isSite: (attendanceController
+                                //         //             //         .attendanceList[index].headName??"").isNotEmpty?true:false,date: attendanceController
+                                //         //             //         .attendanceList[index].date??""))
+                                //         //             //         ?.then((value) {
+                                //         //             //       attendanceController.isLoading.value =
+                                //         //             //       false;
+                                //         //             //       attendanceController.callAttendanceList();
+                                //         //             //     });
+                                //         //             //   },
+                                //         //             //   child: Row(
+                                //         //             //     children: [
+                                //         //             //       Icon(Icons.add_circle),
+                                //         //             //       SizedBox(
+                                //         //             //         width: 2,
+                                //         //             //       ),
+                                //         //             //       Text(
+                                //         //             //         "Sign Out",
+                                //         //             //         style: AppTextStyle.largeBold
+                                //         //             //             .copyWith(
+                                //         //             //             fontSize: 15,
+                                //         //             //             color: Colors.black),
+                                //         //             //       ),
+                                //         //             //     ],
+                                //         //             //   ),
+                                //         //             // ):SizedBox()
+                                //         //
+                                //         //
+                                //         //           ],
+                                //         //         ),
+                                //         //       ),
+                                //         //     );
+                                //         //   },
+                                //         // ),
+                                //         )
+                                //     : Expanded(
+                                //         child: Center(
+                                //         child: Text("No data found"),
+                                //       )),
+                              ],
                             ),
                           ),
-
-                          // attendanceController.finalSiteAttendanceData.isNotEmpty
-                          //     ? Expanded(
-                          //         child: ListView.builder(
-                          //           padding: const EdgeInsets.all(10),
-                          //           itemCount: attendanceController.finalSiteAttendanceData.length,
-                          //           itemBuilder: (context, index) {
-                          //             final data = attendanceController.finalSiteAttendanceData[index];
-                          //
-                          //             return Card(
-                          //               elevation: 2,
-                          //               margin: const EdgeInsets.symmetric(vertical: 8),
-                          //               child: Padding(
-                          //                 padding: const EdgeInsets.all(12),
-                          //                 child: Table(
-                          //                   border: TableBorder.all(color: Colors.grey.shade300),
-                          //                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                          //                   columnWidths: const {
-                          //                     0: FixedColumnWidth(100),
-                          //                     1: FixedColumnWidth(100),
-                          //                     2: FixedColumnWidth(100),
-                          //                     3: FixedColumnWidth(100),
-                          //                     4: FixedColumnWidth(100),
-                          //                     5: FixedColumnWidth(130),
-                          //                     6: FixedColumnWidth(130),
-                          //                   },
-                          //                   children: [
-                          //                     TableRow(
-                          //                       decoration: BoxDecoration(color: Colors.grey.shade200),
-                          //                       children: [
-                          //                         tableHeader('Date'),
-                          //                         tableHeader('Office In'),
-                          //                         tableHeader('Office Out'),
-                          //                         tableHeader('Site In'),
-                          //                         tableHeader('Site Out'),
-                          //                         tableHeader('Office Duration'),
-                          //                         tableHeader('Site Duration'),
-                          //                       ],
-                          //                     ),
-                          //                     TableRow(
-                          //                       children: [
-                          //                         tableCell(data.date ?? ''),
-                          //                         tableCell(data.overallOfficeInTime ?? ''),
-                          //                         tableCell(data.overallOfficeOutTime ?? ''),
-                          //                         tableCell(data.overallSiteInTime ?? ''),
-                          //                         tableCell(data.overallSiteOutTime ?? ''),
-                          //                         tableCell(data.officeDuration ?? ''),
-                          //                         tableCell(data.siteDuration ?? ''),
-                          //                       ],
-                          //                     ),
-                          //                   ],
-                          //                 ),
-                          //               ),
-                          //             );
-                          //           },
-                          //         )
-                          //
-                          //
-                          //
-                          //   // ListView.builder(
-                          //         //   padding: const EdgeInsets.all(10),
-                          //         //   itemCount:
-                          //         //   attendanceController.attendanceList.length,
-                          //         //   itemBuilder: (context, index) {
-                          //         //     return Card(
-                          //         //       elevation: 2,
-                          //         //       margin:
-                          //         //       const EdgeInsets.symmetric(vertical: 8),
-                          //         //       child: Padding(
-                          //         //         padding: const EdgeInsets.all(12),
-                          //         //         child: Column(
-                          //         //           crossAxisAlignment:
-                          //         //           CrossAxisAlignment.start,
-                          //         //           children: [
-                          //         //             Row(
-                          //         //               mainAxisAlignment: MainAxisAlignment.start,
-                          //         //               children: [
-                          //         //                 Expanded(
-                          //         //                   child: Column(
-                          //         //                     crossAxisAlignment: CrossAxisAlignment.start
-                          //         //                     ,children: [
-                          //         //                     Text(
-                          //         //                       'Date',
-                          //         //                       style: AppTextStyle.largeMedium
-                          //         //                           .copyWith(
-                          //         //                           fontSize: 12,
-                          //         //                           color: color_brown_title),
-                          //         //                     ),
-                          //         //                     Text(
-                          //         //                       "${attendanceController
-                          //         //                           .attendanceList[index]
-                          //         //                           .date ??
-                          //         //                           ""} || ${attendanceController
-                          //         //                           .attendanceList[index]
-                          //         //                           .time ??
-                          //         //                           ""}",
-                          //         //                       style: AppTextStyle.largeRegular
-                          //         //                           .copyWith(
-                          //         //                           fontSize: 15,
-                          //         //                           color: Colors.black),
-                          //         //                     ),
-                          //         //                   ],
-                          //         //                   ),
-                          //         //                 ),
-                          //         //                 const SizedBox(height: 12),
-                          //         //                 Column(
-                          //         //                   children: [
-                          //         //                     Text(
-                          //         //                       'Status',
-                          //         //                       style: AppTextStyle.largeMedium
-                          //         //                           .copyWith(
-                          //         //                           fontSize: 12,
-                          //         //                           color: color_brown_title),
-                          //         //                     ),
-                          //         //                     Text(
-                          //         //                       (attendanceController
-                          //         //                           .attendanceList[index]
-                          //         //                           .statusType ??
-                          //         //                           "")
-                          //         //                           .toString(),
-                          //         //                       style: AppTextStyle.largeRegular
-                          //         //                           .copyWith(
-                          //         //                           fontSize: 15,
-                          //         //                           color: Colors.black),
-                          //         //                     ),
-                          //         //                   ],
-                          //         //                 ),
-                          //         //               ],
-                          //         //             ),
-                          //         //
-                          //         //
-                          //         //             const SizedBox(height: 12),
-                          //         //             Text(
-                          //         //               (attendanceController
-                          //         //                   .attendanceList[index]
-                          //         //                   .officeName ??
-                          //         //                   "").isNotEmpty?'Office Name':"Site Name",
-                          //         //               style: AppTextStyle.largeMedium
-                          //         //                   .copyWith(
-                          //         //                   fontSize: 12,
-                          //         //                   color: color_brown_title),
-                          //         //             ),
-                          //         //             Text(
-                          //         //               (attendanceController
-                          //         //                   .attendanceList[index]
-                          //         //                   .officeName ??
-                          //         //                   "").isNotEmpty?(attendanceController
-                          //         //                   .attendanceList[index]
-                          //         //                   .officeName ??
-                          //         //                   ""):(attendanceController
-                          //         //                   .attendanceList[index]
-                          //         //                   .headName ??
-                          //         //                   ""),
-                          //         //               style: AppTextStyle.largeRegular
-                          //         //                   .copyWith(
-                          //         //                   fontSize: 15,
-                          //         //                   color: Colors.black),
-                          //         //             ),
-                          //         //
-                          //         //             const SizedBox(height: 12),
-                          //         //             // InkWell(
-                          //         //             //   onTap: () {
-                          //         //             //     Get.to(WorkReportListScreen(
-                          //         //             //         siteId: (attendanceController
-                          //         //             //             .attendanceList[index]
-                          //         //             //             .headName??"").isNotEmpty?attendanceController
-                          //         //             //             .attendanceList[index]
-                          //         //             //             .headId.toString():attendanceController
-                          //         //             //             .attendanceList[index]
-                          //         //             //             .officeId.toString(),
-                          //         //             //         attendanceId:
-                          //         //             //             attendanceController
-                          //         //             //                 .attendanceList[index]
-                          //         //             //                 .id
-                          //         //             //                 .toString(),
-                          //         //             //         date: attendanceController
-                          //         //             //                 .attendanceList[index]
-                          //         //             //                 .date ??
-                          //         //             //             ""));
-                          //         //             //   },
-                          //         //             //   child: Row(
-                          //         //             //     children: [
-                          //         //             //       Icon(Icons.add_circle),
-                          //         //             //       SizedBox(
-                          //         //             //         width: 2,
-                          //         //             //       ),
-                          //         //             //       Text(
-                          //         //             //         "Site Report",
-                          //         //             //         style: AppTextStyle.largeBold
-                          //         //             //             .copyWith(
-                          //         //             //                 fontSize: 15,
-                          //         //             //                 color: Colors.black),
-                          //         //             //       ),
-                          //         //             //     ],
-                          //         //             //   ),
-                          //         //             // ),
-                          //         //
-                          //         //
-                          //         //
-                          //         //             // const SizedBox(height: 12),
-                          //         //             // attendanceController
-                          //         //             //     .attendanceList[index].status ==
-                          //         //             //     1? InkWell(
-                          //         //             //   onTap: () {
-                          //         //             //     attendanceController
-                          //         //             //         .selectedAttendance.value =
-                          //         //             //     attendanceController
-                          //         //             //         .attendanceList[index];
-                          //         //             //     Get.to(AddAttendanceOutScreen(isSite: (attendanceController
-                          //         //             //         .attendanceList[index].headName??"").isNotEmpty?true:false,date: attendanceController
-                          //         //             //         .attendanceList[index].date??""))
-                          //         //             //         ?.then((value) {
-                          //         //             //       attendanceController.isLoading.value =
-                          //         //             //       false;
-                          //         //             //       attendanceController.callAttendanceList();
-                          //         //             //     });
-                          //         //             //   },
-                          //         //             //   child: Row(
-                          //         //             //     children: [
-                          //         //             //       Icon(Icons.add_circle),
-                          //         //             //       SizedBox(
-                          //         //             //         width: 2,
-                          //         //             //       ),
-                          //         //             //       Text(
-                          //         //             //         "Sign Out",
-                          //         //             //         style: AppTextStyle.largeBold
-                          //         //             //             .copyWith(
-                          //         //             //             fontSize: 15,
-                          //         //             //             color: Colors.black),
-                          //         //             //       ),
-                          //         //             //     ],
-                          //         //             //   ),
-                          //         //             // ):SizedBox()
-                          //         //
-                          //         //
-                          //         //           ],
-                          //         //         ),
-                          //         //       ),
-                          //         //     );
-                          //         //   },
-                          //         // ),
-                          //         )
-                          //     : Expanded(
-                          //         child: Center(
-                          //         child: Text("No data found"),
-                          //       )),
-                        ],
-                      ),
-                    ),
-                  ):Expanded(
-                            child: Center(
-                            child: Text("No data found"),
-                          )),
+                        )
+                      : Expanded(
+                          child: Center(
+                          child: Text("No data found"),
+                        )),
                 ],
               ),
               if (attendanceController.isLoading.value)
@@ -590,5 +662,29 @@ class _SiteReportListForAdminScreenState
         textAlign: TextAlign.center,
       ),
     );
+  }
+
+  Future<String> getAddressFromLatLong(
+      double latitude, double longitude) async {
+    try {
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude, longitude);
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+
+        String address =
+            '${place.street}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea} ${place.postalCode}, ${place.country}';
+
+        print("Address: $address");
+        return address;
+      } else {
+        print("No address found");
+        return 'No address found';
+      }
+    } catch (e) {
+      print("Error: $e");
+      return 'Error: $e';
+    }
   }
 }

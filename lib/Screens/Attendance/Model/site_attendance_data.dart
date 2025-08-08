@@ -6,7 +6,6 @@ import 'dart:convert';
 
 import '../../WorkReport/Model/work_report_list_response.dart';
 
-
 class SiteAttendanceData {
   String? dateOfAttendance;
   int? headId;
@@ -16,9 +15,12 @@ class SiteAttendanceData {
   String? outTime;
   bool isWorkReportAvail = false;
   WorkReportData? workReportData;
-  String? lat;
-  String? long;
-
+  String? siteInLat;
+  String? siteInLong;
+  String? siteOutLat;
+  String? siteOutLong;
+  String? siteInAddress;
+  String? siteOutAddress;
 
   SiteAttendanceData({
     this.dateOfAttendance,
@@ -28,8 +30,12 @@ class SiteAttendanceData {
     this.inTime,
     this.outTime,
     this.workReportData,
-    this.lat,
-    this.long
+    this.siteInLat,
+    this.siteInLong,
+    this.siteOutLat,
+    this.siteOutLong,
+    this.siteInAddress,
+    this.siteOutAddress,
   });
 
   // From JSON
@@ -40,8 +46,12 @@ class SiteAttendanceData {
       siteName: json['siteName'],
       inTime: json['inTime'],
       outTime: json['outTime'],
-      lat: json['lat'],
-      long: json['long'],
+      siteInLat: json['siteInLat'],
+      siteInLong: json['siteInLong'],
+      siteOutLat: json['siteOutLat'],
+      siteOutLong: json['siteOutLong'],
+      siteInAddress: json["siteInAddress"],
+      siteOutAddress: json["siteOutAddress"],
     );
   }
 
@@ -53,8 +63,12 @@ class SiteAttendanceData {
       'siteName': siteName,
       'inTime': inTime,
       'outTime': outTime,
-      'lat': lat,
-      'long': long,
+      'siteInLat': siteInLat,
+      'siteInLong': siteInLong,
+      'siteOutLat': siteOutLat,
+      'siteOutLong': siteOutLong,
+      "siteInAddress": siteInAddress,
+      "siteOutAddress": siteOutAddress
     };
   }
 }
